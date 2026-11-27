@@ -1,0 +1,84 @@
+name: Qualify public showcase
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-showcase-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    outputs:
+      site_sha256: ${{ steps.digest.outputs.sha256 }}
+    steps:
+      - name: Checkout public source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Verify public repository and static site
+        run: |
+          set -eu
+          test "${{ github.event.repository.private }}" = "false"
+          python3 -m unittest discover -s tests -v
+          python3 tests/smoke_site.py
+      - name: Record exact site digest
+        id: digest
+        run: echo "sha256=$(sha256sum site/index.html | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+      - name: Upload qualified static site
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        with:
+          path: site
+          retention-days: 1
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: qualify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Reject superseded source
+        env:
+          EXPECTED: ${{ github.sha }}
+        run: |
+          set -eu
+          current="$(git ls-remote https://github.com/SemperSupra/oneirifact.git refs/heads/main | cut -f 1)"
+          test "$current" = "$EXPECTED"
+      - name: Deploy qualified public artifact
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+      - name: Verify served site digest
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          EXPECTED: ${{ needs.qualify.outputs.site_sha256 }}
+        run: |
+          set -eu
+          case "$PAGE_URL" in https://*) ;; *) exit 1 ;; esac
+          for attempt in $(seq 1 10); do
+            if curl -fsSL --max-time 10 "$PAGE_URL" -o "$RUNNER_TEMP/served.html"; then
+              actual="$(sha256sum "$RUNNER_TEMP/served.html" | cut -d ' ' -f 1)"
+              if test "$actual" = "$EXPECTED"; then
+                echo "Live static site digest PASS"
+                exit 0
+              fi
+            fi
+            sleep 5
+          done
+          echo "::error::Live site did not match the qualified artifact"
+          exit 1

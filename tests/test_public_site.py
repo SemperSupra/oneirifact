@@ -1,0 +1,62 @@
+"""Checks for the static project showcase, not for the procedural engine."""
+from html.parser import HTMLParser
+from pathlib import Path
+import unittest
+
+ROOT = Path(__file__).resolve().parents[1]
+SITE = ROOT / "site"
+
+
+class SiteParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.tags = []
+        self.attrs = []
+        self.text = []
+
+    def handle_starttag(self, tag, attrs):
+        self.tags.append(tag)
+        self.attrs.append((tag, dict(attrs)))
+
+    def handle_data(self, data):
+        self.text.append(data)
+
+
+class PublicSiteTests(unittest.TestCase):
+    def setUp(self):
+        self.parser = SiteParser()
+        self.parser.feed((SITE / "index.html").read_text(encoding="utf-8"))
+
+    def test_static_showcase_only(self):
+        self.assertEqual(sorted(p.name for p in SITE.iterdir()), ["index.html"])
+        self.assertTrue((SITE / "index.html").is_file())
+        self.assertFalse((SITE / "index.html").is_symlink())
+        self.assertIn("Browser preview in preparation", self.parser.text)
+        self.assertIn("The interactive editor is not yet available.", " ".join(self.parser.text))
+
+    def test_semantic_document(self):
+        self.assertEqual(self.parser.tags.count("h1"), 1)
+        self.assertEqual(self.parser.tags.count("main"), 1)
+        self.assertIn(("html", {"lang": "en"}), self.parser.attrs)
+        ids = {a["id"] for _, a in self.parser.attrs if "id" in a}
+        for _, attrs in self.parser.attrs:
+            if "aria-labelledby" in attrs:
+                self.assertIn(attrs["aria-labelledby"], ids)
+
+    def test_no_active_external_content(self):
+        self.assertFalse(set(self.parser.tags) & {"script", "iframe", "object", "embed", "form", "link"})
+        links = set()
+        for tag, attrs in self.parser.attrs:
+            self.assertFalse(any(k.startswith("on") for k in attrs))
+            self.assertNotIn("src", attrs)
+            if "href" in attrs:
+                self.assertEqual(tag, "a")
+                links.add(attrs["href"])
+        self.assertEqual(links, {
+            "https://github.com/SemperSupra/oneirifact",
+            "https://github.com/SemperSupra/oneirifact/issues",
+        })
+
+
+if __name__ == "__main__":
+    unittest.main()

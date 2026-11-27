@@ -46,14 +46,14 @@ class PublicSiteTests(unittest.TestCase):
     def test_gallery_generated_files(self):
         if not (SITE / "gallery").exists():
             self.skipTest("Build gallery with pinned Blender to qualify actual assets")
-        expected = {f"pavilion-{p}{ext}" for p in ("day","night","plan","tall") for ext in (".png",".blend",".glb",".json")} | {"pavilion.py","specs.json","export_gallery.py"}
+        expected = {f"{p}{ext}" for p in ("pavilion-day","pavilion-night","pavilion-plan","pavilion-tall","bearing-assembled","bearing-exploded") for ext in (".png",".blend",".glb",".json")} | {"pavilion.py","specs.json","export_gallery.py","bearing.py"}
         self.assertEqual({p.name for p in (SITE/"gallery").iterdir()}, expected)
         for p in (SITE/"gallery").iterdir():
             self.assertTrue(p.is_file() and not p.is_symlink() and p.stat().st_size > 0)
 
     def test_no_active_external_content(self):
         self.assertFalse(set(self.parser.tags) & {"script", "iframe", "object", "embed", "form", "link"})
-        profiles = ('pavilion-day', 'pavilion-night', 'pavilion-plan', 'pavilion-tall')
+        profiles = ('pavilion-day', 'pavilion-night', 'pavilion-plan', 'pavilion-tall', 'bearing-assembled', 'bearing-exploded')
         expected_images = {f'gallery/{p}.png' for p in profiles}
         links = set()
         for tag, attrs in self.parser.attrs:
@@ -68,7 +68,7 @@ class PublicSiteTests(unittest.TestCase):
         self.assertEqual(links, {
             "https://github.com/SemperSupra/oneirifact",
             "https://github.com/SemperSupra/oneirifact/issues",
-        } | {f"gallery/{p}{ext}" for p in profiles for ext in (".png",".blend",".glb",".json")} | {"gallery/specs.json","gallery/pavilion.py","gallery/export_gallery.py"})
+        } | {f"gallery/{p}{ext}" for p in profiles for ext in (".png",".blend",".glb",".json")} | {"gallery/specs.json","gallery/pavilion.py","gallery/export_gallery.py","gallery/bearing.py"})
 
 
 if __name__ == "__main__":

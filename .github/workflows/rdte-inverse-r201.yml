@@ -1,0 +1,65 @@
+name: Qualify topology-gated inverse fitting
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/inverse-r201/**', '.github/workflows/rdte-inverse-r201.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  fit:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire and verify fixed R200 inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/inputs"
+          cd "$RUNNER_TEMP/inputs"
+          for id in 15229781019 15228548803 15228334677; do
+            gh api "repos/SemperSupra/oneirifact/actions/artifacts/$id/zip" > "github-actions-artifact-$id.zip"
+          done
+          sha256sum -c <<'EOF'
+          5f687d3862302193e12daf972721f7fa4279eccc4cfa12339585be932f50bcb2  github-actions-artifact-15229781019.zip
+          bb8e0bce2fd12dbc606548794f78d37f55b5d856ea3fbb92b840212f100475ae  github-actions-artifact-15228548803.zip
+          7d8a844afe99bea0ff217b5047c827be8aab809672df0c0808fd34e359c2a114  github-actions-artifact-15228334677.zip
+          EOF
+      - name: Execute independent fit and segmentation diagnostics
+        env:
+          OPENBLAS_NUM_THREADS: 1
+          OMP_NUM_THREADS: 1
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 Pillow==12.0.0
+          cd experiments/inverse-r201
+          python fit.py "$RUNNER_TEMP/inputs" "$RUNNER_TEMP/results"
+          python components.py "$RUNNER_TEMP/inputs" "$RUNNER_TEMP/results"
+          python visual.py "$RUNNER_TEMP/inputs" "$RUNNER_TEMP/results"
+          python - "$RUNNER_TEMP/results" <<'PY'
+          import json,sys
+          from pathlib import Path
+          p=Path(sys.argv[1])
+          a=json.loads((p/'component-diagnostics.json').read_text())
+          assert {k:len(v) for k,v in a.items()}=={'Avocado':2,'Lantern':17,'WaterBottle':3}
+          assert {k:sum(r['disposition']=='COARSE_GEOMETRY_ONLY' for r in v) for k,v in a.items()}=={'Avocado':1,'Lantern':4,'WaterBottle':0}
+          for v in a.values():
+              for r in v:
+                  if r['disposition']=='COARSE_GEOMETRY_ONLY':
+                      assert r['metrics']['coverage_2pct_part']>=.95
+          print('R201_REPLAY_PASS')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: inverse-fit-diagnostics
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+          if-no-files-found: error

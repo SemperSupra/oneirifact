@@ -1,4 +1,5 @@
 import json
+from email.message import Message
 from pathlib import Path
 import tempfile
 import unittest
@@ -103,6 +104,68 @@ class DeliveryTests(unittest.TestCase):
             delivery.fetch("https://example.invalid/index.html", 10)
         with self.assertRaisesRegex(ValueError, "unexpected asset redirect"):
             delivery.NoRedirect().redirect_request(None, None, 302, "redirect", {}, "https://example.invalid/")
+
+
+    def test_browser_response_media_types(self):
+        for name, content_type in (("", "text/html; charset=utf-8"),
+                                   ("index.html", "text/html"),
+                                   ("assets/main.mjs", "text/javascript"),
+                                   ("assets/worker.js", "application/javascript; charset=UTF-8"),
+                                   ("assets/core.wasm", "application/wasm"),
+                                   ("assets/style.css", "text/css"),
+                                   (delivery.MANIFEST, "application/json")):
+            with self.subTest(name=name):
+                headers = Message()
+                headers["Content-Type"] = content_type
+                delivery.verify_response_headers(delivery.BASE + name, headers)
+
+    def test_wrong_or_missing_browser_response_media_types(self):
+        for name, content_type in (("assets/core.wasm", "application/octet-stream"),
+                                   ("assets/main.mjs", "text/html"),
+                                   ("assets/worker.js", "text/plain"),
+                                   ("assets/style.css", "application/javascript"),
+                                   (delivery.MANIFEST, "text/plain"),
+                                   ("index.html", None)):
+            with self.subTest(name=name):
+                headers = Message()
+                if content_type is not None:
+                    headers["Content-Type"] = content_type
+                with self.assertRaisesRegex(ValueError, "asset media type"):
+                    delivery.verify_response_headers(delivery.BASE + name, headers)
+
+    def test_ambiguous_media_type_or_content_encoding_rejected(self):
+        headers = Message()
+        headers["Content-Type"] = "application/wasm"
+        headers["Content-Type"] = "text/html"
+        with self.assertRaisesRegex(ValueError, "asset media type"):
+            delivery.verify_response_headers(delivery.BASE + "core.wasm", headers)
+        for encoding in ("gzip", "br", "identity, gzip"):
+            with self.subTest(encoding=encoding):
+                headers = Message()
+                headers["Content-Type"] = "application/wasm"
+                headers["Content-Encoding"] = encoding
+                with self.assertRaisesRegex(ValueError, "content encoding"):
+                    delivery.verify_response_headers(delivery.BASE + "core.wasm", headers)
+        headers.replace_header("Content-Encoding", "identity")
+        delivery.verify_response_headers(delivery.BASE + "core.wasm", headers)
+
+    def test_fetch_checks_headers_before_reading_body(self):
+        from unittest.mock import MagicMock
+        response = MagicMock()
+        response.__enter__.return_value = response
+        url = delivery.BASE + "core.wasm"
+        response.status = 200
+        response.geturl.return_value = url
+        response.headers = Message()
+        response.headers["Content-Type"] = "text/html"
+        response.read.return_value = b"same bytes"
+        with patch.object(delivery.urllib.request, "build_opener") as opener:
+            opener.return_value.open.return_value = response
+            with self.assertRaisesRegex(ValueError, "asset media type"):
+                delivery.fetch(url, 10)
+            response.read.assert_not_called()
+            response.headers.replace_header("Content-Type", "application/wasm")
+            self.assertEqual(delivery.fetch(url, 10), b"same bytes")
 
 
 if __name__ == "__main__":

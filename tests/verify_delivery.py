@@ -99,12 +99,37 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         raise ValueError("unexpected asset redirect")
 
 
+# Browsers enforce MIME types for ES modules and streaming WebAssembly.
+# Bind those response properties to the same origin and bytes checked below.
+BROWSER_MEDIA_TYPES = {
+    ".html": {"text/html"},
+    ".js": {"text/javascript", "application/javascript"},
+    ".mjs": {"text/javascript", "application/javascript"},
+    ".wasm": {"application/wasm"},
+    ".css": {"text/css"},
+    ".json": {"application/json"},
+}
+
+
+def verify_response_headers(url, headers):
+    relative = url[len(BASE):] or "index.html"
+    expected = BROWSER_MEDIA_TYPES.get(Path(relative).suffix.lower())
+    if expected:
+        values = headers.get_all("Content-Type", [])
+        require(len(values) == 1 and values[0].split(";", 1)[0].strip().lower() in expected,
+                "unexpected browser asset media type: " + relative)
+    encodings = headers.get_all("Content-Encoding", [])
+    require(not encodings or (len(encodings) == 1 and encodings[0].strip().lower() == "identity"),
+            "unexpected content encoding: " + relative)
+
+
 def fetch(url, limit):
     require(url.startswith(BASE), "unexpected asset origin")
     opener = urllib.request.build_opener(NoRedirect())
     req = urllib.request.Request(url, headers={"Cache-Control": "no-cache", "Accept-Encoding": "identity"})
     with opener.open(req, timeout=10) as response:
         require(response.status == 200 and response.geturl() == url, "unexpected asset response")
+        verify_response_headers(url, response.headers)
         data = response.read(limit + 1)
         require(len(data) <= limit, "oversized response")
         return data

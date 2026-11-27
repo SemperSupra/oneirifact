@@ -1,0 +1,31 @@
+name: Qualify shared rig evaluation kernel
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r220/**','.github/workflows/rdte-r220-rig.yml']
+permissions:
+  contents: read
+jobs:
+  rig:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: experiments/r220
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Test actual shared Go rig kernel
+        run: |
+          set -euo pipefail
+          go version
+          go vet ./...
+          R220_RIG_RECEIPT="$RUNNER_TEMP/rig-receipt.json" go test -race -count=3 -v ./...
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r220-rig-kernel-receipt
+          path: ${{ runner.temp }}/rig-receipt.json
+          retention-days: 30
+          if-no-files-found: error

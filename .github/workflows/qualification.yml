@@ -39,5 +39,5 @@ jobs:
           test -f "$RUNNER_TEMP/scanner/gitleaks"
           test ! -L "$RUNNER_TEMP/scanner/gitleaks"
           "$RUNNER_TEMP/scanner/gitleaks" version
-          sha256sum "$RUNNER_TEMP/scanner/gitleaks"
+          echo "88f91962aa2f93ac6ab281d553b9e125f5197bbbce38f9f2437f7299c32e5509  $RUNNER_TEMP/scanner/gitleaks" | sha256sum -c -
           python3 qualification/scanner_probe.py "$RUNNER_TEMP/scanner/gitleaks"

@@ -1,0 +1,42 @@
+{
+  "schema": "oneirifact.public-procedural-raytrace-study/v0.1",
+  "notice": "Original standalone procedural pavilion study; not a private Oneirifact foundry.Graph or source-first CSG compiler. No CPE or protected assets.",
+  "profiles": [
+    {
+      "id": "pavilion-day",
+      "label": "Copper daylight",
+      "height_m": 3.75,
+      "roof_radius_m": 3.35,
+      "mode": "day",
+      "camera": "hero",
+      "samples": 32
+    },
+    {
+      "id": "pavilion-night",
+      "label": "Luminous evening",
+      "height_m": 3.75,
+      "roof_radius_m": 3.35,
+      "mode": "night",
+      "camera": "hero",
+      "samples": 32
+    },
+    {
+      "id": "pavilion-tall",
+      "label": "Elevated canopy",
+      "height_m": 4.55,
+      "roof_radius_m": 3.35,
+      "mode": "day",
+      "camera": "hero",
+      "samples": 32
+    },
+    {
+      "id": "pavilion-plan",
+      "label": "Roof and circulation",
+      "height_m": 3.75,
+      "roof_radius_m": 3.35,
+      "mode": "day",
+      "camera": "overview",
+      "samples": 24
+    }
+  ]
+}

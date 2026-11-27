@@ -1,0 +1,100 @@
+name: R191 Public Real CPU Cycles Procedural Gallery
+
+on:
+  push:
+    branches:
+      - rdte/r191-native-cycles-procedural-gallery
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r191-public-real-cycles-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native-raytraced-images:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 17
+    steps:
+      - name: Checkout original public study at triggering commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Public-only source preflight and hostile variant tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ github.event.repository.private }}" = false
+          test ! -e internal/foundry
+          test ! -e internal/engineadapter
+          test ! -e internal/renderhost
+          python3 -m py_compile experiments/raytrace/*.py
+          python3 -m unittest discover -s experiments/raytrace -p 'test_*.py' -v
+          sha256sum experiments/raytrace/pavilion.py experiments/raytrace/specs.json experiments/raytrace/verify_gallery.py
+      - name: Obtain exact checksum-pinned official Blender 5.2.4 LTS
+        shell: bash
+        run: |
+          set -euo pipefail
+          artifact=blender-5.2.4-linux-x64.tar.xz
+          expected=2fd14c50987426897ba60237ee996edf2b4151f4b1a72a460ca20be58c1d2d86
+          root="${RUNNER_TEMP}/r191-blender"
+          install -d -m 700 "$root"
+          verified=0
+          for url in \
+            "https://download.blender.org/release/Blender5.2/${artifact}" \
+            "https://mirror.blender.org/release/Blender5.2/${artifact}" \
+            "https://mirror.nju.edu.cn/blender/release/Blender5.2/${artifact}"; do
+            rm -f "${root}/${artifact}"
+            echo "R191 checking Blender source host ${url%%/release/*} (SHA-256 compulsory)"
+            if timeout 110s curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error \
+              --connect-timeout 12 --speed-limit 32768 --speed-time 12 --max-time 95 \
+              "$url" --output "${root}/${artifact}"; then
+              if printf '%s  %s\n' "$expected" "${root}/${artifact}" | sha256sum -c --status; then
+                verified=1
+                break
+              fi
+              echo "::error::Blender downloaded but exact SHA-256 mismatch; fail closed"
+              exit 1
+            fi
+          done
+          test "$verified" -eq 1 || { echo "::error::No pinned Blender archive obtained"; exit 1; }
+          echo "PUBLIC_R191_PINNED_BLENDER_BINARY_PASS sha256:$expected"
+          timeout 150s tar -xf "${root}/${artifact}" -C "$root"
+          binary="${root}/blender-5.2.4-linux-x64/blender"
+          test -x "$binary"
+          echo "BLENDER_BIN=$binary" >> "$GITHUB_ENV"
+          "$binary" --version | head -n 3
+      - name: Ray trace four actual source-owned procedural designs with CPU Cycles
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="${RUNNER_TEMP}/r191-gallery"
+          install -d -m 700 "$output"
+          for profile in pavilion-day pavilion-night pavilion-tall pavilion-plan; do
+            echo "R191 actual Cycles geometry, light and camera: $profile"
+            timeout 210s /usr/bin/time -f "R191 profile=$profile wall_seconds=%e peak_rss_kib=%M" \
+              "${BLENDER_BIN}" --background --factory-startup --disable-autoexec -t 2 \
+                --python experiments/raytrace/pavilion.py -- \
+                experiments/raytrace/specs.json "$profile" "$output"
+            test -s "$output/$profile.png"
+            test -s "$output/$profile.json"
+          done
+          echo "PUBLIC_R191_FOUR_NATIVE_CPU_CYCLES_RENDER_OUTPUTS_PRESENT"
+      - name: Independent PNG decoding, object identity and visual-difference evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "${RUNNER_TEMP}/r191-venv"
+          "${RUNNER_TEMP}/r191-venv/bin/pip" install --no-input --disable-pip-version-check 'Pillow==11.3.0'
+          "${RUNNER_TEMP}/r191-venv/bin/python" experiments/raytrace/verify_gallery.py \
+             "${RUNNER_TEMP}/r191-gallery" experiments/raytrace/specs.json experiments/raytrace/pavilion.py
+          sha256sum "${RUNNER_TEMP}"/r191-gallery/*.png "${RUNNER_TEMP}"/r191-gallery/*.json
+      - name: Retain original native Cycles images and independently checked evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: r191-oneirifact-original-pavilion-real-cycles
+          path: ${{ runner.temp }}/r191-gallery/
+          retention-days: 7
+          if-no-files-found: error

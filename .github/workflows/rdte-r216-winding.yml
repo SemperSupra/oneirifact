@@ -1,0 +1,37 @@
+name: Correct candidate global winding
+on:
+  pull_request:
+    branches: [rdte/r216-topology-oracle]
+    paths: ['experiments/r216/correct_winding.py','.github/workflows/rdte-r216-winding.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  correct:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve exact R209 candidate geometry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api repos/SemperSupra/oneirifact/actions/artifacts/15232986038/zip > "$RUNNER_TEMP/geometry.zip"
+      - name: Correct and independently verify orientation
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 Pillow==12.0.0
+          python experiments/r216/correct_winding.py "$RUNNER_TEMP/geometry.zip" "$RUNNER_TEMP/corrected"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r216-corrected-winding
+          path: ${{ runner.temp }}/corrected
+          retention-days: 30
+          if-no-files-found: error

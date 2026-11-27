@@ -1,0 +1,55 @@
+name: LDraw reconstruction and connector hypothesis bakeoff
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r209/**', '.github/workflows/rdte-r209.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  workcell:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        lane: [geometry, ports]
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire exact R208 reference archives
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/inputs"
+          cd "$RUNNER_TEMP/inputs"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15232521230/zip > github-actions-artifact-15232521230.zip
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15232132427/zip > github-actions-artifact-15232132427.zip
+          sha256sum -c <<'EOF'
+          3c69e2c331af0b4035f511f0cbb3ce69d41482d0477b9c3cc8f3e2d754eab60d  github-actions-artifact-15232521230.zip
+          9fa2b51c1b0a8a5e1dcbe9deb024e6e39a0bed7c111e4bc1b9abb595d0398fd8  github-actions-artifact-15232132427.zip
+          EOF
+      - name: Execute independent reconstruction or reference anchor recognition
+        env:
+          LANE: ${{ matrix.lane }}
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 scikit-image==0.26.0 Pillow==12.0.0
+          python experiments/r209/reconstruct.py "$RUNNER_TEMP/inputs" "$RUNNER_TEMP/r209" "$LANE"
+      - name: Retain candidate graph, reference and derived evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r209-ldraw-${{ matrix.lane }}
+          path: ${{ runner.temp }}/r209
+          retention-days: 30
+          if-no-files-found: error

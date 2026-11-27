@@ -1,0 +1,70 @@
+name: Human body inverse and anatomical reference experiments
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r217/**','.github/workflows/rdte-r217.yml']
+permissions:
+  contents: read
+jobs:
+  qualify:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        sex: [male, female]
+        lane: [body, anatomy]
+    env:
+      SEX: ${{ matrix.sex }}
+      LANE: ${{ matrix.lane }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire exact openly licensed donor data only
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          cd "$RUNNER_TEMP/input"
+          get() { curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 3 --max-time 150 --max-filesize 300000000 "$1" -o "$2"; }
+          if test "$LANE" = body; then
+            root=https://raw.githubusercontent.com/makehumancommunity/makehuman/a8bc2d54ff0ac92e78ff71431b1023eda42bf482
+            get "$root/makehuman/data/3dobjs/base.obj" base.obj
+            get "$root/LICENSE.md" LICENSE.md
+            get "$root/LICENSE.ASSETS.md" LICENSE.ASSETS.md
+            for anchor in african asian caucasian; do
+              name="$anchor-$SEX-young"
+              get "$root/makehuman/data/targets/macrodetails/$name.target" "$name.target"
+            done
+            for name in torso-scale-depth-incr torso-scale-horiz-incr torso-scale-vert-incr torso-vshape-incr; do
+              get "$root/makehuman/data/targets/torso/$name.target" "$name.target"
+            done
+          else
+            root=https://raw.githubusercontent.com/hubmapconsortium/ccf-3d-reference-object-library/f1a3a63f110e27ff0736047d52d04dba5d3087f9
+            if test "$SEX" = male; then path=VH_Male/v1.2/VH_M_United.glb.zip; else path=VH_Female/v1.2/VH_F_United.glb.zip; fi
+            get "$root/$path" united.zip
+            get "$root/LICENSE" LICENSE
+          fi
+      - name: Execute actual inverse fit and anatomy qualification
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          if test "$LANE" = body; then
+            python experiments/r217/human_inverse.py "$RUNNER_TEMP/input" "$RUNNER_TEMP/results" "$SEX"
+          else
+            python experiments/r217/anatomy.py "$RUNNER_TEMP/input" "$RUNNER_TEMP/results" "$SEX"
+          fi
+      - name: Retain reference models, candidates, previews and provenance
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r217-${{ matrix.sex }}-${{ matrix.lane }}
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+          if-no-files-found: error

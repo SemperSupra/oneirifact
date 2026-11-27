@@ -1,0 +1,51 @@
+name: Qualify artifact inspector independently
+on:
+  pull_request:
+    branches: [main]
+    paths: ['gallery/build_inspector.py','gallery/viewer-dependencies.json','tests/smoke_inspector.mjs','.github/workflows/rdte-inspector.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: inspector-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  inspector:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Reuse exact previously qualified gallery geometry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15232716827/zip > "$RUNNER_TEMP/gallery.zip"
+          echo "5809b0846a815a8b36fea94106b038935bb4ae3e54bb39c3b412a96b59fd972f  $RUNNER_TEMP/gallery.zip" | sha256sum -c -
+          python3 - <<'PY'
+          import os,zipfile
+          from pathlib import Path
+          root=Path("site/gallery");root.mkdir()
+          with zipfile.ZipFile(Path(os.environ["RUNNER_TEMP"])/"gallery.zip") as z:
+              assert len(z.infolist())==28
+              for x in z.infolist():
+                  assert Path(x.filename).name==x.filename and 0<x.file_size<64<<20
+                  (root/x.filename).write_bytes(z.read(x))
+          PY
+      - name: Generate actual inspection pages
+        run: python3 gallery/build_inspector.py
+      - name: Exercise browser controls and source pages
+        run: node tests/smoke_inspector.mjs
+      - name: Retain dependency evidence and inspector screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: inspector-witness
+          path: |
+            site/inspect
+            ${{ runner.temp }}/inspector-*.png
+          retention-days: 30
+          if-no-files-found: error

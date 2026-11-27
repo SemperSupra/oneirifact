@@ -8,14 +8,16 @@ import trimesh
 from PIL import Image,ImageDraw,ImageFont
 from human_inverse import combine,split,sample,metrics,obj
 EXPECTED={"male":"79f916b66a95a203f7534c8ecbb4a28016223a0f","female":"a52ad0fad109b6eaadadea1c7cca5d50d801d2dc"}
-KEYS=[("skin",r"skin"),("brain",r"brain|cerebr|cerebell"),("heart",r"heart|myocard|ventricle|atrium"),("lungs",r"lung|pulmonary lobe"),("liver",r"liver|hepatic lobe"),("kidneys",r"kidney|renal cortex|renal medulla"),("spleen",r"spleen"),("pancreas",r"pancreas"),("intestines",r"intestine|colon|duodenum|jejunum|ileum|rectum"),("bladder",r"urinary bladder|urinary_bladder|bladder"),("prostate",r"prostate"),("uterus",r"uterus|uterine"),("ovaries",r"ovary|ovaries"),("fallopian_tubes",r"fallopian")]
-COLORS={"brain":(192,155,179),"heart":(214,78,80),"lungs":(122,174,205),"liver":(162,93,60),"kidneys":(170,105,90),"spleen":(161,121,194),"pancreas":(232,191,106),"intestines":(210,156,114),"bladder":(116,193,175),"prostate":(150,175,205),"uterus":(191,129,177),"ovaries":(228,171,190),"fallopian_tubes":(218,148,170)}
+# Explicit observed atlas hierarchy roots, not fuzzy leaf names.
+ROOTS={"skin":["skin"],"brain":["@Allen_brain"],"heart":["heart"],"lungs":["lungs"],"liver":["liver"],"kidneys":["kidney"],"spleen":["spleen"],"pancreas":["pancreas"],"intestines":["colon","small_intestine"],"gallbladder":["gallbladder","gallbladder_"],"bladder":["urinary_bladder"],"prostate":["prostate_gland"],"uterus":["uterus"],"ovaries":["ovary"],"fallopian_tubes":["fallopian_tube"]}
+COLORS={"gallbladder":(115,180,115),"brain":(192,155,179),"heart":(214,78,80),"lungs":(122,174,205),"liver":(162,93,60),"kidneys":(170,105,90),"spleen":(161,121,194),"pancreas":(232,191,106),"intestines":(210,156,114),"bladder":(116,193,175),"prostate":(150,175,205),"uterus":(191,129,177),"ovaries":(228,171,190),"fallopian_tubes":(218,148,170)}
 def gitblob(raw):return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
-def classify(name):
-    # Specific names nearest the geometry node are preferred; ancestor group
-    # names recover structures such as heart chambers. No inference from color.
-    for k,pattern in KEYS:
-        if re.search(pattern,name,re.I):return k
+def classify(names,sex):
+    if any(re.search(r"landmark|extraction_site|HuBMAP|blood_vasculature",name,re.I) for name in names):return None
+    prefix="VH_M_" if sex=="male" else "VH_F_"
+    for k,roots in ROOTS.items():
+        allowed={x[1:] if x.startswith("@") else prefix+x for x in roots}
+        if any(x in allowed for x in names):return k
 def node_path(scene,node):
     parents=scene.graph.transforms.parents;names=[str(node)];seen={node}
     while node in parents:
@@ -64,10 +66,7 @@ def main(inp,out,sex):
     for node in scene.graph.nodes_geometry:
         matrix,geom=scene.graph[node];names=node_path(scene,node);m=scene.geometry[geom]
         if not isinstance(m,trimesh.Trimesh) or len(m.faces)==0:continue
-        category=None
-        for name in [str(geom),*names]:
-            category=classify(name)
-            if category:break
+        category=classify(names,sex)
         inventory.append({"node":str(node),"geometry":str(geom),"ancestors":names,"category":category,"triangles":len(m.faces),"transform":matrix.tolist()})
         if category:
             q=m.copy();q.apply_transform(R@matrix);groups.setdefault(category,[]).append(q)
@@ -78,12 +77,13 @@ def main(inp,out,sex):
     skin=merged.pop("skin");height=float(np.ptp(skin.vertices[:,2]))
     assert .8<height<2.5,"skin scale or axes unqualified"
     organs={k:m for k,m in merged.items() if k in COLORS}
-    assert len(organs)>=4 and all(k in organs for k in ("heart","lungs","liver","kidneys")),"essential organ groups missing"
+    assert all(k in organs for k in ("brain","heart","lungs","liver","kidneys","bladder","intestines","gallbladder")),"essential organ groups missing"
+    assert ("prostate" in organs) if sex=="male" else all(k in organs for k in ("uterus","ovaries","fallopian_tubes"))
     # Keep exact source archive, independent grouped exports, and shared frame.
     import shutil
     shutil.copyfile(inp/"united.zip",out/"HRA-united-source.zip")
     shutil.copyfile(inp/"LICENSE",out/"HRA-LICENSE.txt")
-    (out/"ATTRIBUTION.txt").write_text("Human Reference Atlas / HuBMAP, CCF 3D Reference Object Library, CC BY 4.0 https://creativecommons.org/licenses/by/4.0/\nSource: https://github.com/hubmapconsortium/ccf-3d-reference-object-library/tree/f1a3a63f110e27ff0736047d52d04dba5d3087f9\nChanges: selected node categories, baked shared transforms, rigid Y-up to Z-up conversion, display colors, independent approximate procedural fits. Original archive unchanged. Educational research only; no clinical or individualized anatomy claim.\n")
+    (out/"ATTRIBUTION.txt").write_text("Human Reference Atlas / HuBMAP, CCF 3D Reference Object Library, CC BY 4.0 https://creativecommons.org/licenses/by/4.0/\nSource: https://github.com/hubmapconsortium/ccf-3d-reference-object-library/tree/f1a3a63f110e27ff0736047d52d04dba5d3087f9\nChanges: selected observed organ ancestor groups, excluded landmarks/extraction sites and vasculature, baked shared transforms, rigid Y-up to Z-up conversion, display colors, independent approximate procedural fits. Original archive unchanged. Educational research only; no clinical or individualized anatomy claim.\n")
     result=[];organ_scene=trimesh.Scene();skin_lo,skin_hi=skin.bounds
     organ_dir=out/"organs";organ_dir.mkdir()
     for k,m in organs.items():
@@ -107,7 +107,14 @@ def main(inp,out,sex):
     (out/"internal-organs.glb").write_bytes(organ_scene.export(file_type="glb"))
     skin_scene=trimesh.Scene(skin.copy());skin_scene.apply_transform(np.linalg.inv(R))
     (out/"skin-reference.glb").write_bytes(skin_scene.export(file_type="glb"))
+    # Optional body context model with independently named organ geometry.
+    combined=organ_scene.copy()
+    ghost=skin.copy()
+    ghost.visual=trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(name="skin_context",baseColorFactor=[160,180,200,45],alphaMode="BLEND",doubleSided=True,metallicFactor=0.0,roughnessFactor=1.0))
+    ghost.apply_transform(np.linalg.inv(R))
+    combined.add_geometry(ghost,node_name="skin_context",geom_name="skin_context")
+    (out/"body-with-organs.glb").write_bytes(combined.export(file_type="glb"))
     render(out,skin,organs,sex)
-    report={"sex":sex,"source":"HRA United v1.2 CC BY 4.0","source_git_blob":EXPECTED[sex],"skin_height_m":height,"skin_triangles":len(skin.faces),"skin_watertight_diagnostic":bool(skin.is_watertight),"organs":result,"scope":"Original source shared frame, name-based grouping, AABB diagnostic only. No surface containment, inter-organ collision, clinical validation, MakeHuman registration, native graph or articulated runtime qualification."}
+    report={"sex":sex,"source":"HRA United v1.2 CC BY 4.0","source_git_blob":EXPECTED[sex],"skin_height_m":height,"skin_triangles":len(skin.faces),"skin_watertight_diagnostic":bool(skin.is_watertight),"organs":result,"scope":"Original source shared frame, exact observed organ ancestor grouping, landmarks/extraction sites/vasculature excluded, AABB diagnostic only. No surface containment, inter-organ collision, clinical validation, MakeHuman registration, native graph or articulated runtime qualification."}
     (out/"receipt.json").write_text(json.dumps(report,indent=2));print("R217_HRA",json.dumps(report))
 if __name__=="__main__":main(Path(sys.argv[1]),Path(sys.argv[2]),sys.argv[3])

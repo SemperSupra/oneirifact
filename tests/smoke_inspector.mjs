@@ -12,7 +12,7 @@ const server=createServer(async(req,res)=>{
   try{
     let path=new URL(req.url,"http://127.0.0.1").pathname;
     if(!path.startsWith("/oneirifact/"))throw Error("path");
-    let rel=path.slice(11)||"index.html";if(rel.endsWith("/"))rel+="index.html";
+    let rel=path.slice("/oneirifact/".length)||"index.html";if(rel.endsWith("/"))rel+="index.html";
     const target=resolve(root,rel);if(!target.startsWith(root+"/"))throw Error("path");
     let data=await readFile(target);res.writeHead(200,{"Content-Type":mime[extname(target)]||"application/octet-stream"});res.end(data);
   }catch(e){res.writeHead(404);res.end();}

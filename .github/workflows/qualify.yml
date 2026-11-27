@@ -65,12 +65,22 @@ jobs:
           path: site/gallery
           retention-days: 30
           if-no-files-found: error
+      - name: Build static artifact inspector with verified upstream viewer dependencies
+        run: python3 gallery/build_inspector.py
+      - name: Retain exact inspector pages and dependency lock
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: artifact-inspector
+          path: site/inspect
+          retention-days: 30
+          if-no-files-found: error
       - name: Verify public repository and static site
         run: |
           set -eu
           test "${{ github.event.repository.private }}" = "false"
           python3 -m unittest discover -s tests -v
           python3 tests/smoke_site.py
+          node tests/smoke_inspector.mjs
       - name: Stage and hash every qualified asset
         id: digest
         run: |

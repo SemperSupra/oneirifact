@@ -91,7 +91,7 @@ def render(job):
         with job["lock"]:
             job["state"] = "failed"
 
-def origin():
+def origin(renderer=render, request_body=REQUEST, source_sha=SOURCE, total_units=HEIGHT):
     token = secrets.token_urlsafe(32)
     jobs = {}
     class Handler(BaseHTTPRequestHandler):
@@ -121,10 +121,10 @@ def origin():
         def do_POST(self):
             if not self.auth():
                 return
-            if self.headers.get("Transfer-Encoding") or self.headers.get("Content-Length") != str(len(REQUEST)):
+            if self.headers.get("Transfer-Encoding") or self.headers.get("Content-Length") != str(len(request_body)):
                 self.send(400)
                 return
-            if self.rfile.read(len(REQUEST)) != REQUEST:
+            if self.rfile.read(len(request_body)) != request_body:
                 self.send(400)
                 return
             if self.path == "/v1/operations":
@@ -141,9 +141,9 @@ def origin():
                     job = {"id": key, "state": "running", "rows": 0, "lock": threading.Lock(),
                            "cancel": threading.Event(), "controlled": key == "cancel"}
                     jobs[key] = job
-                    job["thread"] = threading.Thread(target=render, args=(job,), daemon=True)
+                    job["thread"] = threading.Thread(target=renderer, args=(job,), daemon=True)
                     job["thread"].start()
-                self.send(202, json.dumps({"id": key, "source_sha256": SOURCE}).encode())
+                self.send(202, json.dumps({"id": key, "source_sha256": source_sha}).encode())
                 return
             match = re.fullmatch(r"/v1/operations/(image|cancel)/cancel", self.path)
             if match and match[1] in jobs:
@@ -173,7 +173,7 @@ def origin():
                     self.send(200, job["image"], "image/png")
                 else:
                     status = {k: job[k] for k in ("id", "state", "rows")}
-                    status.update(source_sha256=SOURCE, total_rows=HEIGHT, artifact_sha256=job.get("sha256"))
+                    status.update(source_sha256=source_sha, total_rows=total_units, artifact_sha256=job.get("sha256"), worker_started=job.get("started", False))
                     self.send(200, json.dumps(status).encode())
     server = HTTPServer(("127.0.0.1", 0), Handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -193,7 +193,8 @@ def call(base, token, path, method="GET", key=None, body=None):
             headers["Content-Type"] = "application/json"
         con.request(method, path, body=body, headers=headers)
         response = con.getresponse()
-        data = response.read(2 << 20)
+        data = response.read((4 << 20) + 1)
+        require(len(data) <= 4 << 20, "response byte budget")
         return response.status, data
     finally:
         con.close()
@@ -263,20 +264,16 @@ def qualify(base, token, out, mode):
     (out / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
     print(json.dumps(receipt), flush=True)
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--cloudflared", type=Path, help="Explicit verified Quick Tunnel binary; omit for loopback")
-    args = parser.parse_args()
-    server, token, jobs, thread = origin()
+def run_fixture(out, cloudflared, origin_factory=origin, tester=qualify):
+    server, token, jobs, thread = origin_factory()
     proc = None
     try:
         base = "http://127.0.0.1:" + str(server.server_port)
-        if args.cloudflared:
+        if cloudflared:
             with tempfile.TemporaryDirectory(prefix="lro-tunnel-") as tmp:
                 log = Path(tmp) / "tunnel.log"
                 with log.open("wb") as writer:
-                    proc = subprocess.Popen([str(args.cloudflared.resolve(strict=True)), "tunnel", "--no-autoupdate",
+                    proc = subprocess.Popen([str(cloudflared.resolve(strict=True)), "tunnel", "--no-autoupdate",
                                              "--protocol", "http2", "--url", base],
                                             stdout=writer, stderr=subprocess.STDOUT,
                                             env={"HOME": tmp, "PATH": os.defpath, "LANG": "C.UTF-8"})
@@ -294,7 +291,7 @@ def main():
                                     pass
                             time.sleep(1)
                         require(remote is not None, "Quick Tunnel not ready")
-                        qualify(remote, token, args.out, "cloudflare-quick-tunnel")
+                        tester(remote, token, out, "cloudflare-quick-tunnel")
                     finally:
                         proc.terminate()
                         try:
@@ -303,7 +300,7 @@ def main():
                             proc.kill()
                             proc.wait(timeout=5)
         else:
-            qualify(base, token, args.out, "loopback")
+            tester(base, token, out, "loopback")
     finally:
         for job in jobs.values():
             job["cancel"].set()
@@ -311,6 +308,13 @@ def main():
         server.shutdown()
         server.server_close()
         thread.join(timeout=5)
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--cloudflared", type=Path, help="Explicit verified Quick Tunnel binary; omit for loopback")
+    args = parser.parse_args()
+    run_fixture(args.out, args.cloudflared)
 
 if __name__ == "__main__":
     main()

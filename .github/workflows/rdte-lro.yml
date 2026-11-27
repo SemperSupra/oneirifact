@@ -37,3 +37,50 @@ jobs:
           path: ${{ runner.temp }}/lro-proof
           retention-days: 7
           if-no-files-found: error
+
+  native-cycles:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify pinned public inputs and Cloudflared
+        run: |
+          set -eu
+          echo "dfb651839319343da291556bf160e474360bb2cd7e92256486d7d7cc6c0f9308  rdte/lro/cycles/pavilion.py" | sha256sum -c -
+          echo "667aa706befe36b34c8689aaf7cbec1a32858cc5610c3ab154b7cf7218ec73c9  rdte/lro/cycles/specs.json" | sha256sum -c -
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 2 --max-time 90 https://github.com/cloudflare/cloudflared/releases/download/2026.11.2/cloudflared-linux-amd64 -o "$RUNNER_TEMP/cloudflared"
+          echo "56f13335143ec0e22772963290683a84a04114a35ec64cbc794a4d39ff9bb8cf  $RUNNER_TEMP/cloudflared" | sha256sum -c -
+          chmod 0700 "$RUNNER_TEMP/cloudflared"
+      - name: Obtain pinned native Blender executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          artifact=blender-5.2.4-linux-x64.tar.xz
+          expected=2fd14c50987426897ba60237ee996edf2b4151f4b1a72a460ca20be58c1d2d86
+          root="$RUNNER_TEMP/native-blender"
+          install -d -m 700 "$root"
+          verified=0
+          for origin in https://download.blender.org https://mirror.blender.org https://mirror.nju.edu.cn/blender; do
+            rm -f "$root/$artifact"
+            if timeout 110s curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error --connect-timeout 12 --speed-limit 32768 --speed-time 12 --max-time 95 "$origin/release/Blender5.2/$artifact" -o "$root/$artifact"; then
+              echo "$expected  $root/$artifact" | sha256sum -c -
+              verified=1
+              break
+            fi
+          done
+          test "$verified" -eq 1
+          timeout 150s tar -xf "$root/$artifact" -C "$root"
+          test -x "$root/blender-5.2.4-linux-x64/blender"
+      - name: Sustained real Cycles rendering through ephemeral HTTPS
+        run: python3 rdte/lro/native_qualify.py --out "$RUNNER_TEMP/native-lro-proof" --cloudflared "$RUNNER_TEMP/cloudflared" --blender "$RUNNER_TEMP/native-blender/blender-5.2.4-linux-x64/blender"
+      - name: Retain native images and receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-cycles-lro-qualification
+          path: ${{ runner.temp }}/native-lro-proof
+          retention-days: 7
+          if-no-files-found: error

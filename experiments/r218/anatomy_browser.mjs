@@ -45,7 +45,8 @@ let child,ws,stderr="";try{
       await val("(()=>{let s=document.getElementById('layer');s.value='"+layer+"';s.dispatchEvent(new Event('change'));return true})()");
       await until("document.querySelector('#status')?.dataset.state==='loaded' && document.querySelector('#status').dataset.layer==='"+layer+"'");
       assert(await val("document.getElementById('viewer').loaded"));
-      assert(await val("document.getElementById('download').getAttribute('href')===document.getElementById('viewer').getAttribute('src')"));
+      const urls=await val("(()=>{let m=document.getElementById('viewer'),a=document.getElementById('download'),s=document.getElementById('layer'),row=JSON.parse(document.getElementById('models').textContent)[s.value];return {loaded:new URL(m.src,document.baseURI).href,download:a.href,expected:new URL(row.file,document.baseURI).href}})()");
+      assert.equal(urls.loaded,urls.expected,JSON.stringify(urls));assert.equal(urls.download,urls.expected,JSON.stringify(urls));
       if(layer==="heart"){
         await val("document.getElementById('side').click()");
         await until("Math.abs(document.getElementById('viewer').getCameraOrbit().theta-Math.PI/2)<.05");

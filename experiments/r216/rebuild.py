@@ -38,7 +38,7 @@ def main():
         with zipfile.ZipFile(path) as z:rebuilt[name]=manifest(z)
     lock=HERE/"content-lock.json"
     if lock.exists():
-        assert json.loads(lock.read_text())==rebuilt,"independent replay content drift"
+        assert json.loads(lock.read_text())=={k:{"count":len(v),"sha256":sha(json.dumps(v,sort_keys=True,separators=(",",":")).encode())} for k,v in rebuilt.items()},"independent replay content drift"
     elif baseline is None:
         raise RuntimeError("no committed content lock or independent baseline")
     if baseline is not None:

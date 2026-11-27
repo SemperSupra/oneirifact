@@ -36,8 +36,9 @@ jobs:
           echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  $work/scanner.tar.gz" | sha256sum -c -
           tar -xOf "$work/scanner.tar.gz" gitleaks > "$work/gitleaks"
           chmod 0700 "$work/gitleaks"
+          echo "88f91962aa2f93ac6ab281d553b9e125f5197bbbce38f9f2437f7299c32e5509  $work/gitleaks" | sha256sum -c -
           "$work/gitleaks" version
-          python3 tests/scan_public_source.py "$work/gitleaks"
+          python3 tests/scan_public_source.py "$work/gitleaks" --commit "$(git rev-parse HEAD)"
       - name: Verify public repository and static site
         run: |
           set -eu

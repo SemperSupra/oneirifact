@@ -1,0 +1,39 @@
+name: Modular construction graph bakeoff
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/modular-construction/**', '.github/workflows/rdte-modular-construction.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  construction:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        family: [brick, large, logs]
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Generate graph candidates and independent models
+        env:
+          FAMILY: ${{ matrix.family }}
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 scikit-image==0.26.0 Pillow==12.0.0
+          python experiments/modular-construction/generate.py "$FAMILY" "$RUNNER_TEMP/modular"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: modular-${{ matrix.family }}
+          path: ${{ runner.temp }}/modular
+          retention-days: 30
+          if-no-files-found: error

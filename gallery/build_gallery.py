@@ -46,6 +46,15 @@ def main():
                 shutil.copyfile(temp/(p+suffix),out/(p+suffix))
         for name in ("pavilion.py","specs.json","export_gallery.py"):
             shutil.copyfile(ROOT/name,out/name)
+    with tempfile.TemporaryDirectory(prefix="mechanical-gallery-") as tmp:
+        temp=Path(tmp)
+        for profile in ("assembled","exploded"):
+            subprocess.run([str(blender),"--background","--factory-startup","--disable-autoexec","-t","2","--python-exit-code","1","--python",str(ROOT/"mechanical/bearing.py"),"--",profile,str(temp)],check=True,timeout=120)
+        subprocess.run([sys.executable,str(ROOT/"mechanical/verify.py"),str(temp),str(blender)],check=True,timeout=150)
+        for profile in ("assembled","exploded"):
+            for suffix in (".png",".blend",".glb",".json"):
+                shutil.copyfile(temp/(profile+suffix),out/("bearing-"+profile+suffix))
+        shutil.copyfile(ROOT/"mechanical/bearing.py",out/"bearing.py")
     print("Public gallery: 4 actual renders, 4 reopened Blender scenes, 4 GLB mesh identity checks PASS")
 if __name__=="__main__":
     main()

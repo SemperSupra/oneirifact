@@ -1,0 +1,35 @@
+name: LDraw insertion path sweep
+on:
+  pull_request:
+    branches: [main, rdte/r214-ldraw-mating]
+    paths: ['experiments/r215/mating_sweep.py','.github/workflows/rdte-r215-sweep.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  sweep:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve exact attributed LDraw reference
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api repos/SemperSupra/oneirifact/actions/artifacts/15232521230/zip > "$RUNNER_TEMP/reference.zip"
+      - name: Execute sampled insertion trajectory and negatives
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 Pillow==12.0.0
+          python experiments/r215/mating_sweep.py "$RUNNER_TEMP/reference.zip" "$RUNNER_TEMP/r215"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r215-insertion
+          path: ${{ runner.temp }}/r215
+          retention-days: 30
+          if-no-files-found: error

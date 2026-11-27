@@ -67,7 +67,10 @@ def stop(proc):
 
 def renderer(blender, work, job):
     path = work / job["id"]
-    path.mkdir()
+    # The pinned donor requires private output custody; default mkdir under
+    # umask 022 produces 0755 and is deliberately rejected by the donor.
+    path.mkdir(mode=0o700)
+    require((path.stat().st_mode & 0o077) == 0, "private native output directory")
     proc = None
     try:
         for profile in PROFILES:
@@ -91,7 +94,13 @@ def renderer(blender, work, job):
                         raise RuntimeError("native render exceeded time budget")
                 if job["cancel"].is_set():
                     break
-                require(proc.returncode == 0, "native Blender failed")
+                if proc.returncode != 0:
+                    # Public fixed-input process only, with a scrubbed environment.
+                    # Retain a bounded diagnostic tail, never HTTP request data.
+                    with (path / (profile + ".log")).open("rb") as diagnostic:
+                        diagnostic.seek(max(0, (path / (profile + ".log")).stat().st_size - 4096))
+                        print(diagnostic.read(4096).decode("utf-8", errors="replace"), flush=True)
+                    raise RuntimeError("native Blender failed")
                 image = (path/(profile+".png")).read_bytes()
                 receipt = json.loads((path/(profile+".json")).read_text())
                 image_check(image)

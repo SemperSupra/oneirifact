@@ -36,20 +36,20 @@ def stage_tracked(destination, repo=None, commit=None):
     commit = commit or git(repo, "rev-parse", "HEAD").decode().strip()
     require(len(commit) == 40 and all(c in "0123456789abcdef" for c in commit),
             "expected exact SHA-1 commit")
-    require(git(repo, "cat-file", "-t", commit) == b"commit\\n", "invalid commit")
+    require(git(repo, "cat-file", "-t", commit) == b"commit\n", "invalid commit")
     require(destination.is_dir() and not destination.is_symlink() and not any(destination.iterdir()),
             "staging directory must exist and be empty")
-    rows = [r for r in git(repo, "ls-tree", "-r", "-l", "-z", commit).split(b"\\0") if r]
+    rows = [r for r in git(repo, "ls-tree", "-r", "-l", "-z", commit).split(b"\0") if r]
     require(0 < len(rows) <= MAX_FILES, "tracked file-count limit")
     total, manifest, names = 0, {}, {}
     for row in rows:
-        meta, raw_path = row.split(b"\\t", 1)
+        meta, raw_path = row.split(b"\t", 1)
         mode, kind, oid, size = meta.decode("ascii").split()
         require(mode in ("100644", "100755") and kind == "blob", "nonregular Git entry")
         name = raw_path.decode("utf-8", errors="strict")
         relative = Path(name)
-        require(not relative.is_absolute() and "\\\\" not in name
-                and all(part not in ("", ".", "..", ".git") for part in name.split("/")),
+        require(not relative.is_absolute() and "\\" not in name
+                and all(part not in ("", ".", "..") and part.casefold() != ".git" for part in name.split("/")),
                 "unsafe tracked path")
         for index in range(1, len(relative.parts) + 1):
             prefix = "/".join(relative.parts[:index])
@@ -61,7 +61,7 @@ def stage_tracked(destination, repo=None, commit=None):
         require(0 <= count <= MAX_FILE and total <= MAX_TOTAL, "tracked source size limit")
         data = git(repo, "cat-file", "blob", oid)
         require(len(data) == count, "Git blob size mismatch")
-        require(hashlib.sha1(b"blob " + str(count).encode() + b"\\0" + data).hexdigest() == oid,
+        require(hashlib.sha1(b"blob " + str(count).encode() + b"\0" + data).hexdigest() == oid,
                 "Git blob identity mismatch")
         target = destination / relative
         target.parent.mkdir(parents=True, exist_ok=True)

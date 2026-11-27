@@ -1,0 +1,51 @@
+name: Recover exact MakeHuman animation rig
+on:
+  pull_request:
+    branches: [rdte/r217-human-inverse]
+    paths: ['experiments/r219/**','.github/workflows/rdte-r219-rig.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  rig:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        sex: [male,female]
+    env:
+      SEX: ${{ matrix.sex }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve exact body source and original CC0 rig files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if test "$SEX" = male; then id=15237135134; else id=15237095388; fi
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/$id/zip > "$RUNNER_TEMP/body.zip"
+          mkdir "$RUNNER_TEMP/rig"
+          root=https://raw.githubusercontent.com/makehumancommunity/makehuman/a8bc2d54ff0ac92e78ff71431b1023eda42bf482/makehuman/data/rigs
+          for name in default.mhskel default_weights.mhw; do
+            curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 3 --max-time 60 "$root/$name" -o "$RUNNER_TEMP/rig/$name"
+          done
+      - name: Fit donor joint positions and execute diagnostic skin deformation
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r219/rig.py "$RUNNER_TEMP/body.zip" "$RUNNER_TEMP/rig" "$RUNNER_TEMP/results" "$SEX"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r219-rig-${{ matrix.sex }}
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+          if-no-files-found: error

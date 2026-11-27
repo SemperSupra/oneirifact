@@ -1,0 +1,49 @@
+name: Qualify explicit anatomical organ hierarchy
+on:
+  pull_request:
+    branches: [rdte/r217-human-inverse]
+    paths: ['experiments/r217/anatomy.py','.github/workflows/rdte-r217-hierarchy.yml']
+permissions:
+  contents: read
+jobs:
+  anatomy:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        sex: [male, female]
+    env:
+      SEX: ${{ matrix.sex }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire exact CC BY 4.0 atlas source
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          cd "$RUNNER_TEMP/input"
+          root=https://raw.githubusercontent.com/hubmapconsortium/ccf-3d-reference-object-library/f1a3a63f110e27ff0736047d52d04dba5d3087f9
+          if test "$SEX" = male; then path=VH_Male/v1.2/VH_M_United.glb.zip; else path=VH_Female/v1.2/VH_F_United.glb.zip; fi
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 3 --max-time 180 --max-filesize 300000000 "$root/$path" -o united.zip
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error "$root/LICENSE" -o LICENSE
+          test "$(git hash-object LICENSE)" = da6ab6cc8f333d7e89a99812866df8f24374d47c
+      - name: Extract exact named organ groups and fit geometric candidates
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r217/anatomy.py "$RUNNER_TEMP/input" "$RUNNER_TEMP/results" "$SEX"
+      - name: Preserve full evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r217-${{ matrix.sex }}-anatomy-hierarchy
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+          if-no-files-found: error

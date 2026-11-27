@@ -17,6 +17,12 @@
     .status { border: 1px solid currentColor; border-radius: .75rem; padding: 1rem 1.25rem; margin: 2rem 0; }
     a { color: LinkText; text-underline-offset: .18em; }
     a:focus-visible { outline: .15rem solid currentColor; outline-offset: .25rem; }
+    .gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr)); gap:1.25rem; margin:1.25rem 0; }
+    .gallery article { border:1px solid color-mix(in srgb, CanvasText 24%, Canvas); border-radius:.75rem; overflow:hidden; }
+    .gallery img { display:block; width:100%; height:auto; aspect-ratio:3/2; background:#242b32; }
+    .gallery .details { padding:1rem; }
+    .gallery h3 { margin:0 0 .5rem; font-size:1.15rem; }
+    .gallery .downloads { display:flex; flex-wrap:wrap; gap:.5rem 1rem; font-size:.92rem; }
     footer { border-top: 1px solid currentColor; font-size: .95rem; }
   </style>
 </head>
@@ -28,6 +34,37 @@
     <section class="status" aria-labelledby="release-status">
       <h2 id="release-status">Browser preview in preparation</h2>
       <p>The interactive editor is not yet available. This is the project showcase, not a released application.</p>
+    </section>
+    <section aria-labelledby="gallery-title" id="gallery">
+      <h2 id="gallery-title">Gallery — procedural design studies</h2>
+      <p>Actual CPU Cycles renders of an original standalone parametric pavilion, paired with the matching editable Blender scenes and portable mesh models. These research examples are not outputs of the unreleased Oneirifact editor.</p>
+      <div class="gallery">
+        <article>
+          <a href="gallery/pavilion-day.png"><img src="gallery/pavilion-day.png" width="720" height="480" loading="lazy" alt="Daylight pavilion: Copper radial ribs, translucent roof and a suspended mineral sculpture."></a>
+          <div class="details"><h3>Daylight pavilion</h3><p>Copper radial ribs, translucent roof and a suspended mineral sculpture.</p>
+            <div class="downloads"><a href="gallery/pavilion-day.blend" download>Blender scene (.blend)</a><a href="gallery/pavilion-day.glb" download>3D mesh (.glb)</a><a href="gallery/pavilion-day.json">Render receipt</a></div>
+          </div>
+        </article>
+        <article>
+          <a href="gallery/pavilion-night.png"><img src="gallery/pavilion-night.png" width="720" height="480" loading="lazy" alt="Night pavilion: Same geometry with emissive path lighting and evening illumination."></a>
+          <div class="details"><h3>Night pavilion</h3><p>Same geometry with emissive path lighting and evening illumination.</p>
+            <div class="downloads"><a href="gallery/pavilion-night.blend" download>Blender scene (.blend)</a><a href="gallery/pavilion-night.glb" download>3D mesh (.glb)</a><a href="gallery/pavilion-night.json">Render receipt</a></div>
+          </div>
+        </article>
+        <article>
+          <a href="gallery/pavilion-plan.png"><img src="gallery/pavilion-plan.png" width="720" height="480" loading="lazy" alt="Elevated overview: A higher camera angle reveals the radial roof and reflecting pool."></a>
+          <div class="details"><h3>Elevated overview</h3><p>A higher camera angle reveals the radial roof and reflecting pool.</p>
+            <div class="downloads"><a href="gallery/pavilion-plan.blend" download>Blender scene (.blend)</a><a href="gallery/pavilion-plan.glb" download>3D mesh (.glb)</a><a href="gallery/pavilion-plan.json">Render receipt</a></div>
+          </div>
+        </article>
+        <article>
+          <a href="gallery/pavilion-tall.png"><img src="gallery/pavilion-tall.png" width="720" height="480" loading="lazy" alt="Tall variant: A parameter change modifies the pavilion's vertical proportions."></a>
+          <div class="details"><h3>Tall variant</h3><p>A parameter change modifies the pavilion's vertical proportions.</p>
+            <div class="downloads"><a href="gallery/pavilion-tall.blend" download>Blender scene (.blend)</a><a href="gallery/pavilion-tall.glb" download>3D mesh (.glb)</a><a href="gallery/pavilion-tall.json">Render receipt</a></div>
+          </div>
+        </article>
+      </div>
+      <p>Reproduce or modify the study: <a href="gallery/specs.json">parameter profiles</a> · <a href="gallery/pavilion.py" download>original scene recipe</a> · <a href="gallery/export_gallery.py" download>model exporter</a>. The Blender files retain the render rig; GLB exports omit the evaluation ground, camera and lights. No product engine or third-party assets are included.</p>
     </section>
     <section aria-labelledby="direction">
       <h2 id="direction">Project direction</h2>

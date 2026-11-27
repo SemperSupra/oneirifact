@@ -83,7 +83,8 @@ def main():
         raise SystemExit("Chrome/Chromium required")
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
-        site = root / "project" / "preview"
+        public = root / "public"
+        site = public / "project" / "preview"
         site.mkdir(parents=True)
         (root / "main.go").write_text(GO, encoding="utf-8")
         env = dict(os.environ, GOOS="js", GOARCH="wasm", CGO_ENABLED="0", GOTOOLCHAIN="local", GOPROXY="off")
@@ -95,7 +96,7 @@ def main():
             (site/name).write_text(data,encoding="utf-8")
         received, fetched, complete = [], set(), threading.Event()
         class Handler(http.server.SimpleHTTPRequestHandler):
-            extensions_map = {**http.server.SimpleHTTPRequestHandler.extensions_map, ".mjs":"text/javascript", ".wasm":"application/wasm"}
+            extensions_map = {**http.server.SimpleHTTPRequestHandler.extensions_map, ".mjs":"text/javascript", ".js":"text/javascript", ".wasm":"application/wasm"}
             def log_message(self,*args): pass
             def do_GET(self):
                 fetched.add(self.path)
@@ -108,7 +109,7 @@ def main():
                     self.send_error(400); return
                 received.append(json.loads(self.rfile.read(count)))
                 self.send_response(204); self.end_headers(); complete.set()
-        with http.server.ThreadingHTTPServer(("127.0.0.1",0),functools.partial(Handler,directory=root)) as server:
+        with http.server.ThreadingHTTPServer(("127.0.0.1",0),functools.partial(Handler,directory=public)) as server:
             thread = threading.Thread(target=server.serve_forever,daemon=True)
             thread.start()
             url = f"http://127.0.0.1:{server.server_port}/project/preview/"

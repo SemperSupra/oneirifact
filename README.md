@@ -10,6 +10,10 @@ The interactive browser preview is in preparation and is not yet available. This
 
 Verified releases will include supported features, limitations, build and test instructions, and applicable licensing notices.
 
+## Reproduce the gallery
+
+The gallery contains original standalone procedural studies, not private Oneirifact engine outputs. On a machine with Blender 5.2.4 LTS, run `python3 gallery/build_gallery.py /path/to/blender` from the repository root before serving the site. It produces four actual 720×480 CPU Cycles renders, matching editable Blender scenes, GLB mesh exports, and JSON receipts; verifies model hashes and mesh names and reopens the Blender files. The output directory must not already exist. The public qualification workflow builds and retains the gallery and publishes it with the static site. GLB omits the evaluation ground, lights and cameras; the Blender scene retains them. No additional license grant is made by this study.
+
 ## Run the project showcase locally
 
 From a checkout of this repository, with Python 3.10 or newer:

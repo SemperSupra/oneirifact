@@ -28,7 +28,7 @@ class PublicSiteTests(unittest.TestCase):
         self.parser.feed((SITE / "index.html").read_text(encoding="utf-8"))
 
     def test_static_showcase_only(self):
-        self.assertEqual(sorted(p.name for p in SITE.iterdir()), ["index.html"])
+        self.assertIn(sorted(p.name for p in SITE.iterdir()), [["index.html"], ["gallery", "index.html"]])
         self.assertTrue((SITE / "index.html").is_file())
         self.assertFalse((SITE / "index.html").is_symlink())
         self.assertIn("Browser preview in preparation", self.parser.text)
@@ -43,19 +43,32 @@ class PublicSiteTests(unittest.TestCase):
             if "aria-labelledby" in attrs:
                 self.assertIn(attrs["aria-labelledby"], ids)
 
+    def test_gallery_generated_files(self):
+        if not (SITE / "gallery").exists():
+            self.skipTest("Build gallery with pinned Blender to qualify actual assets")
+        expected = {f"pavilion-{p}{ext}" for p in ("day","night","plan","tall") for ext in (".png",".blend",".glb",".json")} | {"pavilion.py","specs.json","export_gallery.py"}
+        self.assertEqual({p.name for p in (SITE/"gallery").iterdir()}, expected)
+        for p in (SITE/"gallery").iterdir():
+            self.assertTrue(p.is_file() and not p.is_symlink() and p.stat().st_size > 0)
+
     def test_no_active_external_content(self):
         self.assertFalse(set(self.parser.tags) & {"script", "iframe", "object", "embed", "form", "link"})
+        profiles = ('pavilion-day', 'pavilion-night', 'pavilion-plan', 'pavilion-tall')
+        expected_images = {f'gallery/{p}.png' for p in profiles}
         links = set()
         for tag, attrs in self.parser.attrs:
             self.assertFalse(any(k.startswith("on") for k in attrs))
-            self.assertNotIn("src", attrs)
+            if "src" in attrs:
+                self.assertEqual(tag, "img")
+                self.assertIn(attrs["src"], expected_images)
+                self.assertTrue(attrs.get("alt"))
             if "href" in attrs:
                 self.assertEqual(tag, "a")
                 links.add(attrs["href"])
         self.assertEqual(links, {
             "https://github.com/SemperSupra/oneirifact",
             "https://github.com/SemperSupra/oneirifact/issues",
-        })
+        } | {f"gallery/{p}{ext}" for p in profiles for ext in (".png",".blend",".glb",".json")} | {"gallery/specs.json","gallery/pavilion.py","gallery/export_gallery.py"})
 
 
 if __name__ == "__main__":

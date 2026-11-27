@@ -42,6 +42,17 @@ def main():
                 )
                 assert "<h1>Oneirifact</h1>" in result.stdout
                 assert "Browser preview in preparation" in result.stdout
+                assert "Gallery — procedural design studies" in result.stdout
+                if (ROOT / "site/gallery").exists():
+                    # A test-only page forces all actual PNGs to decode in Chromium.
+                    names = ("day", "night", "plan", "tall")
+                    probe = root / "oneirifact" / "decode-probe.html"
+                    probe.write_text('<!doctype html><meta charset="utf-8"><p id="result">PENDING</p>' +
+                        ''.join(f'<img src="gallery/pavilion-{n}.png">' for n in names) +
+                        '<script>window.addEventListener("load",()=>{try{for(const i of document.images){if(!i.complete||i.naturalWidth!==720||i.naturalHeight!==480)throw Error("dimensions");const c=document.createElement("canvas");c.width=720;c.height=480;const x=c.getContext("2d");x.drawImage(i,0,0);const p=x.getImageData(0,0,720,480).data;let colors=new Set();for(let j=0;j<p.length;j+=64){colors.add(p[j]+","+p[j+1]+","+p[j+2]);if(colors.size>32)break}if(colors.size<=32)throw Error("pixels")}document.getElementById("result").textContent="DECODE_PASS"}catch(e){document.getElementById("result").textContent="DECODE_FAIL: "+e.message}})</script>')
+                    decoded = subprocess.run([browser, "--headless", "--disable-dev-shm-usage", "--disable-background-networking", "--no-first-run", f"--user-data-dir={root / 'decode-profile'}", "--dump-dom", url+"decode-probe.html"], capture_output=True, text=True, timeout=45, check=True)
+                    assert '<p id="result">DECODE_PASS</p>' in decoded.stdout, decoded.stdout[-1000:]
+                    print("All four real gallery PNGs decoded in Chromium")
                 print("Public site HTTP and real browser navigation PASS")
             finally:
                 server.shutdown()

@@ -37,7 +37,7 @@ let child,ws;try{
     await call("Emulation.setDeviceMetricsOverride",{width:size[0],height:size[1],deviceScaleFactor:1,mobile:false});
     await call("Page.navigate",{url:base+"inspect/pavilion-day.html"});
     await until("document.title.startsWith('Pavilion Day') && document.querySelector('model-viewer')?.loaded");
-    assert(await val("document.getElementById('viewer-status').dataset.state === 'loaded'"));
+    await until("document.getElementById('viewer-status').dataset.state === 'loaded'");
     assert(await val("document.querySelector('model-viewer').getCameraOrbit().radius > 0"));
     await val("(()=>{let m=document.querySelector('model-viewer');m.cameraOrbit='45deg 60deg 105%';m.jumpCameraToGoal();return true})()");
     await until("Math.abs(document.querySelector('model-viewer').getCameraOrbit().theta - Math.PI/4)<0.03");

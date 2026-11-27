@@ -1,0 +1,60 @@
+name: Original parametric lantern production study
+
+on:
+  push:
+    branches: [rdte/lantern-production-study]
+    paths:
+      - 'experiments/lantern/**'
+      - '.github/workflows/lantern-production.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire exact pinned Blender CPU renderer
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/lantern-blender"
+          mkdir -p "$root"
+          file=blender-5.2.4-linux-x64.tar.xz
+          hash=2fd14c50987426897ba60237ee996edf2b4151f4b1a72a460ca20be58c1d2d86
+          verified=0
+          for host in https://download.blender.org https://mirror.blender.org https://mirror.nju.edu.cn/blender; do
+            if curl --fail --location --silent --show-error --connect-timeout 12 --speed-limit 32768 --speed-time 12 --max-time 95 "$host/release/Blender5.2/$file" -o "$root/$file"; then
+              printf '%s  %s\n' "$hash" "$root/$file" | sha256sum -c -
+              verified=1
+              break
+            fi
+          done
+          test "$verified" = 1
+          tar -xf "$root/$file" -C "$root"
+          echo "BLENDER_BIN=$root/blender-5.2.4-linux-x64/blender" >> "$GITHUB_ENV"
+      - name: Generate two actual product designs and render three images
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ github.event.repository.private }}" = false
+          mkdir -p "$RUNNER_TEMP/lantern-output"
+          "$BLENDER_BIN" --background --factory-startup --disable-autoexec --python-exit-code 1 -t 2 --python experiments/lantern/render.py -- "$RUNNER_TEMP/lantern-output"
+      - name: Verify rendered images and exported models
+        run: |
+          set -eu
+          python3 -m venv "$RUNNER_TEMP/lantern-venv"
+          "$RUNNER_TEMP/lantern-venv/bin/pip" install --disable-pip-version-check 'Pillow==11.3.0'
+          "$RUNNER_TEMP/lantern-venv/bin/python" experiments/lantern/verify.py "$RUNNER_TEMP/lantern-output"
+          cp experiments/lantern/designs.json "$RUNNER_TEMP/lantern-output/"
+      - name: Retain editable scenes, GLBs, PNGs and verification receipts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: original-parametric-lanterns
+          path: ${{ runner.temp }}/lantern-output
+          if-no-files-found: error
+          retention-days: 7

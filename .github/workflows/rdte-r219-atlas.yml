@@ -1,0 +1,43 @@
+name: Acquire and inventory official anatomical elements
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r219/atlas_inventory.py','.github/workflows/rdte-r219-atlas.yml']
+permissions:
+  contents: read
+jobs:
+  atlas:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire official data and current rights notices
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          cd "$RUNNER_TEMP/input"
+          root=https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST
+          get() { curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 3 --max-time 180 --max-filesize 250000000 "$1" -o "$2"; }
+          get "$root/isa_BP3D_4.0_obj_99.zip" geometry.zip
+          get "$root/isa_element_parts.txt" isa_element_parts.txt
+          get "$root/isa_parts_list_e.txt" isa_parts_list_e.txt
+          get "$root/isa_inclusion_relation_list.txt" isa_inclusion_relation_list.txt
+          get https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html LICENSE-source.html
+          get https://dbarchive.biosciencedbc.jp/update_histories/180 LICENSE-update.html
+          printf '%s\n' 'BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International' 'Source: https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html' 'Original geometry archive preserved, no geometry modifications; category inventory derived.' > ATTRIBUTION.txt
+      - name: Inspect actual element geometry and ontology mappings
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 Pillow==12.0.0
+          python experiments/r219/atlas_inventory.py "$RUNNER_TEMP/input" "$RUNNER_TEMP/results"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r219-bodyparts3d-inventory
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+          if-no-files-found: error

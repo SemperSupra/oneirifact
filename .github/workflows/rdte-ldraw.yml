@@ -1,0 +1,43 @@
+name: Import official LDraw reference corpus
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/ldraw/**', '.github/workflows/rdte-ldraw.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  parts:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        family: [basic, special]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Anonymous official library acquisition
+        run: |
+          set -euo pipefail
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 3 --max-time 180 --max-filesize 300000000 https://library.ldraw.org/library/updates/complete.zip -o "$RUNNER_TEMP/complete.zip"
+          sha256sum "$RUNNER_TEMP/complete.zip"
+      - name: Expand actual part dependency closures and generate metric meshes
+        env:
+          FAMILY: ${{ matrix.family }}
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install Pillow==12.0.0
+          python experiments/ldraw/import_parts.py "$RUNNER_TEMP/complete.zip" "$FAMILY" "$RUNNER_TEMP/ldraw-results"
+      - name: Retain actual source definitions, meshes, receipts and previews
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ldraw-${{ matrix.family }}
+          path: ${{ runner.temp }}/ldraw-results
+          retention-days: 30
+          if-no-files-found: error

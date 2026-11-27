@@ -1,0 +1,62 @@
+name: Missing anatomy section loft qualification
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r221/**','.github/workflows/rdte-r221.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  fit:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        lane: [bp-general,bp-reproductive,hra-female]
+    env:
+      LANE: ${{ matrix.lane }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve exact attributed donor data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          if test "$LANE" = hra-female; then
+            root=https://raw.githubusercontent.com/hubmapconsortium/ccf-3d-reference-object-library/f1a3a63f110e27ff0736047d52d04dba5d3087f9
+            for name in VH_F_Vagina.glb VH_F_Ureter_L.glb VH_F_Ureter_R.glb; do
+              curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 3 --max-time 120 "$root/VH_Female/v1.2/$name" -o "$RUNNER_TEMP/input/$name"
+            done
+            curl --proto '=https' --tlsv1.2 --fail --silent --show-error "$root/LICENSE" -o "$RUNNER_TEMP/input/LICENSE"
+            test "$(git hash-object "$RUNNER_TEMP/input/LICENSE")" = da6ab6cc8f333d7e89a99812866df8f24374d47c
+          else
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/15236959584/zip > "$RUNNER_TEMP/input/atlas.zip"
+          fi
+      - name: Qualify shared actual Go primitive and build evaluator
+        working-directory: experiments/r221
+        run: |
+          set -euo pipefail
+          go vet ./...
+          go test -race -count=2 -v ./...
+          go build -o "$RUNNER_TEMP/loft" ./cmd/loft
+      - name: Fit source and evaluate real generated geometry
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r221/fit_organs.py "$LANE" "$RUNNER_TEMP/input" "$RUNNER_TEMP/loft" "$RUNNER_TEMP/results"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r221-${{ matrix.lane }}
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+          if-no-files-found: error

@@ -1,0 +1,50 @@
+name: Layered anatomy browser qualification
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r218/anatomy_*','.github/workflows/rdte-r218-inspector.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        sex: [male, female]
+    env:
+      SEX: ${{ matrix.sex }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve exact corrected reference anatomy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if test "$SEX" = male; then id=15236391638; else id=15237020985; fi
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/$id/zip > "$RUNNER_TEMP/anatomy.zip"
+      - name: Build local viewer using exact pinned upstream viewer
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 trimesh==4.6.8
+          python experiments/r218/anatomy_viewer.py "$RUNNER_TEMP/anatomy.zip" site/anatomy "$SEX"
+      - name: Exercise actual layer selection in desktop and mobile-sized browsers
+        run: node experiments/r218/anatomy_browser.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r218-anatomy-viewer-${{ matrix.sex }}
+          path: |
+            site/anatomy
+            ${{ runner.temp }}/anatomy-*.png
+          retention-days: 30
+          if-no-files-found: error

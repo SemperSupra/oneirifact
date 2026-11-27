@@ -19,12 +19,13 @@ const server=createServer(async(req,res)=>{
 });
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const profile=await mkdtemp(join(tmpdir(),"oneirifact-viewer-"));
-let child,ws;try{
+let child,ws,stderr="";try{
   await new Promise(r=>server.listen(0,"127.0.0.1",r));
   const base="http://127.0.0.1:"+server.address().port+"/oneirifact/";
   const browser=["/usr/bin/google-chrome","/usr/bin/chromium","/usr/bin/chromium-browser"].find(existsSync);assert(browser,"Chromium required");
-  child=spawn(browser,["--headless","--disable-dev-shm-usage","--disable-background-networking","--no-first-run","--no-sandbox","--enable-unsafe-swiftshader","--use-gl=angle","--use-angle=swiftshader","--remote-debugging-port=0","--user-data-dir="+profile,"about:blank"],{stdio:"ignore"});
-  let port;for(let i=0;i<100;i++){try{port=(await readFile(join(profile,"DevToolsActivePort"),"utf8")).split("\n")[0];break}catch{await wait(100)}}assert(port,"CDP port");
+  child=spawn(browser,["--headless","--disable-dev-shm-usage","--disable-background-networking","--no-first-run","--no-sandbox","--enable-unsafe-swiftshader","--use-gl=angle","--use-angle=swiftshader","--remote-debugging-port=0","--user-data-dir="+profile,"about:blank"],{stdio:["ignore","ignore","pipe"]});
+  child.stderr.on("data",b=>{stderr=(stderr+b.toString()).slice(-12000)});
+  let port;for(let i=0;i<300;i++){try{port=(await readFile(join(profile,"DevToolsActivePort"),"utf8")).split("\n")[0];if(port)break}catch{}if(child.exitCode!==null)break;await wait(150)}assert(port,"CDP port; exit="+child.exitCode+" stderr="+stderr);
   const targets=await (await fetch("http://127.0.0.1:"+port+"/json/list")).json();ws=new WebSocket(targets.find(t=>t.type==="page").webSocketDebuggerUrl);
   await new Promise((r,j)=>{ws.addEventListener("open",r,{once:true});ws.addEventListener("error",j,{once:true})});
   let id=0;const pending=new Map();
@@ -49,4 +50,4 @@ let child,ws;try{
   await call("Page.navigate",{url:base+"inspect/specs.json.html"});await until("document.title.startsWith('specs.json') && document.querySelectorAll('details').length > 4");
   assert(await val("document.body.textContent.includes('oneirifact.public-procedural-raytrace-study/v0.1')"));
   console.log("SOURCE_AND_JSON_VIEW_PASS");
-}finally{if(ws)ws.close();if(child)child.kill();server.close();await wait(300);await rm(profile,{recursive:true,force:true,maxRetries:2});}
+}catch(e){console.error("CHROMIUM_DIAGNOSTIC",stderr);throw e;}finally{if(ws)ws.close();if(child)child.kill();server.close();await wait(300);await rm(profile,{recursive:true,force:true,maxRetries:2});}

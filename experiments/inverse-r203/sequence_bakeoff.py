@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw
 
 # A generic coarse library, not the fixture's exact construction parameters.
 def primitive(kind, center, dims):
-    return {"op":kind,"center":list(center),"dims":list(dims)}
+    return {"op":kind,"center":[float(v) for v in center],"dims":[float(v) for v in dims]}
 def field(p,x):
     q=x-np.array(p["center"]);d=p["dims"]
     if p["op"]=="box":
@@ -49,7 +49,7 @@ def library():
     return out
 def score(a,b):
     inter=np.count_nonzero(a&b);union=np.count_nonzero(a|b)
-    return inter/max(union,1)
+    return float(inter/max(union,1))
 def search(x,y,pool,width,depth):
     mask=[field(p,x)<0 for p in pool]
     root=sorted([(score(m,y),((i,"root"),),m) for i,m in enumerate(mask)],key=lambda a:(-a[0],a[1]))
@@ -141,7 +141,7 @@ def run(out):
             ts=score(eval_program(p,test)<0,yt)
             metrics.append({"pipeline":tag,"validation_iou":vs,"heldout_iou":ts,"topology":tg,"topology_match":ok,"nodes":len(p),"program":p})
         _,_,tag,p,tg=chosen;g=grid(p,40)
-        row={"fixture":name,"reference_topology":tt,"chosen":tag,"admitted":tg==tt and score(eval_program(p,test)<0,yt)>=.95,"metrics":metrics};rows.append(row)
+        row={"fixture":name,"reference_topology":tt,"chosen":tag,"admitted":bool(tg==tt and score(eval_program(p,test)<0,yt)>=.95),"metrics":metrics};rows.append(row)
         obj(out/(name+"-reference.obj"),tv);obj(out/(name+"-recovered.obj"),g)
         (out/(name+"-program.json")).write_text(json.dumps({"reference":truth,"recovered":p,"evidence":row},indent=2))
         # visual diagnostics of actual evaluated arrays; horizontal slice through center.

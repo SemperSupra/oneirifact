@@ -1,0 +1,46 @@
+name: LDraw reconstruction comparison browser qualification
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r215/compare_*','.github/workflows/rdte-r215-compare.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  compare:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        viewport: [desktop, mobile]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve exact original and reconstructed geometry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/inputs"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15232986038/zip > "$RUNNER_TEMP/inputs/geometry.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15232521230/zip > "$RUNNER_TEMP/inputs/basic.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15232132427/zip > "$RUNNER_TEMP/inputs/special.zip"
+      - name: Build attributed reference and candidate comparison bundle
+        run: python3 experiments/r215/compare_ldraw.py "$RUNNER_TEMP/inputs" site/compare
+      - name: Load actual paired models and exercise shared camera
+        env:
+          VIEWPORT: ${{ matrix.viewport }}
+        run: node experiments/r215/compare_browser.mjs
+      - name: Retain comparison pages and actual screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r215-compare-${{ matrix.viewport }}
+          path: |
+            site/compare
+            ${{ runner.temp }}/comparison-*.png
+          retention-days: 30
+          if-no-files-found: error

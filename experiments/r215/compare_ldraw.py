@@ -20,7 +20,7 @@ def mesh(raw):
             q=[float(x) for x in t[1:]];assert len(q)==3 and all(math.isfinite(x) for x in q);v.append((q[0],q[2],-q[1]))
         elif t and t[0]=="f":
             q=[int(x)-1 for x in t[1:]];assert len(q)==3 and min(q)>=0 and max(q)<len(v);f.append(q)
-    assert v and f and len(f)<150000
+    if not v or not f or len(v)>125000 or len(f)>250000:raise ValueError(f"mesh budget: {len(v)} vertices, {len(f)} triangles")
     return v,f
 def glb(raw,color):
     v,f=mesh(raw);pos=[];norm=[]

@@ -28,11 +28,18 @@ class PublicSiteTests(unittest.TestCase):
         self.parser.feed((SITE / "index.html").read_text(encoding="utf-8"))
 
     def test_static_showcase_only(self):
-        self.assertIn(sorted(p.name for p in SITE.iterdir()), [["index.html"], ["gallery", "index.html"]])
+        self.assertIn(sorted(p.name for p in SITE.iterdir()), [["index.html"], ["gallery", "index.html"], ["gallery", "index.html", "inspect"]])
         self.assertTrue((SITE / "index.html").is_file())
         self.assertFalse((SITE / "index.html").is_symlink())
         self.assertIn("Browser preview in preparation", self.parser.text)
         self.assertIn("The interactive editor is not yet available.", " ".join(self.parser.text))
+
+    def test_explicit_renderer_source_boundary(self):
+        text = " ".join(self.parser.text)
+        self.assertIn("standalone Python/Blender procedural recipe", text)
+        self.assertIn("not native Oneirifact feature graphs", text)
+        self.assertIn("No native Oneirifact pavilion artifact", text)
+        self.assertIn("Native Oneirifact artifact gallery — not yet published", text)
 
     def test_semantic_document(self):
         self.assertEqual(self.parser.tags.count("h1"), 1)
@@ -68,7 +75,7 @@ class PublicSiteTests(unittest.TestCase):
         self.assertEqual(links, {
             "https://github.com/SemperSupra/oneirifact",
             "https://github.com/SemperSupra/oneirifact/issues",
-        } | {f"gallery/{p}{ext}" for p in profiles for ext in (".png",".blend",".glb",".json")} | {"gallery/specs.json","gallery/pavilion.py","gallery/export_gallery.py","gallery/bearing.py"})
+        } | {f"gallery/{p}{ext}" for p in profiles for ext in (".png",".blend",".glb",".json")} | {f"inspect/{p}.html" for p in profiles} | {"inspect/index.html","inspect/specs.json.html","inspect/pavilion.py.html","inspect/export_gallery.py.html","inspect/bearing.py.html"})
 
 
 if __name__ == "__main__":

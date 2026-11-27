@@ -108,6 +108,8 @@ BROWSER_MEDIA_TYPES = {
     ".wasm": {"application/wasm"},
     ".css": {"text/css"},
     ".json": {"application/json"},
+    ".png": {"image/png"},
+    ".glb": {"model/gltf-binary", "application/octet-stream"},
 }
 
 

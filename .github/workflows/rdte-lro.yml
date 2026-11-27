@@ -1,0 +1,39 @@
+name: Qualify ephemeral rendering fixture
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['rdte/lro/**', '.github/workflows/rdte-lro.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Loopback real render and lifecycle checks
+        run: python3 rdte/lro/qualify.py --out "$RUNNER_TEMP/lro-proof/loopback"
+      - name: Verify pinned Quick Tunnel executable
+        run: |
+          set -eu
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 2 --max-time 90 https://github.com/cloudflare/cloudflared/releases/download/2026.11.2/cloudflared-linux-amd64 -o "$RUNNER_TEMP/cloudflared"
+          echo "56f13335143ec0e22772963290683a84a04114a35ec64cbc794a4d39ff9bb8cf  $RUNNER_TEMP/cloudflared" | sha256sum -c -
+          chmod 0700 "$RUNNER_TEMP/cloudflared"
+          "$RUNNER_TEMP/cloudflared" --version
+      - name: Public HTTPS real render and lifecycle checks
+        run: python3 rdte/lro/qualify.py --out "$RUNNER_TEMP/lro-proof/tunnel" --cloudflared "$RUNNER_TEMP/cloudflared"
+      - name: Retain generated images and nonsecret receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ephemeral-render-qualification
+          path: ${{ runner.temp }}/lro-proof
+          retention-days: 7
+          if-no-files-found: error

@@ -1,0 +1,14 @@
+{
+  "basic": {
+    "count": 92,
+    "sha256": "e6ae51151112c7b9cc93d3f9c379cd2dbe77f2c697bb58b5ba778c48c4ceb65c"
+  },
+  "geometry": {
+    "count": 42,
+    "sha256": "87792f060606544f56a0c8dba8e7890a896f0c503b4b748493bb413698712a67"
+  },
+  "special": {
+    "count": 77,
+    "sha256": "48daba3526796f0da8743df503aa1903b0360cb3f51f693f258b51b08e8169fd"
+  }
+}

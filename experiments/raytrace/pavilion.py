@@ -155,9 +155,9 @@ def render(profile: dict, source_bytes: bytes, output: Path) -> dict:
     gold = material("champagne brass", (0.78, 0.52, 0.22), metallic=0.68, roughness=0.22)
     glass = material("blue mineral glass", (0.085, 0.37, 0.46), metallic=0.15, roughness=0.18, transmission=0.32)
     water = material("mirror reflecting pool", (0.04, 0.22, 0.26), metallic=0.7, roughness=0.10)
-    glowing = material("emissive crystal", (0.38, 0.74, 0.95) if evening else (0.53, 0.65, 0.94),
-                       metallic=0.05, roughness=0.22, emission=3.0 if evening else 1.5)
-    illuminated = material("warm embedded path lighting", (1.0, 0.55, 0.16), emission=3.0 if evening else 0.5)
+    glowing = material("faceted deep mineral crystal", (0.06, 0.30, 0.62) if evening else (0.065, 0.23, 0.52),
+                       metallic=0.24, roughness=0.16, emission=0.82 if evening else 0.12)
+    illuminated = material("warm embedded path lighting", (1.0, 0.48, 0.12), emission=8.0 if evening else 0.35)
     background = material("sand field", (0.24, 0.25, 0.23), roughness=0.95)
 
     def cylinder(name, radius, depth, pos, mat, vertices=96):
@@ -268,8 +268,8 @@ def render(profile: dict, source_bytes: bytes, output: Path) -> dict:
         data.color = color
         obj.rotation_euler = (Vector((0, 0, 1.0)) - obj.location).to_track_quat("-Z", "Y").to_euler()
 
-    area("large softbox daylight", (-5, -6, 9), 1150 if not evening else 420, 8, (0.88, 0.94, 1.0))
-    area("reflecting fill", (5, 2, 5), 480 if not evening else 680, 5, (0.85, 0.82, 0.78))
+    area("large softbox daylight", (-5, -6, 9), 1150 if not evening else 320, 8, (0.88, 0.94, 1.0))
+    area("reflecting fill", (5, 2, 5), 480 if not evening else 220, 5, (0.85, 0.82, 0.78))
     if scene.world is None:
         scene.world = bpy.data.worlds.new("original study environment")
     scene.world.color = (0.085, 0.1, 0.125) if not evening else (0.018, 0.025, 0.05)
@@ -277,8 +277,8 @@ def render(profile: dict, source_bytes: bytes, output: Path) -> dict:
         scene.world.use_nodes = True
         background_node = scene.world.node_tree.nodes.get("Background")
         if background_node:
-            background_node.inputs["Color"].default_value = (0.20, 0.30, 0.37, 1) if evening else (0.52, 0.59, 0.67, 1)
-            background_node.inputs["Strength"].default_value = 0.38 if evening else 0.65
+            background_node.inputs["Color"].default_value = (0.10, 0.17, 0.30, 1) if evening else (0.52, 0.59, 0.67, 1)
+            background_node.inputs["Strength"].default_value = 0.15 if evening else 0.65
 
     # Fixed cinematic controls are fully disclosed in the public profile.
     if profile["camera"] == "overview":

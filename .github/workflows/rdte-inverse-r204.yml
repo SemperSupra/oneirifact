@@ -1,0 +1,45 @@
+name: Qualify real mesh chain sweep bakeoff
+on:
+  pull_request:
+    branches: [rdte/r201-topology-gated-inverse-fit]
+    paths: ['experiments/inverse-r204/**', '.github/workflows/rdte-inverse-r204.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  sweep:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify original R200 input archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/inputs"
+          cd "$RUNNER_TEMP/inputs"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15228548803/zip > github-actions-artifact-15228548803.zip
+          echo "bb8e0bce2fd12dbc606548794f78d37f55b5d856ea3fbb92b840212f100475ae  github-actions-artifact-15228548803.zip" | sha256sum -c -
+      - name: Fit actual chain links and compare eligible candidates
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 Pillow==12.0.0
+          python experiments/inverse-r204/sweep_bakeoff.py "$RUNNER_TEMP/inputs" "$RUNNER_TEMP/r204"
+      - name: Retain actual geometry and diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r204-chain-sweep-bakeoff
+          path: ${{ runner.temp }}/r204
+          retention-days: 30
+          if-no-files-found: error

@@ -270,6 +270,8 @@ def render(profile: dict, source_bytes: bytes, output: Path) -> dict:
 
     area("large softbox daylight", (-5, -6, 9), 1150 if not evening else 420, 8, (0.88, 0.94, 1.0))
     area("reflecting fill", (5, 2, 5), 480 if not evening else 680, 5, (0.85, 0.82, 0.78))
+    if scene.world is None:
+        scene.world = bpy.data.worlds.new("original study environment")
     scene.world.color = (0.085, 0.1, 0.125) if not evening else (0.018, 0.025, 0.05)
     if scene.world:
         scene.world.use_nodes = True

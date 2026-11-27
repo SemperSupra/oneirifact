@@ -1,0 +1,58 @@
+name: Clean LDraw comparison reconstruction
+on:
+  pull_request:
+    branches: [main, rdte/r215-ldraw-comparison]
+    paths: ['experiments/r216/**','experiments/r215/compare_ldraw.py','.github/workflows/rdte-r216.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  rebuild:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire immutable-content official library
+        run: |
+          set -euo pipefail
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 3 --max-time 180 --max-filesize 300000000 https://library.ldraw.org/library/updates/complete.zip -o "$RUNNER_TEMP/library.zip"
+          echo "023083918da2d3697c794fb4267975509584f3611b993095874206a803fa610f  $RUNNER_TEMP/library.zip" | sha256sum -c -
+      - name: Obtain independent prior witness for first lock only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if test ! -f experiments/r216/content-lock.json; then
+            mkdir "$RUNNER_TEMP/baseline"
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/15232521230/zip > "$RUNNER_TEMP/baseline/basic.zip"
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/15232132427/zip > "$RUNNER_TEMP/baseline/special.zip"
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/15232986038/zip > "$RUNNER_TEMP/baseline/geometry.zip"
+          fi
+      - name: Rebuild from official library and compare exact nonimage bytes
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 scikit-image==0.26.0 Pillow==12.0.0
+          args=()
+          if test -d "$RUNNER_TEMP/baseline"; then args+=("$RUNNER_TEMP/baseline"); fi
+          python experiments/r216/rebuild.py "$RUNNER_TEMP/library.zip" "$RUNNER_TEMP/work" site/compare "${args[@]}"
+      - name: Inspect reconstructed pairs in real browser
+        env:
+          VIEWPORT: desktop
+        run: node experiments/r215/compare_browser.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r216-rebuilt-comparison
+          path: |
+            site/compare
+            ${{ runner.temp }}/comparison-*.png
+          retention-days: 30
+          if-no-files-found: error

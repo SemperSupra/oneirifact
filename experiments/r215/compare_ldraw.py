@@ -54,11 +54,12 @@ if(a&&b){
 }"""
 def page(title,body,model=False):
     return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Security-Policy" content="'+esc(CSP)+'"><title>'+esc(title)+'</title><link rel="stylesheet" href="comparison.css">'+('<script type="module" src="model-viewer.min.js"></script><script defer src="comparison.js"></script>' if model else '')+'</head><body><main><nav><a href="index.html">All parts</a></nav><h1>'+esc(title)+'</h1>'+body+'</main></body></html>'
-def run(inputs,out):
+def run(inputs,out,archive_digests=None):
+    archive_digests=archive_digests or {"geometry":"64bb52981b46a402210c200e97437edff93597733e9886332a5544dd27130bea","basic":"3c69e2c331af0b4035f511f0cbb3ce69d41482d0477b9c3cc8f3e2d754eab60d","special":"9fa2b51c1b0a8a5e1dcbe9deb024e6e39a0bed7c111e4bc1b9abb595d0398fd8"}
     out.mkdir(parents=True);vendor(out)
     (out/"comparison.css").write_text(CSS);(out/"comparison.js").write_text(JS)
     results=[]
-    with checked(inputs/"geometry.zip","64bb52981b46a402210c200e97437edff93597733e9886332a5544dd27130bea") as z, checked(inputs/"basic.zip","3c69e2c331af0b4035f511f0cbb3ce69d41482d0477b9c3cc8f3e2d754eab60d") as basic, checked(inputs/"special.zip","9fa2b51c1b0a8a5e1dcbe9deb024e6e39a0bed7c111e4bc1b9abb595d0398fd8") as special:
+    with checked(inputs/"geometry.zip",archive_digests["geometry"]) as z, checked(inputs/"basic.zip",archive_digests["basic"]) as basic, checked(inputs/"special.zip",archive_digests["special"]) as special:
         rows={x["id"]:x for x in json.loads(z.read("receipt.json"))["results"]}
         for id in IDS:
             d=out/id;d.mkdir();source=special if id=="3002" else basic

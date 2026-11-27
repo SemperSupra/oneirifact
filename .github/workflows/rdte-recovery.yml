@@ -1,0 +1,25 @@
+name: Qualify worker-loss recovery
+on:
+  pull_request:
+    branches: [main]
+    paths: ['rdte/recovery/**', '.github/workflows/rdte-recovery.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  process-recovery:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Kill real worker and recover with fenced publication
+        run: python3 rdte/recovery/worker_loss.py "$RUNNER_TEMP/recovery-proof"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: process-recovery-image-and-receipt
+          path: ${{ runner.temp }}/recovery-proof
+          retention-days: 7
+          if-no-files-found: error

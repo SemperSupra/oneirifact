@@ -1,0 +1,25 @@
+name: Qualify synthetic multiview depth fit
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/reconstruction/**', '.github/workflows/rdte-reconstruction.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fit:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Reconstruct from calibrated depth and score withheld view
+        run: python3 experiments/reconstruction/depth_fit.py "$RUNNER_TEMP/reconstruction"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: synthetic-depth-fit
+          path: ${{ runner.temp }}/reconstruction
+          retention-days: 30
+          if-no-files-found: error

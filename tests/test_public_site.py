@@ -34,6 +34,13 @@ class PublicSiteTests(unittest.TestCase):
         self.assertIn("Browser preview in preparation", self.parser.text)
         self.assertIn("The interactive editor is not yet available.", " ".join(self.parser.text))
 
+    def test_explicit_renderer_source_boundary(self):
+        text = " ".join(self.parser.text)
+        self.assertIn("standalone Python/Blender procedural recipe", text)
+        self.assertIn("not native Oneirifact feature graphs", text)
+        self.assertIn("No native Oneirifact pavilion artifact", text)
+        self.assertIn("Native Oneirifact artifact gallery — not yet published", text)
+
     def test_semantic_document(self):
         self.assertEqual(self.parser.tags.count("h1"), 1)
         self.assertEqual(self.parser.tags.count("main"), 1)

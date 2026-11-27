@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 6
     outputs:
-      site_sha256: ${{ steps.digest.outputs.sha256 }}
+      manifest_sha256: ${{ steps.digest.outputs.sha256 }}
     steps:
       - name: Checkout public source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -31,14 +31,17 @@ jobs:
           test "${{ github.event.repository.private }}" = "false"
           python3 -m unittest discover -s tests -v
           python3 tests/smoke_site.py
-      - name: Record exact site digest
+      - name: Stage and hash every qualified asset
         id: digest
-        run: echo "sha256=$(sha256sum site/index.html | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+        run: |
+          set -eu
+          digest="$(python3 tests/verify_delivery.py stage site "$RUNNER_TEMP/qualified-site")"
+          echo "sha256=$digest" >> "$GITHUB_OUTPUT"
       - name: Upload qualified static site
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:
-          path: site
+          path: ${{ runner.temp }}/qualified-site
           retention-days: 1
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
@@ -53,6 +56,11 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Checkout exact qualified public source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
       - name: Reject superseded source
         env:
           EXPECTED: ${{ github.sha }}
@@ -63,22 +71,18 @@ jobs:
       - name: Deploy qualified public artifact
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
-      - name: Verify served site digest
+      - name: Verify live manifest and every asset
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
-          EXPECTED: ${{ needs.qualify.outputs.site_sha256 }}
+          EXPECTED: ${{ needs.qualify.outputs.manifest_sha256 }}
         run: |
           set -eu
-          case "$PAGE_URL" in https://*) ;; *) exit 1 ;; esac
+          test "${PAGE_URL%/}/" = "https://sempersupra.github.io/oneirifact/"
           for attempt in $(seq 1 10); do
-            if curl -fsSL --max-time 10 "$PAGE_URL" -o "$RUNNER_TEMP/served.html"; then
-              actual="$(sha256sum "$RUNNER_TEMP/served.html" | cut -d ' ' -f 1)"
-              if test "$actual" = "$EXPECTED"; then
-                echo "Live static site digest PASS"
-                exit 0
-              fi
+            if python3 tests/verify_delivery.py verify "$EXPECTED"; then
+              exit 0
             fi
             sleep 5
           done
-          echo "::error::Live site did not match the qualified artifact"
+          echo "::error::Live assets did not match the qualified artifact"
           exit 1

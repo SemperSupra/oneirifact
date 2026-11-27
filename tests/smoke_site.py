@@ -42,7 +42,7 @@ def main():
                 )
                 assert "<h1>Oneirifact</h1>" in result.stdout
                 assert "Browser preview in preparation" in result.stdout
-                assert "Gallery — procedural design studies" in result.stdout
+                assert "Renderer qualification gallery — standalone Blender studies" in result.stdout
                 if (ROOT / "site/gallery").exists():
                     # A test-only page forces all actual PNGs to decode in Chromium.
                     names = ("pavilion-day", "pavilion-night", "pavilion-plan", "pavilion-tall", "bearing-assembled", "bearing-exploded")

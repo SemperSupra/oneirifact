@@ -42,6 +42,17 @@ def main():
                 )
                 assert "<h1>Oneirifact</h1>" in result.stdout
                 assert "Browser preview in preparation" in result.stdout
+                assert "Gallery — procedural design studies" in result.stdout
+                if (ROOT / "site/gallery").exists():
+                    # A test-only page forces all actual PNGs to decode in Chromium.
+                    names = ("day", "night", "plan", "tall")
+                    probe = root / "oneirifact" / "decode-probe.html"
+                    probe.write_text('<!doctype html><meta charset="utf-8"><p id="result">PENDING</p>' +
+                        ''.join(f'<img src="gallery/pavilion-{n}.png">' for n in names) +
+                        '<script>Promise.all([...document.images].map(async i=>{await i.decode();if(i.naturalWidth!==720||i.naturalHeight!==480)throw Error("dimensions")})).then(()=>document.getElementById("result").textContent="DECODE_PASS").catch(()=>document.getElementById("result").textContent="DECODE_FAIL")</script>')
+                    decoded = subprocess.run([browser, "--headless", "--disable-dev-shm-usage", "--disable-background-networking", "--no-first-run", "--virtual-time-budget=5000", f"--user-data-dir={root / 'decode-profile'}", "--dump-dom", url+"decode-probe.html"], capture_output=True, text=True, timeout=45, check=True)
+                    assert '<p id="result">DECODE_PASS</p>' in decoded.stdout, decoded.stdout[-1000:]
+                    print("All four real gallery PNGs decoded in Chromium")
                 print("Public site HTTP and real browser navigation PASS")
             finally:
                 server.shutdown()

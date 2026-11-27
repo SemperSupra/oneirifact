@@ -1,0 +1,52 @@
+name: Qualify all published gallery inspection pages
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r214/gallery_coverage.mjs','.github/workflows/rdte-r214-gallery.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  browser:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        viewport: [desktop, mobile]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Restore exact published gallery and inspector bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15233875816/zip > "$RUNNER_TEMP/gallery.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15233716378/zip > "$RUNNER_TEMP/inspector.zip"
+          echo "08dfe615f7db69f53ad2f843e955a98b98f1e1c324fb691617e711e36c497c5f  $RUNNER_TEMP/gallery.zip" | sha256sum -c -
+          echo "67a4add0504a129f6392e99808be63383a616271d6e614c94d80b1acc6a7a9b5  $RUNNER_TEMP/inspector.zip" | sha256sum -c -
+          python3 - <<'PY'
+          import os,zipfile
+          from pathlib import Path
+          for src,dest,count in [('gallery','gallery',28),('inspector','inspect',21)]:
+              root=Path('site')/dest;root.mkdir()
+              with zipfile.ZipFile(Path(os.environ['RUNNER_TEMP'])/(src+'.zip')) as z:
+                  assert len(z.infolist())==count
+                  for entry in z.infolist():
+                      assert Path(entry.filename).name==entry.filename and 0<entry.file_size<64<<20
+                      (root/entry.filename).write_bytes(z.read(entry))
+          PY
+      - name: Exercise every actual 3D gallery model
+        env:
+          VIEWPORT: ${{ matrix.viewport }}
+        run: node experiments/r214/gallery_coverage.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r214-gallery-${{ matrix.viewport }}
+          path: ${{ runner.temp }}/coverage-*.png
+          retention-days: 30
+          if-no-files-found: error

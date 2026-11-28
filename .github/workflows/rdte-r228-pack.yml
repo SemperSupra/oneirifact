@@ -68,3 +68,44 @@ jobs:
           gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern anatomy-display-r229-v1.zip --dir "$RUNNER_TEMP/readback"
           echo "$PACK_SHA  $RUNNER_TEMP/readback/anatomy-display-r229-v1.zip" | sha256sum --check --strict
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json url,tagName,isDraft
+  live:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify live published anatomy route and manifest
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,sys,time
+          from pathlib import Path
+          sys.path.insert(0,"tests")
+          import verify_delivery as v
+          base=v.BASE
+          for attempt in range(5):
+              try:
+                  # The site manifest is fetched independently; compare source
+                  # HTML/CSS/JS to the reviewed checkout, then all live assets.
+                  raw=v.fetch(base+v.MANIFEST,v.MAX_MANIFEST)
+                  doc=json.loads(raw);rows=v.validate(doc)
+                  index={r["path"]:r for r in rows}
+                  for n in ("anatomy/index.html","anatomy/viewer.css","anatomy/viewer.js"):
+                      b=(Path("site")/n).read_bytes()
+                      assert index[n]["sha256"]==hashlib.sha256(b).hexdigest(),n
+                  catalog=json.loads(v.fetch(base+"anatomy/data/catalog.json",1<<20))
+                  models=[m for d in catalog["datasets"] for m in d["layers"]]
+                  assert catalog["schema"]=="oneirifact.reference-viewer/v1" and len(catalog["datasets"])==4 and len(models)==32
+                  for m in models:
+                      r=index["anatomy/"+m["file"]]
+                      assert r["sha256"]==m["sha256"] and r["bytes"]==m["bytes"]
+                  count=v.verify(hashlib.sha256(raw).hexdigest())
+                  print("LIVE_ANATOMY_VERIFIED",base+"anatomy/","manifest_assets",count,"models",len(models))
+                  break
+              except Exception as e:
+                  print("LIVE_PROBE",attempt+1,type(e).__name__,str(e),flush=True)
+                  if attempt==4:raise
+                  time.sleep(10)
+          PY

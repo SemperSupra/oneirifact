@@ -41,7 +41,7 @@ def main():
                     capture_output=True, text=True, timeout=45, check=True,
                 )
                 assert "<h1>Oneirifact</h1>" in result.stdout
-                assert "Browser preview in preparation" in result.stdout
+                assert "Browser research previews available" in result.stdout
                 assert "Renderer qualification gallery — standalone Blender studies" in result.stdout
                 if (ROOT / "site/gallery").exists():
                     # A test-only page forces all actual PNGs to decode in Chromium.

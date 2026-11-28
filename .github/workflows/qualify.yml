@@ -76,7 +76,9 @@ jobs:
           retention-days: 30
           if-no-files-found: error
       - name: Restore verified versioned anatomy display release (no temporary artifacts)
-        run: python3 gallery/restore_anatomy_release.py
+        run: |
+          python3 gallery/restore_anatomy_release.py
+          python3 gallery/restore_adult_design_release.py
       - name: Verify public repository and static site
         run: |
           set -eu
@@ -85,12 +87,15 @@ jobs:
           python3 tests/smoke_site.py
           node tests/smoke_inspector.mjs
           node tests/smoke_anatomy.mjs
+          node tests/smoke_adult_design.mjs site
       - name: Retain anatomy browser screenshots
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: anatomy-browser-witnesses
-          path: ${{ runner.temp }}/anatomy-*.png
+          path: |
+            ${{ runner.temp }}/anatomy-*.png
+            ${{ runner.temp }}/morph-browser-*.png
           retention-days: 30
           if-no-files-found: ignore
       - name: Retain browser reference asset pack

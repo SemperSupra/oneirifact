@@ -1,0 +1,218 @@
+{
+  "schema": "oneirifact.public-hygiene-snapshot/v1",
+  "observed_at": "2026-11-28T12:32:12Z",
+  "repository": "SemperSupra/oneirifact",
+  "main_sha": "5608261f29fe42e651e7de68c4eb43fe50e30344",
+  "scope": "Bounded R239-R241 retained comparison and R242 input inventory; no release, anatomical acceptance, deletion or branch integration claim.",
+  "retained_pull_requests": [
+    {
+      "number": 83,
+      "url": "https://github.com/SemperSupra/oneirifact/pull/83",
+      "state": "open",
+      "draft": true,
+      "head": "rdte/r239-full-influence-rig-motion",
+      "head_sha": "cb36ffce5e07e0c86d1a514ff7762a54bc4f89cf",
+      "base": "rdte/r219-anatomical-rig",
+      "base_sha": "2f4f2d98ef5f509a9817a4438c067545e27753e9"
+    },
+    {
+      "number": 84,
+      "url": "https://github.com/SemperSupra/oneirifact/pull/84",
+      "state": "open",
+      "draft": true,
+      "head": "rdte/r239-shared-live-readback",
+      "head_sha": "82ca8c9b8c7408ece9804e0a3986d8d23637a153",
+      "base": "main",
+      "base_sha": "5608261f29fe42e651e7de68c4eb43fe50e30344"
+    },
+    {
+      "number": 85,
+      "url": "https://github.com/SemperSupra/oneirifact/pull/85",
+      "state": "open",
+      "draft": true,
+      "head": "rdte/r240-ct-skin-coupling",
+      "head_sha": "dd489c57e4a0aaba58180f2c2044e2e26dd533ff",
+      "base": "rdte/r239-fullweight-animated-human",
+      "base_sha": "2a8c99b1e064766546c9e5bfbb72b5e4f0245270"
+    },
+    {
+      "number": 86,
+      "url": "https://github.com/SemperSupra/oneirifact/pull/86",
+      "state": "open",
+      "draft": true,
+      "head": "rdte/r240-skin-deformation-critic",
+      "head_sha": "cea046856b2cc05864ded146474049e85505aaa7",
+      "base": "rdte/r239-fullweight-animated-human",
+      "base_sha": "2a8c99b1e064766546c9e5bfbb72b5e4f0245270"
+    },
+    {
+      "number": 87,
+      "url": "https://github.com/SemperSupra/oneirifact/pull/87",
+      "state": "open",
+      "draft": true,
+      "head": "rdte/r240-registration-roll-critic",
+      "head_sha": "c5542741af6e997be449faea123b684359e90d87",
+      "base": "rdte/r240-ct-skin-coupling",
+      "base_sha": "dd489c57e4a0aaba58180f2c2044e2e26dd533ff"
+    },
+    {
+      "number": 88,
+      "url": "https://github.com/SemperSupra/oneirifact/pull/88",
+      "state": "open",
+      "draft": true,
+      "head": "rdte/r241-male-anatomical-registration",
+      "head_sha": "5a809f4c8b36a5fbedc8cec8b5b63ee48051b502",
+      "base": "rdte/r240-ct-skin-coupling",
+      "base_sha": "dd489c57e4a0aaba58180f2c2044e2e26dd533ff"
+    },
+    {
+      "number": 89,
+      "url": "https://github.com/SemperSupra/oneirifact/pull/89",
+      "state": "open",
+      "draft": true,
+      "head": "rdte/r241-ct-orientation-critic",
+      "head_sha": "b80f195832e0a53f172f6bd2678df0c91f326306",
+      "base": "rdte/r240-registration-roll-critic",
+      "base_sha": "c5542741af6e997be449faea123b684359e90d87"
+    },
+    {
+      "number": 90,
+      "url": "https://github.com/SemperSupra/oneirifact/pull/90",
+      "state": "open",
+      "draft": true,
+      "head": "rdte/r241-male-hip-patch-critic",
+      "head_sha": "e337db66e8c970135591e9282fb24561e6b047c3",
+      "base": "rdte/r241-male-anatomical-registration",
+      "base_sha": "5a809f4c8b36a5fbedc8cec8b5b63ee48051b502"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 15238389268,
+      "name": "r222-baseline-male",
+      "sha256": "18c2089c2878a6729515754795779fd34b59e887809646d45fa84d829e6906d9",
+      "bytes": 132739377,
+      "expired": false,
+      "expires_at": "2026-12-28T00:08:00Z",
+      "run_id": 46086171059,
+      "run_url": "https://github.com/SemperSupra/oneirifact/actions/runs/46086171059",
+      "source_head_sha": "6528fbc21c49885e63f9912ea01c09f6c471abed"
+    },
+    {
+      "id": 15260769266,
+      "name": "r239-actual-human-animation",
+      "sha256": "f40250cbed7a5758aac5ffe9bec9f9a535b282e2b0b10f5b9d75dfad316bd34f",
+      "bytes": 3515838,
+      "expired": false,
+      "expires_at": "2026-12-28T11:40:21Z",
+      "run_id": 46140911835,
+      "run_url": "https://github.com/SemperSupra/oneirifact/actions/runs/46140911835",
+      "source_head_sha": "2a8c99b1e064766546c9e5bfbb72b5e4f0245270"
+    },
+    {
+      "id": 15261653436,
+      "name": "r239-ct-leg-articulation",
+      "sha256": "f9e0e39a5591705aa73509e4239a4a9652d57fe3bdbb010b120b5366443ede8a",
+      "bytes": 41418525,
+      "expired": false,
+      "expires_at": "2026-12-28T11:38:55Z",
+      "run_id": 46140825962,
+      "run_url": "https://github.com/SemperSupra/oneirifact/actions/runs/46140825962",
+      "source_head_sha": "da895fe704006c580403fe2f696daec93971633e"
+    },
+    {
+      "id": 15262795704,
+      "name": "r240-ct-skin-candidate",
+      "sha256": "38c9d834128f18932870a799399496b1b86341a920374971af7585e676ec81c7",
+      "bytes": 16668693,
+      "expired": false,
+      "expires_at": "2026-12-28T11:57:06Z",
+      "run_id": 46142224809,
+      "run_url": "https://github.com/SemperSupra/oneirifact/actions/runs/46142224809",
+      "source_head_sha": "dd489c57e4a0aaba58180f2c2044e2e26dd533ff"
+    },
+    {
+      "id": 15262026648,
+      "name": "r240-ct-skin-roll-candidate",
+      "sha256": "45b6e0650ceee40acf62ee67d227aaf6b9542a3b5af6b1dceb344f02b25e5886",
+      "bytes": 25903996,
+      "expired": false,
+      "expires_at": "2026-12-28T12:00:10Z",
+      "run_id": 46142452959,
+      "run_url": "https://github.com/SemperSupra/oneirifact/actions/runs/46142452959",
+      "source_head_sha": "c5542741af6e997be449faea123b684359e90d87"
+    },
+    {
+      "id": 15262213014,
+      "name": "r241-male-anatomical-candidate",
+      "sha256": "15c35738f128cdab948f7f727091f32875288ec3bc6a2b55dfd69d20d5ed9e31",
+      "bytes": 853096,
+      "expired": false,
+      "expires_at": "2026-12-28T12:06:13Z",
+      "run_id": 46142969677,
+      "run_url": "https://github.com/SemperSupra/oneirifact/actions/runs/46142969677",
+      "source_head_sha": "5a809f4c8b36a5fbedc8cec8b5b63ee48051b502"
+    },
+    {
+      "id": 15262378117,
+      "name": "r241-female-penetration-critic",
+      "sha256": "9416a8978eccdb734d859936e1f962fe1daba96f860085880966127cce47d546",
+      "bytes": 25894715,
+      "expired": false,
+      "expires_at": "2026-12-28T12:07:49Z",
+      "run_id": 46143036986,
+      "run_url": "https://github.com/SemperSupra/oneirifact/actions/runs/46143036986",
+      "source_head_sha": "b80f195832e0a53f172f6bd2678df0c91f326306"
+    },
+    {
+      "id": 15263115201,
+      "name": "r241-male-head-patch-critic",
+      "sha256": "c5d667690bdf6021a9d9ae5610281b2544cc72d4b813d34a2254da1869a7c834",
+      "bytes": 30309,
+      "expired": false,
+      "expires_at": "2026-12-28T12:08:40Z",
+      "run_id": 46143154087,
+      "run_url": "https://github.com/SemperSupra/oneirifact/actions/runs/46143154087",
+      "source_head_sha": "e337db66e8c970135591e9282fb24561e6b047c3"
+    }
+  ],
+  "actions": [
+    {
+      "name": "actions/checkout",
+      "version": "v7.0.1",
+      "commit": "3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "action_yml_blob": "5b0524f730db83f9513c18ab31a6c086c7239076",
+      "runtime": "node24",
+      "release_url": "https://github.com/actions/checkout/releases/tag/v7.0.1",
+      "source_url": "https://github.com/actions/checkout/blob/3d3c42e5aac5ba805825da76410c181273ba90b1/action.yml"
+    },
+    {
+      "name": "actions/upload-artifact",
+      "version": "v7.0.2",
+      "commit": "cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+      "action_yml_blob": "7cb4d1e81db55320b41217e1a78a1a46e3d2baef",
+      "runtime": "node24",
+      "release_url": "https://github.com/actions/upload-artifact/releases/tag/v7.0.2",
+      "source_url": "https://github.com/actions/upload-artifact/blob/cf430e030ddbb5b0abf93d22962f4752f3646cd9/action.yml"
+    }
+  ],
+  "verification": {
+    "pr_heads_and_base_refs": "MATCH_OBSERVED_LIVE_BRANCHES",
+    "artifact_metadata": "AVAILABLE_NOT_EXPIRED_DIGEST_MATCH",
+    "artifact_bytes": "NOT_REDOWNLOADED_BY_THIS_INVENTORY",
+    "action_release_tag_and_exact_sha_metadata": "VERIFIED",
+    "action_runtime": "PASS_BOUNDED_PUBLIC_UBUNTU_24_04"
+  },
+  "action_runtime_evidence": {
+    "pull_request_url": "https://github.com/SemperSupra/oneirifact/pull/91",
+    "source_head_sha": "8caf48472c13ad229f9f6f9188f442429bf0a7a2",
+    "run_url": "https://github.com/SemperSupra/oneirifact/actions/runs/46145272199",
+    "run_id": 46145272199,
+    "job_id": 140979845711,
+    "checkout_and_post_checkout": "SUCCESS",
+    "upload_artifact": "SUCCESS",
+    "artifact_id": 15263481874,
+    "artifact_sha256": "441e272b88b0f8c8557d936ca0f0ba9f61fb2ddd967abb495f3bd4f0ea339cf1",
+    "verification": "Exact pinned action versions independently read back from completed job steps and logs; checkout, workload, artifact upload and post-checkout passed. Artifact bytes and anatomy acceptance are outside this action-runtime witness."
+  }
+}

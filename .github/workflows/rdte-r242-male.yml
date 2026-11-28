@@ -1,0 +1,50 @@
+name: R242 paired male head refinement replay
+on:
+  pull_request:
+    branches: [rdte/r241-male-hip-patch-critic]
+    paths: ['experiments/r242/male/**', '.github/workflows/rdte-r242-male.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  male:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      WORKFLOW_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Restore exact public research inputs
+        run: |
+          set -euo pipefail
+          task_source_sha="$(git rev-parse HEAD)"
+          test "$task_source_sha" = "$SOURCE_HEAD_SHA"
+          echo "EXECUTION_SHA=$task_source_sha" >> "$GITHUB_ENV"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15238389268/zip > "$RUNNER_TEMP/atlas.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15260769266/zip > "$RUNNER_TEMP/skin.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15262213014/zip > "$RUNNER_TEMP/baseline.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15263115201/zip > "$RUNNER_TEMP/head-patch.zip"
+      - name: Regenerate and independently compare paired actual surfaces
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0 rtree==1.4.1
+          python experiments/r242/male/refine.py "$RUNNER_TEMP/atlas.zip" "$RUNNER_TEMP/skin.zip" "$RUNNER_TEMP/baseline.zip" "$RUNNER_TEMP/head-patch.zip" "$RUNNER_TEMP/male"
+          cp experiments/r242/male/evidence-lock.json "$RUNNER_TEMP/male/evidence-lock.json"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: r242-male-refined-candidate
+          path: ${{ runner.temp }}/male
+          retention-days: 30
+          if-no-files-found: error

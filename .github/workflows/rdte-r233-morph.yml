@@ -1,0 +1,44 @@
+name: R233 interactive adult morphology browser
+on:
+  pull_request:
+    branches: [rdte/r232-adult-morphology]
+    paths: ['experiments/r233/morph/**','.github/workflows/rdte-r233-morph.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  browser:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Prepare pinned actual shape and rig basis
+        run: |
+          set -euo pipefail
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15257080341/zip > "$RUNNER_TEMP/morph.zip"
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          mkdir -p "$RUNNER_TEMP/site/morph" "$RUNNER_TEMP/site/inspect"
+          cp experiments/r233/morph/{index.html,style.css,app.mjs,morph-core.mjs} "$RUNNER_TEMP/site/morph/"
+          python experiments/r233/morph/pack.py "$RUNNER_TEMP/morph.zip" "$RUNNER_TEMP/site/morph/data"
+          node experiments/r233/morph/test.mjs "$RUNNER_TEMP/site/morph/data"
+          python -c 'import sys;sys.path.insert(0,"gallery");from pathlib import Path;from build_inspector import vendor;vendor(Path(sys.argv[1]))' "$RUNNER_TEMP/site/inspect"
+          rm "$RUNNER_TEMP/site/morph/data/witness.json"
+      - name: Browser test actual generated GLB and editing
+        run: node experiments/r233/morph/browser.mjs "$RUNNER_TEMP/site"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r233-browser-morphology
+          path: |
+            ${{ runner.temp }}/site
+            ${{ runner.temp }}/morph-browser-*.png
+          retention-days: 30
+          if-no-files-found: error

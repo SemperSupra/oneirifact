@@ -13,7 +13,9 @@ def req(x,msg):
     if not x:raise ValueError(msg)
 def validate(s):
     req(set(s)=={"schema","common","appearance_mix","regional","anatomical_configuration"} and s["schema"]=="oneirifact.shared-adult-morphology/v1","schema")
-    m.validate(s["common"]) # legacy common numerical fields, not anatomy identity
+    numeric={k for k in m.profile() if k not in ("schema","adult","sex")}
+    req(set(s["common"])==numeric,"common numerical fields")
+    m.validate(m.profile(**s["common"])) # internal legacy adapter only
     a=s["appearance_mix"];req(type(a) in (float,int) and np.isfinite(a) and 0<=a<=1,"appearance")
     req(set(s["regional"])==set(r.lock["regional"]),"regional inventory")
     req(all(type(x) in (int,float) and np.isfinite(x) and 0<=x<=1 for x in s["regional"].values()),"regional bounds")
@@ -21,7 +23,7 @@ def validate(s):
     return s
 def spec(common,mix,config="UNSPECIFIED",**regional):
     p={k:0. for k in r.lock["regional"]};p.update(regional)
-    return validate({"schema":"oneirifact.shared-adult-morphology/v1","common":common,"appearance_mix":mix,"regional":p,"anatomical_configuration":config})
+    return validate({"schema":"oneirifact.shared-adult-morphology/v1","common":{k:v for k,v in common.items() if k not in ("schema","adult","sex")},"appearance_mix":mix,"regional":p,"anatomical_configuration":config})
 def bases(v,targets,folder,lock):
     female={};male={}
     for stage,anchors in (("young",m.ADULT["female"]),("old",m.OLD)):
@@ -82,7 +84,7 @@ def main(archive,folder,out):
         ja,jb=rig_a[3],rig_b[3];req(set(ja)==set(jb) and len(ja)==326,"joint identity")
         movement=np.array([np.linalg.norm(ja[n]-jb[n]) for n in sorted(ja)])
         req(float(movement.max())>.001,"joint refit ineffective")
-        report={"schema":"oneirifact.shared-adult-morphology-qualification/v1","variants":rows,"shared_regional_controls":control_rows,"joint_refit":{"matched_helper_joints":len(ja),"max_endpoint_displacement_mm":float(movement.max()*1000),"rms_endpoint_displacement_mm":float(np.sqrt(np.mean(movement**2))*1000)},"source_pins":{"male":lock,"female_base_archive":r.PIN,"regional":r.lock},"limits":"Adult appearance-only same-topology blending, not gender inference or reproductive topology. Existing female-specific breast controls separate; male/common chest variants and coupled actual bone/organ geometry not admitted. common.sex legacy numerical adapter tag is female only and must not be interpreted as anatomical configuration. Animation rig joint positions are not anatomical joint surfaces."}
+        report={"schema":"oneirifact.shared-adult-morphology-qualification/v1","variants":rows,"shared_regional_controls":control_rows,"joint_refit":{"matched_helper_joints":len(ja),"max_endpoint_displacement_mm":float(movement.max()*1000),"rms_endpoint_displacement_mm":float(np.sqrt(np.mean(movement**2))*1000)},"source_pins":{"male":lock,"female_base_archive":r.PIN,"regional":r.lock},"limits":"Adult appearance-only same-topology blending, not gender inference or reproductive topology. Existing female-specific breast controls separate; male/common chest variants and coupled actual bone/organ geometry not admitted. The legacy adult numerical validator is used internally only; no sex field is exposed in the common numeric specification. Animation rig joint positions are not anatomical joint surfaces."}
         (out/"receipt.json").write_text(json.dumps(report,indent=2)+"\n")
         print("R235_SHARED_MORPHOLOGY",json.dumps({"variants":len(rows),"shared_control_tests":len(control_rows),"joint_refit":report["joint_refit"],"status":"EXTERIOR_AND_RIG_ONLY"}),flush=True)
 if __name__=="__main__":main(*(Path(x) for x in sys.argv[1:]))

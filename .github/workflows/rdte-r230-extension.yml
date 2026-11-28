@@ -1,0 +1,56 @@
+name: R230 separate reference viewer extension
+on:
+  pull_request:
+    branches: [main]
+    paths: ['gallery/extend_anatomy.py','.github/workflows/rdte-r230-extension.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  extension:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+      ANATOMY_EXTENDED: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve exact archived R229 display pack and research subsets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15254760516/zip > "$RUNNER_TEMP/input/base-outer.zip"
+          echo "76da18d6aadc3ce116b9fb6670c07315885521876d92c912510637155480f5f6  $RUNNER_TEMP/input/base-outer.zip" | sha256sum --check --strict
+          unzip -p "$RUNNER_TEMP/input/base-outer.zip" anatomy-display-r229-v1.zip > "$RUNNER_TEMP/input/base.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15252379819/zip > "$RUNNER_TEMP/input/pelvis.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15254526895/zip > "$RUNNER_TEMP/input/digits.zip"
+      - name: Assemble isolated source-preserving browser candidate
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 trimesh==4.6.8
+          python gallery/extend_anatomy.py "$RUNNER_TEMP/input/base.zip" "$RUNNER_TEMP/input/pelvis.zip" "$RUNNER_TEMP/input/digits.zip" site/anatomy/data "$RUNNER_TEMP/anatomy-extension-candidate.zip"
+          mkdir -p site/inspect
+          python -c 'import sys;sys.path.insert(0,"gallery");from pathlib import Path;from build_inspector import vendor;vendor(Path("site/inspect"))'
+      - name: Exercise actual models and receipt links in Chromium
+        run: node tests/smoke_anatomy.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r230-extension-candidate
+          path: ${{ runner.temp }}/anatomy-extension-candidate.zip
+          retention-days: 30
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r230-extension-browser-witnesses
+          path: ${{ runner.temp }}/anatomy-*.png
+          retention-days: 30
+          if-no-files-found: ignore

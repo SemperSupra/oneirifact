@@ -1,0 +1,38 @@
+name: R256 actual weight and support dynamics
+on:
+  pull_request:
+    branches: [main]
+    paths: ['rdte/r256-weight-support/**','.github/workflows/r256-weight-support.yml']
+permissions:
+  contents: read
+jobs:
+  mechanics:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    env:
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Install exact CPU dependencies
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD_SHA"
+          python3 -c "import sys; assert sys.version_info[:2] == (3,12)"
+          python3 -m venv "$RUNNER_TEMP/r256-env"
+          "$RUNNER_TEMP/r256-env/bin/python" -m pip install --require-hashes -r rdte/r256-weight-support/requirements.txt
+      - name: Integrate support loss and verify analytic controls
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/r256-env/bin/python" rdte/r256-weight-support/probe.py --out "$RUNNER_TEMP/r256-product"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: r256-actual-weight-support-probe
+          path: ${{ runner.temp }}/r256-product
+          retention-days: 30
+          if-no-files-found: error
+

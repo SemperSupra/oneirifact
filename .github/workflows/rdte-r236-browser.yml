@@ -1,0 +1,61 @@
+name: R236 shared browser morphology and binary mode
+on:
+  pull_request:
+    branches: [rdte/r235-shared-adult-morphology]
+    paths: ['experiments/r236/**','.github/workflows/rdte-r236-browser.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  shared:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire pinned male adult and shared regional CC0 targets
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/targets"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15257080341/zip > "$RUNNER_TEMP/base.zip"
+          python3 - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          male=json.loads(Path("experiments/r235/male-targets.json").read_text())
+          reg=json.loads(Path("experiments/r234/regional-targets.json").read_text())
+          root="https://raw.githubusercontent.com/makehumancommunity/makehuman/"+reg["upstream"]+"/makehuman/data/targets/"
+          rows=[("macrodetails/"+n,h) for s in male.values() for n,h in s["anchors"]+s["macro"]]
+          for group in list(reg["regional"].values())+list(reg["breast"].values()):rows.extend(group)
+          for name,h in rows:
+              dest=Path(os.environ["RUNNER_TEMP"])/"targets"/(Path(name).name+".target")
+              subprocess.run(["curl","--fail","--silent","--show-error","--location","--proto","=https","--proto-redir","=https","--max-time","40","--max-filesize","16000000",root+name+".target","-o",str(dest)],check=True)
+          PY
+      - name: Generate actual common morphology and refitted rigs
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15258079477/zip > "$RUNNER_TEMP/ref.zip"
+          mkdir -p "$RUNNER_TEMP/site/morph" "$RUNNER_TEMP/site/inspect"
+          cp experiments/r236/{index.html,style.css,app.mjs,core.mjs} "$RUNNER_TEMP/site/morph/"
+          python experiments/r236/pack.py "$RUNNER_TEMP/base.zip" "$RUNNER_TEMP/targets" "$RUNNER_TEMP/ref.zip" "$RUNNER_TEMP/site/morph/data"
+          node experiments/r236/test.mjs "$RUNNER_TEMP/site/morph/data"
+          rm "$RUNNER_TEMP/site/morph/data/witness.json"
+          python -c 'import sys;sys.path.insert(0,"gallery");from pathlib import Path;from build_inspector import vendor;vendor(Path(sys.argv[1]))' "$RUNNER_TEMP/site/inspect"
+      - name: Exercise actual binary and advanced browser editing
+        run: node experiments/r236/browser.mjs "$RUNNER_TEMP/site"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r236-shared-browser
+          path: |
+            ${{ runner.temp }}/site
+            ${{ runner.temp }}/shared-browser-*.png
+          retention-days: 30
+          if-no-files-found: error

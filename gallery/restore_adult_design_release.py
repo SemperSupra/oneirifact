@@ -2,13 +2,13 @@
 import argparse,json,subprocess,tempfile,zipfile
 from pathlib import Path
 import anatomy_pack as p
-from qualify_r233_delivery import verify_design
+from qualify_r237_shared import verify_design
 ROOT=Path(__file__).resolve().parent
 LOCK=ROOT/"adult-design-release-lock.json"
 def restore(source=None,dest=None):
     lock=p.parse(LOCK.read_bytes())
     p.require(lock["schema"]=="oneirifact.adult-design-release/v1" and lock["repository"]=="SemperSupra/oneirifact","lock schema or origin")
-    p.require(lock["tag"]=="anatomy-display-r233-v3" and lock["asset"]=="adult-design-r233-v1.zip" and p.HEX.fullmatch(lock["sha256"]),"lock asset")
+    p.require(lock["tag"]=="shared-design-r237-v1" and lock["asset"]=="shared-design-r237-v1.zip" and p.HEX.fullmatch(lock["sha256"]),"lock asset")
     dest=dest or ROOT.parent/"site"/"morph"
     p.require(not dest.exists() and not dest.is_symlink(),"fresh destination required")
     with tempfile.TemporaryDirectory(prefix="oneirifact-design-") as td:
@@ -26,5 +26,6 @@ def restore(source=None,dest=None):
                 b=z.read(r["path"]);p.require(p.sha(b)==r["sha256"] and len(b)==r["bytes"],"asset changed");q.write_bytes(b)
         p.require({q.relative_to(dest).as_posix() for q in dest.rglob("*") if q.is_file()}=={r["path"] for r in rows},"restored inventory")
     print("DURABLE_ADULT_DESIGN_RESTORE_PASS",lock["sha256"],len(rows),flush=True)
+    return lock
 if __name__=="__main__":
     a=argparse.ArgumentParser(description=__doc__);a.add_argument("--source",type=Path);a.add_argument("--dest",type=Path);q=a.parse_args();restore(q.source,q.dest)

@@ -62,8 +62,8 @@ def run(out):
             if p.name.lower() in ("getlandmarks.m","readdata.m"):
                 b=z.read(name);s=b.decode("utf-8-sig",errors="replace")
                 # Record actual source parsing statements without any case values.
-                lines=[line.strip() for line in s.splitlines() if re.search(r"\b(readmatrix|readtable|textscan|fscanf|sscanf|importdata|dlmread|fgetl|strsplit|split)\b",line,re.I)]
-                source_readers[p.name]={"sha256":hashlib.sha256(b).hexdigest(),"reader_statements":lines[:20]}
+                lines=[line.strip() for line in s.splitlines() if re.search(r"\b(readmatrix|readtable|textscan|fscanf|sscanf|importdata|dlmread|fgetl|fgets|strsplit|split|str2double|str2num|feof)\b|line\s*[({]",line,re.I)]
+                source_readers[p.name]={"sha256":hashlib.sha256(b).hexdigest(),"reader_statements":lines[:40]}
         report["source_readers"]=source_readers
         data={1:{},2:{}};counts=Counter();fail=Counter();schema=None
         for i in z.infolist():
@@ -75,7 +75,11 @@ def run(out):
             b=z.read(i);a=parse(b)
             if a is None:
                 fail["no_documented_four_column_parse"]+=1
-                if schema is None:schema=diagnostics(b)
+                if schema is None:
+                    schema=diagnostics(b)
+                    # FCSV declared column names are format metadata, not patient data.
+                    schema["column_header"]=[x[:500] for x in b.decode("utf-8-sig").splitlines() if x.lstrip().startswith("#") and re.search(r"columns|coordinate system|version",x,re.I)][:5]
+                    schema["first_numeric_row_types"]=[["numeric" if re.fullmatch(r"[-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?",v.strip()) else "text" if v.strip() else "empty" for v in row.split(",")] for row in b.decode("utf-8-sig").splitlines() if len(row.split(",")) in (14,16)][:1]
                 continue
             need(p.stem not in data[obs],"duplicate case");data[obs][p.stem]=a
         shared=set(data[1])&set(data[2]);per=[];sizes=Counter()

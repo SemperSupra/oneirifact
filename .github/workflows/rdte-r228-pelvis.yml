@@ -1,0 +1,48 @@
+name: R228 historical female pelvic source recovery
+on:
+  pull_request:
+    branches: [rdte/r226-granular-identity-fair-registration]
+    paths: ['experiments/r228/**','.github/workflows/rdte-r228-pelvis.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  pelvis:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire official historical atlas and pinned current atlas
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15238269509/zip > "$RUNNER_TEMP/input/current.zip"
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 4 --max-time 150 --max-filesize 536870912 https://cdn.humanatlas.io/digital-objects/ref-organ/united-female/v1.5/assets/3d-vh-f-united.glb -o "$RUNNER_TEMP/input/historical.glb"
+          sha256sum "$RUNNER_TEMP/input/historical.glb"
+      - name: Compare common source geometry and extract separate historical pelvic subset
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r228/pelvis.py "$RUNNER_TEMP/input/historical.glb" "$RUNNER_TEMP/input/current.zip" "$RUNNER_TEMP/pelvis"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r228-pelvic-reference
+          path: ${{ runner.temp }}/pelvis
+          retention-days: 30
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r228-historical-atlas-source
+          path: ${{ runner.temp }}/input/historical.glb
+          retention-days: 30
+          if-no-files-found: error

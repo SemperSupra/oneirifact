@@ -10,9 +10,9 @@ import urllib.request
 
 MANIFEST = "release-manifest.json"
 BASE = "https://sempersupra.github.io/oneirifact/"
-MAX_FILES = 256
+MAX_FILES = 768
 MAX_FILE = 64 << 20
-MAX_TOTAL = 128 << 20
+MAX_TOTAL = 512 << 20
 MAX_MANIFEST = 1 << 20
 SEGMENT = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*\Z")
 DIGEST = re.compile(r"[0-9a-f]{64}\Z")
@@ -109,6 +109,8 @@ BROWSER_MEDIA_TYPES = {
     ".css": {"text/css"},
     ".json": {"application/json"},
     ".png": {"image/png"},
+    ".svg": {"image/svg+xml"},
+    ".mp4": {"video/mp4"},
     ".glb": {"model/gltf-binary", "application/octet-stream"},
 }
 

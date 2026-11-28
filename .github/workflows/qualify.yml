@@ -79,6 +79,13 @@ jobs:
         run: |
           python3 gallery/restore_anatomy_release.py
           python3 gallery/restore_adult_design_release.py
+          python3 gallery/restore_motion_release.py
+      - name: Prepare independent full-vertex motion oracle
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/motion-oracle-env"
+          "$RUNNER_TEMP/motion-oracle-env/bin/pip" install --disable-pip-version-check --require-hashes --only-binary=:all: -r tests/motion-reference-requirements.txt
+          "$RUNNER_TEMP/motion-oracle-env/bin/python" tests/motion_reference.py site "$RUNNER_TEMP/motion-reference"
       - name: Verify public repository and static site
         run: |
           set -eu
@@ -88,6 +95,7 @@ jobs:
           node tests/smoke_inspector.mjs
           node tests/smoke_anatomy.mjs
           node tests/smoke_adult_design.mjs site
+          node tests/smoke_motion.mjs "$RUNNER_TEMP/motion-reference"
       - name: Retain anatomy browser screenshots
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -96,6 +104,8 @@ jobs:
           path: |
             ${{ runner.temp }}/anatomy-*.png
             ${{ runner.temp }}/morph-browser-*.png
+            ${{ runner.temp }}/motion-*.png
+            ${{ runner.temp }}/motion-browser-qualification.json
           retention-days: 30
           if-no-files-found: ignore
       - name: Retain browser reference asset pack

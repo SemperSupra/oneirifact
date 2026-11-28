@@ -21,14 +21,33 @@ def probe(url,hosts):
     except (urllib.error.HTTPError,urllib.error.URLError,TimeoutError,ValueError) as e:
         return {"url":url,"status":"ACCESS_HELD","http_status":getattr(e,"code",None),"error":type(e).__name__}
 def fcsv(b):
-    text=b.decode("utf-8-sig");lines=text.splitlines()
+    # FCSV and documented legacy N,X,Z,Y exports. Accept explicit column
+    # headers and standard comment records; never guess a missing coordinate.
+    text=b.decode("utf-8-sig");lines=[l.strip() for l in text.splitlines() if l.strip()]
     header=[l for l in lines if l.startswith("#")]
+    body=[l for l in lines if not l.startswith("#")]
+    if not body:raise ValueError("empty_fcsv")
+    delimiter=next((x for x in (",",";","\t") if x in body[0]),None)
+    fields=list(csv.reader(body,delimiter=delimiter)) if delimiter else [l.split() for l in body]
+    if not fields or len(fields[0])<4:raise ValueError("fcsv_width")
+    first=[x.strip().lower() for x in fields[0]]
+    axes=[1,2,3];key=0
+    # If actual x/y/z column names are supplied, preserve that declared order.
+    if all(x in first for x in ("x","y","z")):
+        axes=[first.index(x) for x in ("x","y","z")]
+        key=next((first.index(x) for x in ("n","id","label","landmark","name") if x in first),0)
+        fields=fields[1:]
     rows={}
-    for row in csv.reader(l for l in lines if l.strip() and not l.startswith("#")):
-        if len(row)<4:raise ValueError("FCSV record")
-        k=row[0].strip();q=np.array([float(x) for x in row[1:4]])
-        if k in rows or not np.isfinite(q).all():raise ValueError("invalid coordinate")
+    for row in fields:
+        if not row or all(not x.strip() for x in row):continue
+        if len(row)<=max([key]+axes):raise ValueError("fcsv_width")
+        k=row[key].strip()
+        try:q=np.array([float(row[i].strip()) for i in axes])
+        except ValueError:raise ValueError("fcsv_coordinate_non_numeric") from None
+        if not k or k in rows:raise ValueError("fcsv_duplicate_or_empty_label")
+        if not np.isfinite(q).all():raise ValueError("fcsv_nonfinite")
         rows[k]=q
+    if not rows:raise ValueError("empty_fcsv")
     return rows,header
 def main(out):
     out.mkdir(parents=True,exist_ok=False)
@@ -51,7 +70,7 @@ def main(out):
             b=fetch(f["links"]["self"],4<<20,{"zenodo.org","www.zenodo.org"})
             assert hashlib.md5(b).hexdigest()==MD5
             info["archive_sha256"]=hashlib.sha256(b).hexdigest()
-            data={1:{},2:{}};headers={1:set(),2:set()}
+            data={1:{},2:{}};headers={1:set(),2:set()};parse_failures={};fcsv_count=0
             with zipfile.ZipFile(io.BytesIO(b)) as z:
                 infos=z.infolist();assert len(infos)<=1000 and sum(i.file_size for i in infos)<=32<<20
                 assert z.testzip() is None
@@ -61,11 +80,16 @@ def main(out):
                     if p.suffix.lower()!=".fcsv":continue
                     obs=next((j for j in (1,2) if any(re.fullmatch(r"observer[_ -]?"+str(j),x,re.I) for x in p.parts)),None)
                     if obs is None:continue
-                    rows,head=fcsv(z.read(i))
+                    fcsv_count+=1
+                    try:rows,head=fcsv(z.read(i))
+                    except (ValueError,UnicodeError) as e:
+                        key=str(e) if isinstance(e,ValueError) and str(e) in {"empty_fcsv","fcsv_width","fcsv_coordinate_non_numeric","fcsv_duplicate_or_empty_label","fcsv_nonfinite"} else type(e).__name__
+                        parse_failures[key]=parse_failures.get(key,0)+1
+                        continue
                     assert p.stem not in data[obs]
                     data[obs][p.stem]=rows;headers[obs].update(head)
             shared=sorted(set(data[1])&set(data[2]))
-            info.update({"observer_counts":[len(data[1]),len(data[2])],"matching_case_names":len(shared),"coordinate_header_examples":[sorted(x for x in headers[j] if "coordinate" in x.lower())[:3] for j in (1,2)]})
+            info.update({"fcsv_files_seen":fcsv_count,"parse_failures":parse_failures,"observer_counts":[len(data[1]),len(data[2])],"matching_case_names":len(shared),"coordinate_header_examples":[sorted(x for x in headers[j] if "coordinate" in x.lower())[:3] for j in (1,2)]})
             # Compare complete paired row identifiers only. Avoid treating
             # missing or differently labelled records as matched landmarks.
             per=[];points=0;counts=[]
@@ -76,9 +100,9 @@ def main(out):
                 per.append(float(np.sqrt(np.mean(np.square(d)))))
                 counts.append(len(d));points+=len(d)
             info.update({"complete_matching_cases":len(per),"matching_landmarks":points,"landmark_counts":sorted(set(counts))})
-            if per:
+            if per and not parse_failures and len(per)==len(shared)==67:
                 info.update({"status":"PASS_PAIRED_SOURCE_SCREEN","per_case_rms_coordinate_units":{"median":statistics.median(per),"p95":float(np.quantile(per,.95)),"max":max(per)},"limits":"Coordinate units/orientation require independent source confirmation; aggregate observer differences, not registration accuracy or individual subject model."})
-            else:info["status"]="PAIR_IDENTITY_HELD"
+            else:info["status"]="PAIR_IDENTITY_OR_PARSE_HELD"
     except (urllib.error.HTTPError,urllib.error.URLError,TimeoutError,ValueError,KeyError,AssertionError,StopIteration) as e:
         report.setdefault("landmark_critic",{"source":API}).update({"status":"ACQUISITION_OR_PARSE_HELD","error":type(e).__name__,"http_status":getattr(e,"code",None)})
     (out/"receipt.json").write_text(json.dumps(report,indent=2)+"\n")

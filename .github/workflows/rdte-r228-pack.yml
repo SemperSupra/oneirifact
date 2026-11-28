@@ -75,8 +75,10 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
+          # This is a released-base witness, not a prediction that the PR is already deployed.
+          ref: ${{ github.event.pull_request.base.sha }}
           persist-credentials: false
-      - name: Verify live published anatomy route and manifest
+      - name: Verify live released-base anatomy route and manifest
         run: |
           set -euo pipefail
           python3 - <<'PY'

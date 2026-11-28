@@ -6,6 +6,17 @@ out=Path(sys.argv[1]);errors=[];critics={};receipt_path=out/"consumer-receipt.js
 receipt=json.loads(receipt_path.read_text()) if receipt_path.exists() else {}
 if receipt.get("status")!="PASS_NATIVE_CONSUMER_TRANSPORT":errors.append("native consumer transport absent or failed")
 if not receipt.get("export",{}).get("full_source_attributes_bit_identical"):errors.append("exact source geometry/weights export absent")
+interpolation=receipt.get("interpolation",{})
+if set(interpolation)!={"swimming_front_crawl","bathing_seated_wash"}:errors.append("native quaternion continuity evidence absent")
+for activity,info in interpolation.items():
+    times=info.get("fractional_replay_times_s",[])
+    if len(times)<2:errors.append("missing general fractional seeks for "+activity)
+    for cross in info.get("raw_sign_transitions",[]):
+        if not any(abs(t-cross["midpoint_time_s"])<1e-8 for t in times):errors.append("unprobed quaternion sign-transition midpoint")
+    for phase in ("saved_blend_reopened","baked_glb_reimported"):
+        for t in times:
+            if not any(c.get("phase")==phase and c.get("activity_id")==activity and abs(c.get("time_s",-1)-t)<1e-8 for c in receipt.get("checks",[])):
+                errors.append("missing adaptive fractional transport "+activity+" / "+phase+" / "+str(t))
 for name in ("aquatic-prototypes.blend","aquatic-prototypes.glb","aquatic-native-contact-sheet.png"):
     if not (out/name).is_file():errors.append("missing product "+name)
 for phase in ("native-ik","reopened-blend","consumer"):

@@ -308,7 +308,7 @@ def context_visibility(activity):
     bpy.data.objects["R246 rigid sponge proxy"].hide_render=activity!="bathing_seated_wash"
 
 FULL=set(AQUATIC);IDS=list(AQUATIC)
-clips=[];actions={};tracks={};checks=[];replay_reference={};activity_state=[];clip_inputs={}
+clips=[];actions={};tracks={};checks=[];replay_reference={};activity_state=[];clip_inputs={};interpolation={}
 for activity in IDS:
     clip=AQUATIC[activity]
     sample_ids=list(range(len(clip["frames"]))) if activity in FULL and not QUICK else sorted(set(np.linspace(0,len(clip["frames"])-1,5,dtype=int).tolist()))
@@ -324,13 +324,23 @@ for activity in IDS:
     # Keyframe original source armature. Controls are separate and never replace its 163 bones.
     rig.animation_data_clear();rig.animation_data_create()
     action=bpy.data.actions.new(CASE["id"]+" / "+activity);action.use_fake_user=True;rig.animation_data.action=action
-    for ti,poses in zip(times,bone_basis):
+    previous={};previous_raw={};crossings=[];corrected_keys=0
+    for key_index,(ti,poses) in enumerate(zip(times,bone_basis)):
         for n,(loc,rot,scale) in zip(NAMES,poses):
+            raw=rot.copy();rot=rot.copy()
+            if n in previous_raw and previous_raw[n].dot(raw)<0:
+                crossings.append({"bone":n,"start_time_s":times[key_index-1],"end_time_s":ti,"midpoint_time_s":(times[key_index-1]+ti)/2,"raw_adjacent_quaternion_dot":float(previous_raw[n].dot(raw))})
+            if n in previous and previous[n].dot(rot)<0:
+                rot.negate();corrected_keys+=1
+            if n in previous:assert previous[n].dot(rot)>=0,"native quaternion hemisphere continuity"
+            previous[n]=rot.copy();previous_raw[n]=raw
             pb=rig.pose.bones[n];pb.location=loc;pb.rotation_quaternion=rot;pb.scale=scale
             pb.keyframe_insert("location",frame=1+ti*24,group=n);pb.keyframe_insert("rotation_quaternion",frame=1+ti*24,group=n)
     curves=list(action.fcurves) if hasattr(action,"fcurves") else [fc for layer in action.layers for strip in layer.strips for bag in strip.channelbags for fc in bag.fcurves]
     for fc in curves:
         for key in fc.keyframe_points:key.interpolation="LINEAR"
+    interpolation[activity]={"native_key_interpolation":"LINEAR with continuous quaternion hemisphere","corrected_quaternion_keys":corrected_keys,"raw_sign_transitions":crossings,
+        "fractional_replay_times_s":sorted({.3125,.7291666666666666}|{c["midpoint_time_s"] for c in crossings})}
     actions[activity]=action.name;tracks[activity]={"times":times,"world":np.array(W_all)};clip_inputs[activity]=clip
     row={"activity_id":activity,"compiler_clip":clip,"frames":rows,"sample_scope":"all authored 24 fps frames" if len(sample_ids)==len(clip["frames"]) else "five critical keys only; sparse interpolation is not qualified"}
     clips.append(row)
@@ -384,7 +394,7 @@ for (activity,t),expected in replay_reference.items():
     checks.append({"activity_id":activity,"time_s":t,"phase":"baked_blend_action","max_bidirectional_error_m":err})
 for activity in IDS:
     if activity in actions:
-        for t in (.3125,.7291666666666666):
+        for t in interpolation[activity]["fractional_replay_times_s"]:
             choose_action(activity,t)
             replay_reference[(activity,t)]=evaluated(skin).copy()
 assert max(c["max_bidirectional_error_m"] for c in checks)<5e-5,"full-weight native/export-basis transport error"
@@ -483,7 +493,8 @@ transport="PASS" if worst<5e-5 else "FAIL"
 receipt={"schema":"oneirifact.aquatic-native-consumer-receipt/v1","status":transport+"_NATIVE_CONSUMER_TRANSPORT","realism":"HOLD_AUTHORED_KINEMATIC_PROTOTYPE","case":CASE,
  "actual_footwear":"barefoot; no footwear meshes in native render or body GLB",
  "source_head_commit":os.environ.get("SOURCE_HEAD_SHA"),"run_id":os.environ.get("GITHUB_RUN_ID"),"blender_version":bpy.app.version_string,
- "time_mapping":{"authored_blend":"frame=1+24*time_s","imported_glb":"frame=observed_action_first_frame+24*time_s","fractional_seek":"Two off-key samples per aquatic clip, compared after reopen and reimport"},
+ "time_mapping":{"authored_blend":"frame=1+24*time_s","imported_glb":"frame=observed_action_first_frame+24*time_s","fractional_seek":"Two general off-key samples per clip plus every observed raw quaternion sign-transition midpoint, compared after reopen and reimport"},
+ "interpolation":interpolation,
  "activities":activity_state,"videos":video_manifest,"export":export,"checks":checks,"marker_import_guards":marker_import_guards,"worst_transport_error_m":worst,"transport_tolerance_m":5e-5,
  "contact_acceptance":"SEPARATE_AQUATIC_OBSERVATION_CRITIC_PENDING","geometry_preservation":"Original 13380 vertices/26756 triangles,163 source bones,3packed influence sets retained; source rest-bind fitting precedes animation.",
  "props":{"water":"Static world surface and bottom context only","tub":"Static exact context floor, rim and seat, walls omitted for review cutaway","sponge":"Rigid original-wrist child in native scene/render only; actual mesh center observed; no grip/contact admission"},

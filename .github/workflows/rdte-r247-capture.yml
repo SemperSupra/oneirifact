@@ -1,0 +1,31 @@
+name: R247 primary-linked capture intake and donor qualification
+on:
+  pull_request:
+    branches: [rdte/r245-actual-motion-consumer]
+    paths: ['experiments/r247/**', '.github/workflows/rdte-r247-capture.yml']
+permissions:
+  contents: read
+jobs:
+  source-intake:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 Node24
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Verify source head and fetch only selected primary-linked captures
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD_SHA"
+          python3 experiments/r247/capture/intake.py "$RUNNER_TEMP/r247-source-intake"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2 Node24
+        if: always()
+        with:
+          name: r247-two-selected-capture-intake
+          path: ${{ runner.temp }}/r247-source-intake
+          retention-days: 30
+          if-no-files-found: error

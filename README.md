@@ -6,7 +6,7 @@ Oneirifact is a procedural 3D creation and exploration project. Its goal is to m
 
 ## Release status
 
-The interactive browser preview is in preparation and is not yet available. This repository currently contains the public project showcase and its delivery checks, not the procedural engine. No product binaries or engine source are distributed at this stage.
+The read-only [Anatomy Explorer](https://sempersupra.github.io/oneirifact/anatomy/) reference preview and renderer showcase are available online. The native procedural editor is not yet released. This repository contains the public showcase and its delivery checks, not the procedural engine. No product binaries or engine source are distributed at this stage.
 
 Verified releases will include supported features, limitations, build and test instructions, and applicable licensing notices.
 
@@ -35,4 +35,4 @@ Questions are welcome through the [issue tracker](https://github.com/SemperSupra
 
 Open `anatomy/` from the published site. The responsive read-only web tier uses the existing local Model Viewer dependency. It includes separate R222 reference layers, R223 female CT registration candidate, R225 pineal recovery and R226 identity and registration receipts. Default image mode avoids a 3D transfer until requested. Browser meshes are explicitly reduced display derivatives where needed; never substitute them for full reference or native editable source. Attribution and source archive digests are carried with the catalog. No medical, complete anatomy or native rig claim.
 
-Rebuild with Python 3.12, NumPy 2.3.5, trimesh 4.6.8 and fast-simplification 0.1.13. Supply the six pinned, rights-cleared ZIPs named male, female, regional, pineal, identity and registration (see gallery/build_anatomy.py) in an input directory, then run `python gallery/build_anatomy.py INPUT_DIRECTORY` and the existing gallery/inspector builds. CI retrieves these versioned artifacts by ID, checks the SHA-256 of every input, and fails closed if they expire or differ. Original source artifacts remain separate from the deployed viewer. No credentials are required by the browser.
+For an exact display rebuild with Python 3.12+ and curl, run `python3 gallery/restore_anatomy_release.py` (fresh output directory). It retrieves the versioned public release locked by `gallery/anatomy-release-lock.json`, verifies the SHA-256 and every asset before restoring. An offline previously obtained exact pack can be supplied with `--source PATH`. CI uses this same restore path and browser tests; it no longer needs expiring upstream Actions artifacts for the anatomy display corpus. Raw reference generation is separate: `gallery/build_anatomy.py` with the six original pinned inputs and NumPy 2.3.5, trimesh 4.6.8, fast-simplification 0.1.13. No credentials are required by the browser.

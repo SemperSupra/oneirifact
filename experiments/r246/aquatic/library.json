@@ -1,0 +1,56 @@
+{
+  "schema": "oneirifact.aquatic-activity-library/v1",
+  "id": "original-aquatic-kinematic-intent",
+  "version": "0.1.0",
+  "authorship": "Original analytic authored trajectories; no captured motion or physiological calibration.",
+  "coordinates": "metres; +Y world up, +Z forward travel, +X left; xyzw quaternions",
+  "evaluation_order": ["source morphology", "measured source bind and skin anchors", "resolve context", "compile target intent", "native consumer IK", "observe actual geometry", "independent critic"],
+  "activities": {
+    "swimming_front_crawl": {
+      "activity_family": "swimming",
+      "implementation": "AUTHORED_KINEMATIC_PROTOTYPE",
+      "named_stroke": "front crawl",
+      "period_s": 2.4,
+      "default_cycles": 2,
+      "loop": true,
+      "root_prone_rotation_x_deg": 90,
+      "body_roll_deg": 22,
+      "arm_longitudinal_reach_ratio": 0.79,
+      "arm_vertical_radius_ratio": 0.43,
+      "arm_lateral_offset_ratio": 0.10,
+      "flutter_cycles_per_stroke": 3,
+      "leg_extension_ratio": 0.94,
+      "kick_amplitude_leg_ratio": 0.09,
+      "plantar_flexion_deg": 38,
+      "plantar_flexion_amplitude_deg": 7,
+      "breathing_side": "R",
+      "breathing_turn_deg": 62,
+      "breathing_recovery_window": [0.55, 0.95],
+      "supported_footwear": ["barefoot"],
+      "limits": ["Targets and head-turn intent only; airway clearance, real stroke timing, joint limits, forces, drag and buoyancy are unqualified.", "No terrain, ground or water support contact is asserted.", "No automatic land-to-water transition or wall push-off."]
+    },
+    "bathing_seated_wash": {
+      "activity_family": "bathing",
+      "implementation": "AUTHORED_KINEMATIC_PROTOTYPE",
+      "named_action": "tub-seated chest washing with sponge",
+      "period_s": 3.2,
+      "default_cycles": 2,
+      "loop": true,
+      "hip_above_seat_leg_ratio": 0.10,
+      "foot_forward_leg_ratio": 0.72,
+      "wash_radius_stature_ratio": 0.019,
+      "sponge_standoff_stature_ratio": 0.024,
+      "sponge_radius_stature_ratio": 0.018,
+      "head_down_deg": 12,
+      "supported_footwear": ["barefoot"],
+      "limits": ["Seat, sole, rim and sponge contacts are authored intent, not observed collision or load support.", "Tub entry/exit and seated-to-standing transitions are UNSUPPORTED in this version.", "Measured chest skin anchor is a donor surface witness, not a qualified palm-contact patch."]
+    }
+  },
+  "qualification": {
+    "kinematic_intent": "AUTHORED_PROTOTYPE",
+    "native_consumer": "NOT_RUN",
+    "realism": "NOT_QUALIFIED",
+    "physics": "NOT_QUALIFIED",
+    "observed_contacts": "NOT_QUALIFIED"
+  }
+}

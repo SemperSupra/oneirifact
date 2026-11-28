@@ -34,14 +34,14 @@ let child,ws,stderr="";try{
   async function val(expression){const r=await call("Runtime.evaluate",{expression,returnByValue:true});if(r.exceptionDetails)throw Error("evaluation failed");return r.result.value}
   async function until(expression){for(let i=0;i<160;i++){try{if(await val(expression))return}catch{}await wait(250)}throw Error("witness timeout: "+expression)}
   const lock=JSON.parse(await readFile(resolve('gallery/anatomy-release-lock.json'),'utf8'));
-  const extended=process.env.ANATOMY_EXTENDED==='1'||lock.datasets===6;
-  assert([4,6].includes(lock.datasets),'supported pinned catalog count');
+  const extended=lock.datasets>=6;
+  assert([4,6,7].includes(lock.datasets),'supported pinned catalog count');
   await call("Page.enable");await call("Runtime.enable");
   for(const size of [[1280,900],[768,1024],[390,844],[844,390]]){
     await call("Emulation.setDeviceMetricsOverride",{width:size[0],height:size[1],deviceScaleFactor:1,mobile:false});
     await call("Page.navigate",{url:base+"anatomy/"});
     await until("document.title.includes('Anatomy Explorer') && document.getElementById('status').dataset.state==='image' && document.getElementById('preview').naturalWidth>0");
-    assert(await val("document.getElementById('dataset').options.length==="+(extended?6:4)+" && !document.querySelector('model-viewer').hasAttribute('src')"));
+    assert(await val("document.getElementById('dataset').options.length==="+lock.datasets+" && !document.querySelector('model-viewer').hasAttribute('src')"));
     const sex=size[0]===390||size[0]===768?'female':'male';
     await val("(()=>{const s=document.getElementById('dataset');s.value='"+sex+"';s.dispatchEvent(new Event('change'));const l=document.getElementById('layer');l.value='"+sex+"-skeletal';l.dispatchEvent(new Event('change'));document.getElementById('start').click();return true})()");
     await until("document.getElementById('status').dataset.state==='loaded' && document.querySelector('model-viewer').loaded");
@@ -66,7 +66,7 @@ let child,ws,stderr="";try{
   // Separate donor candidate and recovered organ must also render, not just list.
   await call("Page.navigate",{url:base+"anatomy/"});
   await until("document.getElementById('status').dataset.state==='image'");
-  for(const id of extended?['ct','pineal','pelvis','digits']:['ct','pineal']){
+  for(const id of lock.datasets===7?['ct','pineal','pelvis','digits','mammary']:extended?['ct','pineal','pelvis','digits']:['ct','pineal']){
     await val("(()=>{const d=document.getElementById('dataset');d.value='"+id+"';d.dispatchEvent(new Event('change'));document.getElementById('start').click();return true})()");
     await until("document.getElementById('status').dataset.state==='loaded' && document.querySelector('model-viewer').loaded");
     if(extended&&['pelvis','digits'].includes(id)){
@@ -82,6 +82,16 @@ let child,ws,stderr="";try{
       await wait(250);
       assert(await val("(()=>{const r=document.querySelector('model-viewer').getBoundingClientRect();return Math.min(innerHeight,r.bottom)-Math.max(0,r.top)>=160})()"));
       const shot=await call("Page.captureScreenshot",{format:"png"});if(process.env.RUNNER_TEMP)await writeFile(join(process.env.RUNNER_TEMP,"anatomy-"+id+".png"),Buffer.from(shot.data,"base64"));
+    }
+    if(id==='mammary'){
+      assert(await val("document.getElementById('layer').options.length===16 && !document.getElementById('dataset-receipt').hidden"));
+      const ids=await val("Array.from(document.getElementById('layer').options).map(x=>x.value)");
+      for(const k of ids.slice(1)){
+        await val("(()=>{const l=document.getElementById('layer');l.value="+JSON.stringify(k)+";l.dispatchEvent(new Event('change'));return true})()");
+        await until("document.getElementById('status').dataset.state==='loaded' && document.querySelector('model-viewer').loaded");
+      }
+      await until("document.getElementById('inventory').children.length===1");
+      console.log("MAMMARY_ALL_16_LOADED");
     }
     await val("document.getElementById('image').click()");
     console.log("ANATOMY_SEPARATE_REFERENCE_PASS",id);

@@ -25,31 +25,27 @@ def diagnostics(raw):
     for delimiter in (",",";","\t"," "):
         widths[repr(delimiter)]=dict(Counter(len(x.split(delimiter)) if delimiter!=" " else len(x.split()) for x in lines))
     return {"data_lines":len(lines),"widths":widths}
-def parse(raw):
+def parse(raw,author):
     text=raw.decode("utf-8-sig")
     headers=[x.strip() for x in text.splitlines() if x.lstrip().startswith("#")]
     expected="id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID"
     cols=[x.split("=",1)[1].strip() for x in headers if x.lower().startswith("# columns") and "=" in x]
-    if cols!=[expected]:return None
+    if cols!=[expected]:return None,"declared_header"
+    # Follow the pinned author reader's literal comma split, not a CSV dialect
+    # inferred from optional free-text description columns.
     lines=[x.strip() for x in text.splitlines() if x.strip() and not x.lstrip().startswith("#")]
-    try:rows=list(csv.reader(lines,strict=True))
-    except csv.Error:return None
-    # The original author reader explicitly consumes age/height/weight
-    # metadata before landmark rows. Do not parse or expose those values.
-    if len(rows)<4 or any(len(r)!=2 for r in rows[:3]):return None
-    out={}
-    for r in rows[3:]:
-        # The original MATLAB reader consumes columns 2/3/4 regardless of
-        # optional trailing metadata. Require all columns through label.
-        if len(r)<14 or len(r)>32:return None
+    rows=[[x.strip() for x in line.split(",")] for line in lines]
+    if len(rows)<4 or any(len(r)!=2 for r in rows[:3]):return None,"three_metadata_rows"
+    names=author.get("landmark_names",[])
+    if len(names)!=len(rows)-3 or len(set(names))!=len(names):return None,"author_landmark_order_count"
+    result={}
+    for name,r in zip(names,rows[3:]):
+        if len(r)<14 or len(r)>32:return None,"landmark_width"
         try:x,y,z=(float(r[i]) for i in (1,2,3))
-        except ValueError:return None
-        if not np.isfinite([x,y,z]).all():return None
-        label=r[11].strip()
-        if not label or label in out:return None
-        # Exact author transform: [line{3}, -line{4}, line{2}].
-        out[label]=np.array([y,-z,x])
-    return out if out else None
+        except ValueError:return None,"coordinate_parse"
+        if not np.isfinite([x,y,z]).all():return None,"nonfinite"
+        result[name]=np.array([y,-z,x])
+    return result,"ok"
 def run(out):
     out.mkdir(parents=True,exist_ok=False)
     meta=json.loads(get(API,2<<20))
@@ -69,6 +65,18 @@ def run(out):
                 # Record actual source parsing statements without any case values.
                 lines=[line.strip() for line in s.splitlines() if re.search(r"\b(readmatrix|readtable|textscan|fscanf|sscanf|importdata|dlmread|fgetl|fgets|strsplit|split|str2double|str2num|feof)\b|line\s*[({]",line,re.I)]
                 source_readers[p.name]={"sha256":hashlib.sha256(b).hexdigest(),"reader_statements":lines[:40]}
+                if p.name.lower()=="getlandmarks.m":
+                    # Extract only literal semantic landmark names from the
+                    # author source declaration. Never extract subject values.
+                    clean="\n".join(x.split("%",1)[0] for x in s.splitlines())
+                    block=re.search(r"\blandmark\s*=\s*\{(.*?)\}\s*;",clean,re.S)
+                    names=re.findall(r"'([A-Za-z][A-Za-z0-9_]*)'",block.group(1)) if block else []
+                    if not names:
+                        pairs=re.findall(r"\blandmark\s*\{\s*(\d+)\s*\}\s*=\s*'([A-Za-z][A-Za-z0-9_]*)'\s*;",clean)
+                        if pairs and sorted(int(k) for k,v in pairs)==list(range(1,len(pairs)+1)):
+                            names=[v for k,v in sorted(pairs,key=lambda x:int(x[0]))]
+                    source_readers[p.name]["landmark_names"]=names
+                    source_readers[p.name]["landmark_declaration_lines"]=[x.strip() for x in s.splitlines() if re.search(r"\blandmark\s*(=|\{)",x,re.I)][:50]
         report["source_readers"]=source_readers
         author=source_readers.get("getLandmarks.m",{})
         need(author.get("sha256")=="2deed7b048ab7ba5511f0451b8736a8ff866cc6f69488420ca267d4005e53e82","author reader pin")
@@ -79,9 +87,9 @@ def run(out):
             obs=next((j for j in (1,2) if any(re.fullmatch(r"observer[_ -]?"+str(j),x,re.I) for x in p.parts)),None)
             if obs is None:continue
             counts[obs]+=1
-            b=z.read(i);a=parse(b)
+            b=z.read(i);a,reason=parse(b,author)
             if a is None:
-                fail["declared_fcsv_parse_or_label_hold"]+=1
+                fail[reason]+=1
                 if schema is None:
                     schema=diagnostics(b)
                     # FCSV declared column names are format metadata, not patient data.

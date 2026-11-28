@@ -1,0 +1,109 @@
+name: R233 durable human design and anatomy assets
+on:
+  pull_request:
+    branches: [main]
+    paths: ['gallery/qualify_r233_delivery.py','.github/workflows/r233-human-design-assets.yml']
+  push:
+    branches: [main]
+    paths: ['gallery/qualify_r233_delivery.py','.github/workflows/r233-human-design-assets.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualify:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    outputs:
+      design: ${{ steps.pack.outputs.design }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify exact candidate bytes and prepare two versioned assets
+        id: pack
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --max-time 120 --max-filesize 67108864 https://github.com/SemperSupra/oneirifact/releases/download/anatomy-display-r231-v2/anatomy-display-r231-v2.zip -o "$RUNNER_TEMP/base.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15257186134/zip > "$RUNNER_TEMP/mammary.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15256567522/zip > "$RUNNER_TEMP/morph.zip"
+          python3 gallery/qualify_r233_delivery.py "$RUNNER_TEMP/base.zip" "$RUNNER_TEMP/mammary.zip" "$RUNNER_TEMP/morph.zip" "$RUNNER_TEMP/qualified"
+          echo "design=$(sha256sum "$RUNNER_TEMP/qualified/adult-design-r233-v1.zip" | cut -d ' ' -f1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r233-qualified-human-design-assets
+          path: ${{ runner.temp }}/qualified
+          retention-days: 30
+          if-no-files-found: error
+  live-base:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - name: Independently verify exact current released base and all manifest assets
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,sys,time
+          from pathlib import Path
+          sys.path.insert(0,"tests")
+          import verify_delivery as v
+          lock=json.loads(Path("gallery/anatomy-release-lock.json").read_text())
+          for attempt in range(5):
+              try:
+                  raw=v.fetch(v.BASE+v.MANIFEST,v.MAX_MANIFEST)
+                  rows=v.validate(json.loads(raw));index={r["path"]:r for r in rows}
+                  for name in ("anatomy/index.html","anatomy/viewer.css","anatomy/viewer.js"):
+                      assert index[name]["sha256"]==hashlib.sha256((Path("site")/name).read_bytes()).hexdigest(),name
+                  cat=json.loads(v.fetch(v.BASE+"anatomy/data/catalog.json",1<<20))
+                  models=[m for d in cat["datasets"] for m in d["layers"]]
+                  assert len(cat["datasets"])==lock["datasets"] and len(models)==lock["models"]
+                  for m in models:
+                      r=index["anatomy/"+m["file"]]
+                      assert r["sha256"]==m["sha256"] and r["bytes"]==m["bytes"]
+                  count=v.verify(hashlib.sha256(raw).hexdigest())
+                  print("R233_LIVE_BASE_VERIFIED",v.BASE+"anatomy/",count,len(models),lock["tag"])
+                  break
+              except Exception as e:
+                  print("LIVE_PROBE",attempt+1,type(e).__name__,str(e),flush=True)
+                  if attempt==4:raise
+                  time.sleep(10)
+          PY
+  publish:
+    needs: qualify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: anatomy-display-r233-v3
+      ANATOMY_SHA: d72fbb77b1b0603005131bbd387a36ce1c2c9965dfce13a30150a0f4b22d56be
+      DESIGN_SHA: ${{ needs.qualify.outputs.design }}
+    steps:
+      - name: Publish version once and read both assets back anonymously
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/publish" "$RUNNER_TEMP/readback"
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name r233-qualified-human-design-assets --dir "$RUNNER_TEMP/publish"
+          cd "$RUNNER_TEMP/publish"
+          echo "$ANATOMY_SHA  anatomy-display-r233-v3.zip" | sha256sum --check --strict
+          echo "$DESIGN_SHA  adult-design-r233-v1.zip" | sha256sum --check --strict
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "R233 anatomical reference and adult design display assets" --notes "Seven reference datasets and 53 models; separate CC0 generic adult female design browser. Per-source attribution and explicit research limitations. No raw donor scans, clinical/native anatomy or private source." --latest=false anatomy-display-r233-v3.zip adult-design-r233-v1.zip receipt.json
+          fi
+          for n in anatomy-display-r233-v3.zip adult-design-r233-v1.zip; do
+            curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --max-time 120 --max-filesize 67108864 "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$n" -o "$RUNNER_TEMP/readback/$n"
+          done
+          cd "$RUNNER_TEMP/readback"
+          echo "$ANATOMY_SHA  anatomy-display-r233-v3.zip" | sha256sum --check --strict
+          echo "$DESIGN_SHA  adult-design-r233-v1.zip" | sha256sum --check --strict
+          echo R233_PUBLIC_ASSET_READBACK_PASS

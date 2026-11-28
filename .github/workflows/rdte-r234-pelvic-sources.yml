@@ -1,0 +1,29 @@
+name: R234 female pelvic source and independent landmark critic
+on:
+  pull_request:
+    branches: [rdte/r233-female-source-acquisition]
+    paths: ['experiments/r234/pelvic_sources.py','.github/workflows/rdte-r234-pelvic-sources.yml']
+permissions:
+  contents: read
+jobs:
+  source:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify public source access, rights and aggregate paired landmarks
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5
+          python experiments/r234/pelvic_sources.py "$RUNNER_TEMP/result"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r234-female-source-critic-receipt
+          path: ${{ runner.temp }}/result
+          retention-days: 30
+          if-no-files-found: error

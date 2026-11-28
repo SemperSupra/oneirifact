@@ -72,6 +72,7 @@ func layer(id,policy string,deps []string,g Mesh,a []Vec)Layer{
  l.Revision=digest(l)
  return l
 }
+func field(name string,value any) string {return digest(struct{Name string;Value any}{name,value})}
 func Build(s Source)(Result,error){
  if e:=Validate(s);e!=nil{return Result{},e}
  h:=s.Shape;theta:=s.Pose.HingeDegrees*math.Pi/180
@@ -80,18 +81,18 @@ func Build(s Source)(Result,error){
  origin:=Vec{};j:=Vec{h.Proximal,0,0};x:=Vec{math.Cos(theta),math.Sin(theta),0};y:=Vec{-math.Sin(theta),math.Cos(theta),0};z:=Vec{0,0,1}
  tip:=add(j,mul(x,h.Distal))
  // Rigid geometry and attachment identities are independently materialized.
- p:=layer("bone-proximal","rigid-rest",[]string{rest},prism(origin,j,h.BoneWidth,h.BoneWidth),[]Vec{origin,j})
- d:=layer("bone-distal","rigid-pose",[]string{rest,pose,p.Revision},prism(j,tip,h.BoneWidth,h.BoneWidth),[]Vec{j,tip})
+ p:=layer("bone-proximal","rigid-rest",[]string{field("proximal_length",h.Proximal),field("bone_width",h.BoneWidth)},prism(origin,j,h.BoneWidth,h.BoneWidth),[]Vec{origin,j})
+ d:=layer("bone-distal","rigid-pose",[]string{field("distal_length",h.Distal),pose,p.Revision},prism(j,tip,h.BoneWidth,h.BoneWidth),[]Vec{j,tip})
  // Anchors are defined in each segment's local frame, not mesh vertex indices.
  a:=Vec{h.Proximal*.2,h.AttachmentOffset,0}
  b:=add(add(j,mul(x,h.Distal*.8)),mul(y,h.AttachmentOffset))
  length:=norm(sub(b,a));if length<.02{return Result{},errors.New("degenerate attachment path")}
  w:=math.Sqrt(h.MuscleVolume/length)
- t:=layer("muscle-proxy","prescribed-volume-prism",[]string{rest,pose,p.Revision,d.Revision},prism(a,b,w,w),[]Vec{a,b})
+ t:=layer("muscle-proxy","prescribed-volume-prism",[]string{field("attachment_offset",h.AttachmentOffset),field("muscle_volume",h.MuscleVolume),p.Revision,d.Revision},prism(a,b,w,w),[]Vec{a,b})
  // Organ surrogate is an independently sized rigid carried compartment.
  c:=Vec{h.Proximal*.5,-h.AttachmentOffset,0};ux,uy:=Vec{1,0,0},Vec{0,1,0}
- cavity:=layer("cavity-proxy","rigid-carried-cavity",[]string{rest,p.Revision},box(c,ux,uy,z,h.CavityDimensions),[]Vec{c})
- organ:=layer("organ-proxy","rigid-carried-organ",[]string{rest,cavity.Revision},box(c,ux,uy,z,h.OrganDimensions),[]Vec{c})
+ cavity:=layer("cavity-proxy","rigid-carried-cavity",[]string{field("attachment_offset",h.AttachmentOffset),field("cavity_dimensions",h.CavityDimensions),p.Revision},box(c,ux,uy,z,h.CavityDimensions),[]Vec{c})
+ organ:=layer("organ-proxy","rigid-carried-organ",[]string{field("organ_dimensions",h.OrganDimensions),cavity.Revision},box(c,ux,uy,z,h.OrganDimensions),[]Vec{c})
  out.Layers=[]Layer{p,d,t,cavity,organ}
  return out,nil
 }
@@ -111,4 +112,20 @@ func OBJ(r Result)[]byte{
   offset+=len(l.Geometry.Vertices)
  }
  return []byte(text)
+}
+
+// ChangeSet describes exact content reuse, not an assertion of reduced compute.
+// Build and Verify recompute the complete bounded result before commit.
+type ChangeSet struct { PreviousSource string; NextSource string; Changed []string; Reused []string }
+func Update(previous Source,old Result,next Source)(Result,ChangeSet,error){
+ if err:=Verify(previous,old);err!=nil{return Result{},ChangeSet{},err}
+ result,err:=Build(next);if err!=nil{return Result{},ChangeSet{},err}
+ if err=Verify(next,result);err!=nil{return Result{},ChangeSet{},err}
+ revisions:=map[string]string{}
+ for _,l:=range old.Layers{revisions[l.ID]=l.Revision}
+ changes:=ChangeSet{PreviousSource:old.SourceDigest,NextSource:result.SourceDigest,Changed:[]string{},Reused:[]string{}}
+ for _,l:=range result.Layers{
+  if revisions[l.ID]==l.Revision{changes.Reused=append(changes.Reused,l.ID)}else{changes.Changed=append(changes.Changed,l.ID)}
+ }
+ return result,changes,nil
 }

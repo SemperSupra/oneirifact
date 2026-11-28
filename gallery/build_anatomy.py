@@ -32,36 +32,59 @@ def glb(raw):
     return trimesh.load(io.BytesIO(raw),file_type="glb",force="scene",process=False)
 def scene_counts(sc):
     return sum(len(sc.geometry[sc.graph[n][1]].faces) for n in sc.graph.nodes_geometry)
+def reduce_mesh(m,target):
+    # GLB transport can duplicate vertices at flat normal/material seams.
+    # Quadric edge collapse requires connected geometry, not triangle soup.
+    # Work on a display-only copy; preserve the original donor mesh separately.
+    material=getattr(m.visual,"material",None)
+    q=trimesh.Trimesh(vertices=m.vertices.copy(),faces=m.faces.copy(),process=False)
+    q.merge_vertices(digits_vertex=9)
+    q.update_faces(q.nondegenerate_faces())
+    q.update_faces(q.unique_faces())
+    q.remove_unreferenced_vertices()
+    if not len(q.faces):
+        raise ValueError("all display triangles degenerate")
+    if len(q.faces)>target:
+        last=q
+        for aggression in (7,10):
+            candidate=q.simplify_quadric_decimation(face_count=max(4,target),aggression=aggression)
+            if len(candidate.faces)>0 and np.isfinite(candidate.vertices).all() and len(candidate.faces)<len(last.faces):
+                last=candidate
+            if len(last.faces)<=target:break
+        q=last
+    if material is not None:q.visual=trimesh.visual.TextureVisuals(material=material)
+    return q
 def compact(raw,cap):
     s=glb(raw);nodes=sorted(s.graph.nodes_geometry);assert nodes
     original=scene_counts(s)
     if original<=cap:return raw,original,original,len(nodes)
     out=trimesh.Scene()
-    # Keep every source node. Distribute a small minimum to small features;
-    # remaining budget is proportional to source triangle count.
     counts={n:len(s.geometry[s.graph[n][1]].faces) for n in nodes}
     floors={n:min(v,32) for n,v in counts.items()};remaining=cap-sum(floors.values())
     assert remaining>0
     excess=sum(counts[n]-floors[n] for n in nodes)
+    over=[]
     for n in nodes:
         tf,g=s.graph[n];m=s.geometry[g].copy();m.apply_transform(tf)
         target=min(counts[n],floors[n]+int(remaining*(counts[n]-floors[n])/excess))
         if target<len(m.faces):
-            original_mesh=m
             try:
-                q=m.simplify_quadric_decimation(face_count=max(4,target))
-                if len(q.faces)>0 and np.isfinite(q.vertices).all():
-                    q.visual=trimesh.visual.TextureVisuals(material=original_mesh.visual.material)
-                    m=q
-            except (ValueError,RuntimeError,IndexError):pass
+                m=reduce_mesh(m,target)
+            except (ValueError,RuntimeError,IndexError) as exc:
+                # Preserve the named geometry rather than silently dropping it;
+                # the final budget gate still rejects excess.
+                print("LOD_FALLBACK",n,type(exc).__name__,len(m.faces),target,flush=True)
         assert len(m.faces)>0 and np.isfinite(m.vertices).all(),n
+        if len(m.faces)>target:over.append((n,len(m.faces),target))
         out.add_geometry(m,node_name=n,geom_name=n)
     result=out.export(file_type="glb");verify=glb(result)
     assert set(verify.graph.nodes_geometry)==set(nodes)
     display=scene_counts(verify)
+    print("LOD_BUDGET",original,display,cap,"over-target",sorted(over,key=lambda x:x[1]-x[2],reverse=True)[:10],flush=True)
     assert display<=cap*1.10,(display,cap)
     return result,original,display,len(nodes)
 def model(out,key,label,raw,cap=90000):
+    print("BUILD_LAYER",key,flush=True)
     data,source,display,nodes=compact(raw,cap)
     return {"id":key,"label":label,"file":write(out,key+".glb",data),"bytes":len(data),"sha256":sha(data),"source_triangles":source,"display_triangles":display,"nodes":nodes,"fidelity":"Reduced browser display geometry" if source!=display else "Original reference geometry"}
 def base(inp,out,sex):

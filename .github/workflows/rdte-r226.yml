@@ -1,0 +1,69 @@
+name: R226 granular skeletal identity and fair registration
+on:
+  pull_request:
+    branches: [rdte/r225-anatomical-identity-recovery]
+    paths: ['experiments/r226/**','.github/workflows/rdte-r226.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  identity:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve pinned public evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          for row in 'recovery 15251336172' 'male 15238389268' 'female 15238269509' 'ct 15238834402'; do
+            read -r name id <<< "$row"
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/$id/zip > "$RUNNER_TEMP/input/$name.zip"
+          done
+      - name: Execute explicit individual-bone and dentition identity screen
+        run: python3 experiments/r226/identity.py "$RUNNER_TEMP/input" "$RUNNER_TEMP/identity"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r226-granular-identity
+          path: ${{ runner.temp }}/identity
+          retention-days: 30
+          if-no-files-found: error
+  registration:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve pinned CT and HRA data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          for row in 'female 15238269509' 'ct 15238834402'; do
+            read -r name id <<< "$row"
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/$id/zip > "$RUNNER_TEMP/input/$name.zip"
+          done
+      - name: Refit both comparison methods independently for each held-out bone
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5
+          python experiments/r226/registration.py "$RUNNER_TEMP/input" "$RUNNER_TEMP/registration"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r226-fair-registration
+          path: ${{ runner.temp }}/registration
+          retention-days: 30
+          if-no-files-found: error

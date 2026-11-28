@@ -35,11 +35,14 @@ def parse(raw,author):
     # inferred from optional free-text description columns.
     lines=[x.strip() for x in text.splitlines() if x.strip() and not x.lstrip().startswith("#")]
     rows=[[x.strip() for x in line.split(",")] for line in lines]
-    if len(rows)<4 or any(len(r)!=2 for r in rows[:3]):return None,"three_metadata_rows"
     names=author.get("landmark_names",[])
-    if len(names)!=len(rows)-3 or len(set(names))!=len(names):return None,"author_landmark_order_count"
+    if len(names)!=len(rows) or len(set(names))!=len(names):return None,"author_landmark_order_count"
+    if [k for k in names if k in ("age","height","weight")]!=["age","height","weight"]:return None,"author_metadata_order"
     result={}
-    for name,r in zip(names,rows[3:]):
+    for name,r in zip(names,rows):
+        if name in ("age","height","weight"):
+            if len(r)!=2:return None,"metadata_width"
+            continue
         if len(r)<14 or len(r)>32:return None,"landmark_width"
         try:x,y,z=(float(r[i]) for i in (1,2,3))
         except ValueError:return None,"coordinate_parse"
@@ -54,7 +57,7 @@ def run(out):
     f=next(f for f in meta["files"] if f["key"]=="landmarks.zip")
     need(f["checksum"]=="md5:"+MD5,"source metadata pin")
     raw=get(f["links"]["self"],4<<20);need(hashlib.md5(raw).hexdigest()==MD5 and hashlib.sha256(raw).hexdigest()==SHA,"source archive pin")
-    report={"schema":"oneirifact.pelvic-paired-critic/v1","archive_sha256":SHA,"license":license,"data_order":"Declared Slicer FCSV x,y,z transformed by author getLandmarks.m to y,-z,x","scope":"Paired observer aggregate geometry only; no population anatomy model or individual records."}
+    report={"schema":"oneirifact.pelvic-paired-critic/v1","archive_sha256":SHA,"license":license,"data_order":"Declared Slicer FCSV x,y,z transformed to y,-z,x; raw transformed coordinates, before author origin subtraction","scope":"Paired observer aggregate raw-coordinate differences only; not the author origin-normalized analysis, a population anatomy model, or individual records."}
     with zipfile.ZipFile(io.BytesIO(raw)) as z:
         need(z.testzip() is None and len(z.infolist())<=1000 and sum(i.file_size for i in z.infolist())<=32<<20,"archive integrity")
         source_readers={}

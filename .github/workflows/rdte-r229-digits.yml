@@ -1,0 +1,41 @@
+name: R229 CT digit component recovery
+on:
+  pull_request:
+    branches: [rdte/r226-granular-identity-fair-registration]
+    paths: ['experiments/r229/**','.github/workflows/rdte-r229-digits.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  digit-components:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve pinned original-frame CT and identity evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15238834402/zip > "$RUNNER_TEMP/input/ct.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15251349301/zip > "$RUNNER_TEMP/input/identity.zip"
+      - name: Inspect edge and vertex components and preserve all original triangles
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.16.3 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r229/digit_components.py "$RUNNER_TEMP/input/ct.zip" "$RUNNER_TEMP/input/identity.zip" "$RUNNER_TEMP/digits"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r229-ct-digit-components
+          path: ${{ runner.temp }}/digits
+          retention-days: 30
+          if-no-files-found: error

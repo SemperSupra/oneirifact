@@ -1,0 +1,70 @@
+name: R231 versioned expanded anatomy display assets
+on:
+  pull_request:
+    branches: [main]
+    paths: ['gallery/qualify_expanded_anatomy_pack.py','.github/workflows/r231-expanded-pack.yml']
+  push:
+    branches: [main]
+    paths: ['gallery/qualify_expanded_anatomy_pack.py','.github/workflows/r231-expanded-pack.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualify-pack:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Restore the exact qualified expanded corpus
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          base=https://github.com/SemperSupra/oneirifact/releases/download
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --max-time 120 --max-filesize 67108864 "$base/anatomy-display-r229-v1/anatomy-display-r229-v1.zip" -o "$RUNNER_TEMP/input/base.zip"
+          if curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --max-time 120 --max-filesize 67108864 "$base/anatomy-display-r231-v2/anatomy-display-r231-v2.zip" -o "$RUNNER_TEMP/input/v2.zip"; then
+            python3 gallery/qualify_expanded_anatomy_pack.py "$RUNNER_TEMP/input/v2.zip" "$RUNNER_TEMP/input/base.zip" "$RUNNER_TEMP/qualified"
+          else
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/15256050572/zip > "$RUNNER_TEMP/input/candidate.zip"
+            python3 gallery/qualify_expanded_anatomy_pack.py "$RUNNER_TEMP/input/candidate.zip" "$RUNNER_TEMP/input/base.zip" "$RUNNER_TEMP/qualified" --outer
+          fi
+      - name: Hostile archive regression controls
+        run: python3 tests/test_anatomy_pack.py -v
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r231-qualified-expanded-pack
+          path: ${{ runner.temp }}/qualified
+          retention-days: 30
+          if-no-files-found: error
+  publish:
+    needs: qualify-pack
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: anatomy-display-r231-v2
+      PACK_SHA: ffac8867db9951a3d721558e7aad8ae9250b00798d4bf65b8c53e3d811ec0947
+    steps:
+      - name: Publish once and independently verify public download
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/publish"
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name r231-qualified-expanded-pack --dir "$RUNNER_TEMP/publish"
+          cd "$RUNNER_TEMP/publish"
+          echo "$PACK_SHA  anatomy-display-r231-v2.zip" | sha256sum --check --strict
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Existing version must match; no replacement"
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Anatomy Explorer expanded reference display assets R231" --notes "Versioned browser display reference corpus: 6 datasets, 37 models; separate historical female pelvis and grouped CT digits. No clinical, native articulated or individual phalanx reconstruction claim. Source attributions and qualification receipts included." --latest=false anatomy-display-r231-v2.zip receipt.json
+          fi
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --max-time 120 --max-filesize 67108864 "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/anatomy-display-r231-v2.zip" -o "$RUNNER_TEMP/public-readback.zip"
+          echo "$PACK_SHA  $RUNNER_TEMP/public-readback.zip" | sha256sum --check --strict
+          echo "R231_PUBLIC_ASSET_READBACK_PASS $TAG $PACK_SHA"

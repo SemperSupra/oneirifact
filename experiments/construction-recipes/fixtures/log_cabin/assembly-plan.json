@@ -1,0 +1,56 @@
+{
+  "description": "Open-front cabin of thirteen crossed notched beams and two pitched roof panels.",
+  "assembly_sequence": [
+    "Place the front sill and rear beam.",
+    "Alternate perpendicular paired side beams and rear beams at half-height courses.",
+    "Place the two thirty-degree roof panels on the side walls."
+  ],
+  "construction_invariants": {
+    "notch_axis_spacing_m": 0.048,
+    "wall_axis_spacing_m": 0.048,
+    "course_step_m": 0.004,
+    "roof_ridge_m": 0.05158845726811989,
+    "wall_top_m": 0.036
+  },
+  "connection_scope": "Nominal half-lap notch alignment; roof seam and structural loading unqualified.",
+  "schema": "oneirifact.construction-review/v1",
+  "id": "log_cabin",
+  "length_unit": "m",
+  "rotation_unit": "degrees",
+  "euler_order": "XYZ",
+  "geometry_authority": "canonical feature graphs evaluated by native Oneirifact",
+  "definition_pin_status": "COMPUTE_WITH_NATIVE_COMPONENT_HASH_BEFORE_ADMISSION",
+  "bom": {
+    "notched_log": 13,
+    "roof_panel": 2
+  },
+  "instance_count": 15,
+  "families": {
+    "notched_log": {
+      "family": "rectangular notched beam",
+      "length_m": 0.064,
+      "cross_section_m": [
+        0.008,
+        0.008
+      ],
+      "notch_centers_m": [
+        -0.024,
+        0.024
+      ],
+      "notch_width_m": 0.0084,
+      "course_step_m": 0.004,
+      "nominal_lateral_clearance_m": 0.0004,
+      "physical_fit": "NOT_QUALIFIED"
+    },
+    "roof_panel": {
+      "family": "flat panel",
+      "size_m": [
+        0.038,
+        0.072,
+        0.003
+      ]
+    }
+  },
+  "physical_fit": "NOT_QUALIFIED",
+  "structural_loads": "NOT_QUALIFIED"
+}

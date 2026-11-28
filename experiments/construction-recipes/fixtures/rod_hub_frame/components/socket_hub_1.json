@@ -1,0 +1,152 @@
+{
+  "schema": "oneirifact.component/v0.1",
+  "id": "socket_hub_1",
+  "name": "socket hub 1",
+  "unit": "m",
+  "graph": {
+    "schema": "oneirifact.graph/v0.1",
+    "name": "socket_hub_1",
+    "unit": "m",
+    "detail": 32,
+    "root": "f13",
+    "features": [
+      {
+        "id": "f0",
+        "op": "sphere",
+        "params": {
+          "radius": 0.06
+        }
+      },
+      {
+        "id": "f1",
+        "op": "cylinder",
+        "params": {
+          "radius": 0.018,
+          "height": 0.075
+        }
+      },
+      {
+        "id": "f2",
+        "op": "rotate",
+        "params": {
+          "rx": 0,
+          "ry": 90.0,
+          "rz": 180.0
+        },
+        "inputs": [
+          "f1"
+        ]
+      },
+      {
+        "id": "f3",
+        "op": "translate",
+        "params": {
+          "x": -0.04,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "inputs": [
+          "f2"
+        ]
+      },
+      {
+        "id": "f4",
+        "op": "difference",
+        "inputs": [
+          "f0",
+          "f3"
+        ]
+      },
+      {
+        "id": "f5",
+        "op": "cylinder",
+        "params": {
+          "radius": 0.018,
+          "height": 0.075
+        }
+      },
+      {
+        "id": "f6",
+        "op": "rotate",
+        "params": {
+          "rx": 0,
+          "ry": 90.0,
+          "rz": 119.99999999999999
+        },
+        "inputs": [
+          "f5"
+        ]
+      },
+      {
+        "id": "f7",
+        "op": "translate",
+        "params": {
+          "x": -0.02,
+          "y": 0.034641016151377546,
+          "z": 0.0
+        },
+        "inputs": [
+          "f6"
+        ]
+      },
+      {
+        "id": "f8",
+        "op": "difference",
+        "inputs": [
+          "f4",
+          "f7"
+        ]
+      },
+      {
+        "id": "f9",
+        "op": "cylinder",
+        "params": {
+          "radius": 0.018,
+          "height": 0.075
+        }
+      },
+      {
+        "id": "f10",
+        "op": "rotate",
+        "params": {
+          "rx": 0,
+          "ry": 35.264389682754654,
+          "rz": 150.0
+        },
+        "inputs": [
+          "f9"
+        ]
+      },
+      {
+        "id": "f11",
+        "op": "translate",
+        "params": {
+          "x": -0.02,
+          "y": 0.011547005383792518,
+          "z": 0.032659863237109045
+        },
+        "inputs": [
+          "f10"
+        ]
+      },
+      {
+        "id": "f12",
+        "op": "difference",
+        "inputs": [
+          "f8",
+          "f11"
+        ]
+      },
+      {
+        "id": "f13",
+        "op": "scale",
+        "params": {
+          "factor": 0.1
+        },
+        "inputs": [
+          "f12"
+        ]
+      }
+    ]
+  }
+}

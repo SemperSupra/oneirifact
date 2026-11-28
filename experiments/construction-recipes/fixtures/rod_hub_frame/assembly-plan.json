@@ -1,0 +1,281 @@
+{
+  "description": "Ten-piece tetrahedral frame: six equal struts and four three-socket hubs.",
+  "assembly_sequence": [
+    "Assemble the triangular base from three hubs and three struts.",
+    "Insert three rising struts.",
+    "Seat the apex hub on all three upper rod ends."
+  ],
+  "hub_centers_m": [
+    [
+      -0.03,
+      -0.017320508075688773,
+      0.006
+    ],
+    [
+      0.03,
+      -0.017320508075688773,
+      0.006
+    ],
+    [
+      0,
+      0.034641016151377546,
+      0.006
+    ],
+    [
+      0,
+      0,
+      0.054989794855663555
+    ]
+  ],
+  "socket_axes": [
+    {
+      "hub": 0,
+      "toward": 1,
+      "axis": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    },
+    {
+      "hub": 0,
+      "toward": 2,
+      "axis": [
+        0.5,
+        0.8660254037844387,
+        0.0
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    },
+    {
+      "hub": 0,
+      "toward": 3,
+      "axis": [
+        0.5,
+        0.2886751345948129,
+        0.816496580927726
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    },
+    {
+      "hub": 1,
+      "toward": 0,
+      "axis": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    },
+    {
+      "hub": 1,
+      "toward": 2,
+      "axis": [
+        -0.5,
+        0.8660254037844387,
+        0.0
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    },
+    {
+      "hub": 1,
+      "toward": 3,
+      "axis": [
+        -0.5,
+        0.2886751345948129,
+        0.816496580927726
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    },
+    {
+      "hub": 2,
+      "toward": 0,
+      "axis": [
+        -0.5,
+        -0.8660254037844387,
+        0.0
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    },
+    {
+      "hub": 2,
+      "toward": 1,
+      "axis": [
+        0.5,
+        -0.8660254037844387,
+        0.0
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    },
+    {
+      "hub": 2,
+      "toward": 3,
+      "axis": [
+        0.0,
+        -0.5773502691896258,
+        0.816496580927726
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    },
+    {
+      "hub": 3,
+      "toward": 0,
+      "axis": [
+        -0.5,
+        -0.2886751345948129,
+        -0.816496580927726
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    },
+    {
+      "hub": 3,
+      "toward": 1,
+      "axis": [
+        0.5,
+        -0.2886751345948129,
+        -0.816496580927726
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    },
+    {
+      "hub": 3,
+      "toward": 2,
+      "axis": [
+        0.0,
+        0.5773502691896258,
+        -0.816496580927726
+      ],
+      "radius_m": 0.0018,
+      "start_distance_m": 0.00025,
+      "end_distance_m": 0.00775
+    }
+  ],
+  "edges": [
+    {
+      "rod": "rod_0_1",
+      "hubs": [
+        0,
+        1
+      ],
+      "center_distance_m": 0.06,
+      "endpoint_inset_m": 0.0015
+    },
+    {
+      "rod": "rod_0_2",
+      "hubs": [
+        0,
+        2
+      ],
+      "center_distance_m": 0.06,
+      "endpoint_inset_m": 0.0015
+    },
+    {
+      "rod": "rod_0_3",
+      "hubs": [
+        0,
+        3
+      ],
+      "center_distance_m": 0.06,
+      "endpoint_inset_m": 0.0015
+    },
+    {
+      "rod": "rod_1_2",
+      "hubs": [
+        1,
+        2
+      ],
+      "center_distance_m": 0.06,
+      "endpoint_inset_m": 0.0015
+    },
+    {
+      "rod": "rod_1_3",
+      "hubs": [
+        1,
+        3
+      ],
+      "center_distance_m": 0.06,
+      "endpoint_inset_m": 0.0015
+    },
+    {
+      "rod": "rod_2_3",
+      "hubs": [
+        2,
+        3
+      ],
+      "center_distance_m": 0.06,
+      "endpoint_inset_m": 0.0015
+    }
+  ],
+  "connection_scope": "Exact endpoint-to-socket axis alignment and nominal clearance; friction, rigidity and loads unqualified.",
+  "schema": "oneirifact.construction-review/v1",
+  "id": "rod_hub_frame",
+  "length_unit": "m",
+  "rotation_unit": "degrees",
+  "euler_order": "XYZ",
+  "geometry_authority": "canonical feature graphs evaluated by native Oneirifact",
+  "definition_pin_status": "COMPUTE_WITH_NATIVE_COMPONENT_HASH_BEFORE_ADMISSION",
+  "bom": {
+    "frame_rod": 6,
+    "socket_hub_0": 1,
+    "socket_hub_1": 1,
+    "socket_hub_2": 1,
+    "socket_hub_3": 1
+  },
+  "instance_count": 10,
+  "families": {
+    "frame_rod": {
+      "family": "cylindrical strut",
+      "radius_m": 0.0016,
+      "length_m": 0.056999999999999995
+    },
+    "socket_hub_0": {
+      "family": "three-socket spherical hub",
+      "radius_m": 0.006,
+      "socket_radius_m": 0.0018,
+      "radial_clearance_m": 0.0002
+    },
+    "socket_hub_1": {
+      "family": "three-socket spherical hub",
+      "radius_m": 0.006,
+      "socket_radius_m": 0.0018,
+      "radial_clearance_m": 0.0002
+    },
+    "socket_hub_2": {
+      "family": "three-socket spherical hub",
+      "radius_m": 0.006,
+      "socket_radius_m": 0.0018,
+      "radial_clearance_m": 0.0002
+    },
+    "socket_hub_3": {
+      "family": "three-socket spherical hub",
+      "radius_m": 0.006,
+      "socket_radius_m": 0.0018,
+      "radial_clearance_m": 0.0002
+    }
+  },
+  "physical_fit": "NOT_QUALIFIED",
+  "structural_loads": "NOT_QUALIFIED"
+}

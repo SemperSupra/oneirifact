@@ -1,0 +1,77 @@
+{
+  "schema": "oneirifact.graph/v0.1",
+  "name": "notched_log",
+  "unit": "m",
+  "detail": 32,
+  "root": "f6",
+  "features": [
+    {
+      "id": "f0",
+      "op": "box",
+      "params": {
+        "depth": 0.08,
+        "height": 0.08,
+        "width": 0.64
+      }
+    },
+    {
+      "id": "f1",
+      "op": "box",
+      "params": {
+        "depth": 0.1,
+        "height": 0.041999999999999996,
+        "width": 0.08399999999999999
+      }
+    },
+    {
+      "id": "f2",
+      "op": "translate",
+      "inputs": [
+        "f1"
+      ],
+      "params": {
+        "x": -0.24,
+        "y": 0,
+        "z": -0.020999999999999998
+      }
+    },
+    {
+      "id": "f3",
+      "op": "difference",
+      "inputs": [
+        "f0",
+        "f2"
+      ]
+    },
+    {
+      "id": "f4",
+      "op": "translate",
+      "inputs": [
+        "f1"
+      ],
+      "params": {
+        "x": 0.24,
+        "y": 0,
+        "z": -0.020999999999999998
+      }
+    },
+    {
+      "id": "f5",
+      "op": "difference",
+      "inputs": [
+        "f3",
+        "f4"
+      ]
+    },
+    {
+      "id": "f6",
+      "op": "scale",
+      "inputs": [
+        "f5"
+      ],
+      "params": {
+        "factor": 0.1
+      }
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+name: Build source-compiled construction studies
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'experiments/construction-recipes/**'
+      - '.github/workflows/construction-recipes.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: construction-recipes-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        case: [brick_bridge, log_cabin, rod_hub_frame]
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source revision
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_SHA"
+          git rev-parse HEAD
+      - name: Check source bindings and reject tampering
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s experiments/construction-recipes -p 'test_*.py' -v
+          python3 experiments/construction-recipes/verify.py experiments/construction-recipes/fixtures
+      - name: Install the OpenSCAD evaluator
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends openscad
+          openscad --version
+      - name: Obtain checksum-pinned Blender 5.2.4
+        run: |
+          set -euo pipefail
+          artifact=blender-5.2.4-linux-x64.tar.xz
+          expected=2fd14c50987426897ba60237ee996edf2b4151f4b1a72a460ca20be58c1d2d86
+          root="$RUNNER_TEMP/native-blender"
+          install -d -m 700 "$root"
+          verified=0
+          for origin in https://download.blender.org https://mirror.blender.org https://mirror.nju.edu.cn/blender; do
+            rm -f "$root/$artifact"
+            if timeout 110s curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error --connect-timeout 12 --speed-limit 32768 --speed-time 12 --max-time 95 "$origin/release/Blender5.2/$artifact" -o "$root/$artifact"; then
+              echo "$expected  $root/$artifact" | sha256sum -c -
+              verified=1
+              break
+            fi
+          done
+          test "$verified" -eq 1
+          timeout 150s tar -xf "$root/$artifact" -C "$root"
+          "$root/blender-5.2.4-linux-x64/blender" --version
+      - name: Execute actual compiled parts and render source assembly
+        run: |
+          set -euo pipefail
+          python3 experiments/construction-recipes/build_compiled.py \
+            --case '${{ matrix.case }}' \
+            --blender "$RUNNER_TEMP/native-blender/blender-5.2.4-linux-x64/blender" \
+            --output "$RUNNER_TEMP/construction-${{ matrix.case }}"
+          git rev-parse HEAD > "$RUNNER_TEMP/construction-${{ matrix.case }}/public-source-commit.txt"
+      - name: Retain actual meshes, views, editable scene and evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: construction-${{ matrix.case }}
+          path: ${{ runner.temp }}/construction-${{ matrix.case }}
+          retention-days: 30
+          if-no-files-found: error

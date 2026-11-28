@@ -1,0 +1,278 @@
+{
+  "schema": "oneirifact.scene/v0.1",
+  "id": "log_cabin",
+  "name": "log cabin",
+  "composition_mode": "scene_assembly",
+  "instances": [
+    {
+      "id": "back_0",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          0.024,
+          0.004
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "front_sill",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          -0.024,
+          0.004
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "side_left_1",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.024,
+          0,
+          0.008
+        ],
+        "rotation": [
+          0,
+          0,
+          90
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "side_right_1",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.024,
+          0,
+          0.008
+        ],
+        "rotation": [
+          0,
+          0,
+          90
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "back_2",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          0.024,
+          0.012
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "side_left_3",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.024,
+          0,
+          0.016
+        ],
+        "rotation": [
+          0,
+          0,
+          90
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "side_right_3",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.024,
+          0,
+          0.016
+        ],
+        "rotation": [
+          0,
+          0,
+          90
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "back_4",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          0.024,
+          0.02
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "side_left_5",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.024,
+          0,
+          0.024
+        ],
+        "rotation": [
+          0,
+          0,
+          90
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "side_right_5",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.024,
+          0,
+          0.024
+        ],
+        "rotation": [
+          0,
+          0,
+          90
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "back_6",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          0.024,
+          0.028
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "side_left_7",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.024,
+          0,
+          0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          90
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "side_right_7",
+      "definition_id": "notched_log",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.024,
+          0,
+          0.032
+        ],
+        "rotation": [
+          0,
+          0,
+          90
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "roof_left",
+      "definition_id": "roof_panel",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.016454482671904334,
+          0,
+          0.0420884572681199
+        ],
+        "rotation": [
+          0,
+          -30,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "roof_right",
+      "definition_id": "roof_panel",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.016454482671904334,
+          0,
+          0.0420884572681199
+        ],
+        "rotation": [
+          0,
+          30,
+          0
+        ],
+        "scale": 1
+      }
+    }
+  ]
+}

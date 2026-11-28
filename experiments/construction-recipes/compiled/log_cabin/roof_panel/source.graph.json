@@ -1,0 +1,28 @@
+{
+  "schema": "oneirifact.graph/v0.1",
+  "name": "roof_panel",
+  "unit": "m",
+  "detail": 32,
+  "root": "f1",
+  "features": [
+    {
+      "id": "f0",
+      "op": "box",
+      "params": {
+        "depth": 0.72,
+        "height": 0.03,
+        "width": 0.38
+      }
+    },
+    {
+      "id": "f1",
+      "op": "scale",
+      "inputs": [
+        "f0"
+      ],
+      "params": {
+        "factor": 0.1
+      }
+    }
+  ]
+}

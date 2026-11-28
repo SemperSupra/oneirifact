@@ -57,7 +57,7 @@ export class MotionRenderer{
   }
   upload(){const g=this.gl;this.model.palettes.forEach((p,i)=>{g.bindTexture(g.TEXTURE_2D,this.textures[i]);g.texSubImage2D(g.TEXTURE_2D,0,0,0,4,p.length/16,g.RGBA,g.FLOAT,p)})}
   pose(name,time){this.model.pose(name,time);this.upload();this.draw()}
-  frame(){const lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];for(let m=0;m<this.model.meshes.length;m++){const v=this.model.vertices(m);for(let i=0;i<v.length;i++) {const k=i%3;lo[k]=Math.min(lo[k],v[i]);hi[k]=Math.max(hi[k],v[i])}}
+  frame(includeContext=false){const useSkins=!includeContext&&this.model.meshes.some(m=>m.skin!==undefined);this.frameScope=useSkins?'actors':'scene';const lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];for(let m=0;m<this.model.meshes.length;m++){if(useSkins&&this.model.meshes[m].skin===undefined)continue;const v=this.model.vertices(m);for(let i=0;i<v.length;i++) {const k=i%3;lo[k]=Math.min(lo[k],v[i]);hi[k]=Math.max(hi[k],v[i])}}
     this.target=lo.map((x,i)=>(x+hi[i])/2);
     const z=[Math.cos(this.elevation)*Math.sin(this.azimuth),Math.sin(this.elevation),Math.cos(this.elevation)*Math.cos(this.azimuth)],x=norm(cross([0,1,0],z)),y=cross(z,x),tan=Math.tan(Math.PI/8),aspect=this.canvas.clientWidth/this.canvas.clientHeight||4/3;
     let required=.4;for(let mask=0;mask<8;mask++){const corner=[0,1,2].map(i=>((mask>>i)&1?hi[i]:lo[i])-this.target[i]),depth=dot(corner,z);required=Math.max(required,Math.abs(dot(corner,x))/(tan*aspect)+depth,Math.abs(dot(corner,y))/tan+depth)}

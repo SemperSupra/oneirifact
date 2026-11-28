@@ -11,6 +11,39 @@
       "unpacked_bytes": 197312917,
       "packages": 17,
       "previews": 32
+    },
+    {
+      "pack_id": "r255-support-events-v2",
+      "repository": "SemperSupra/oneirifact",
+      "tag": "r255-support-events-v2",
+      "asset": "r255-support-events-v2.zip",
+      "sha256": "0a2de756a5a2e137048791a6f83385a44d2fcf5b305987fede68c3fea8cd8319",
+      "files": 49,
+      "unpacked_bytes": 25572141,
+      "packages": 4,
+      "previews": 4
+    },
+    {
+      "pack_id": "r255-acrobatics-combat-v2",
+      "repository": "SemperSupra/oneirifact",
+      "tag": "r255-acrobatics-combat-v2",
+      "asset": "r255-acrobatics-combat-v2.zip",
+      "sha256": "2ec65e43a345b44accbff38213e3f4b431e49b5baaa1f26fe049c09a37ce9ea3",
+      "files": 60,
+      "unpacked_bytes": 49160971,
+      "packages": 5,
+      "previews": 5
+    },
+    {
+      "pack_id": "r255-exercise-dance-v2",
+      "repository": "SemperSupra/oneirifact",
+      "tag": "r255-exercise-dance-v2",
+      "asset": "r255-exercise-dance-v2.zip",
+      "sha256": "1ccb3e1493d1ace3ef8fe66ac761c0e018425f617f7035f22fe3fdf46d7fb56b",
+      "files": 49,
+      "unpacked_bytes": 32446019,
+      "packages": 4,
+      "previews": 4
     }
   ]
 }

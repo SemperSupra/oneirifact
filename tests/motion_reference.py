@@ -1,7 +1,7 @@
 """Independent double-precision glTF animation/LBS oracle for the actual WebGL shader.
 
 No browser evaluator or shader code is imported. Original accessors are read directly.
-Every skin vertex is retained at three arbitrary times per source product; all other
+Every skin and rigid vertex is retained at three arbitrary times per source product; all other
 named clips receive an additional complete-vertex sample. The browser compares its
 actual transform-feedback positions, not target empties or the CPU helper.
 """
@@ -56,16 +56,18 @@ def pose(d,b,a,time):
     for i,n in enumerate(d['nodes']):
         if 'mesh' not in n:continue
         for p in d['meshes'][n['mesh']]['primitives']:
-            if 'skin' not in n:mesh_index+=1;continue
+            attrs=p['attributes'];positions=array(d,b,attrs['POSITION']);v=np.column_stack([positions,np.ones(len(positions))])
+            if 'skin' not in n:
+                out=(world[i]@v.T).T[:,:3];results.append((mesh_index,out,0.,'rigid',n.get('name',''),None));mesh_index+=1;continue
             skin=d['skins'][n['skin']];ibm=array(d,b,skin['inverseBindMatrices']).reshape(-1,4,4).transpose(0,2,1)
-            palette=np.array([world[j]@ibm[k] for k,j in enumerate(skin['joints'])]);attrs=p['attributes'];positions=array(d,b,attrs['POSITION']);v=np.column_stack([positions,np.ones(len(positions))]);out=np.zeros((len(v),3));eight=np.zeros_like(out)
+            palette=np.array([world[j]@ibm[k] for k,j in enumerate(skin['joints'])]);out=np.zeros((len(v),3));eight=np.zeros_like(out)
             sets=sorted(int(k[8:]) for k in attrs if k.startswith('WEIGHTS_'))
             for s in sets:
                 joints=array(d,b,attrs['JOINTS_'+str(s)]).astype(int);weights=array(d,b,attrs['WEIGHTS_'+str(s)])
                 for k in range(4):
                     contribution=np.einsum('nij,nj->ni',palette[joints[:,k]],v)[:,:3]*weights[:,k,None];out+=contribution
                     if s<2:eight+=contribution
-            results.append((mesh_index,out,float(np.max(np.linalg.norm(out-eight,axis=1)))));mesh_index+=1
+            results.append((mesh_index,out,float(np.max(np.linalg.norm(out-eight,axis=1))),'skin',n.get('name',''),n['skin']));mesh_index+=1
     return results
 
 def build(site,out):
@@ -78,11 +80,11 @@ def build(site,out):
                 for clip in p['clips']:
                     times=[clip['duration_s']*s for s in ([.137,.513,.883] if clip['animation_name']==primary else [.413])]
                     for t in times:
-                        for mesh,positions,truncation in pose(d,b,animations[clip['animation_name']],t):
-                            raw=positions.astype('<f4').tobytes();f.write(raw);samples.append({'animation':clip['animation_name'],'time_s':t,'mesh':mesh,'vertices':len(positions),'offset_bytes':offset,'length_bytes':len(raw),'eight_slot_omission_max_error_m':truncation});offset+=len(raw);worst_negative=max(worst_negative,truncation)
-                rows.append({'id':p['id'],'model_path':entry['base_url']+p['assets']['model']['path'],'model_sha256':p['assets']['model']['sha256'],'samples':samples})
+                        for mesh,positions,truncation,kind,node_name,skin_index in pose(d,b,animations[clip['animation_name']],t):
+                            raw=positions.astype('<f4').tobytes();f.write(raw);samples.append({'animation':clip['animation_name'],'time_s':t,'mesh':mesh,'kind':kind,'node_name':node_name,'skin_index':skin_index,'vertices':len(positions),'offset_bytes':offset,'length_bytes':len(raw),'eight_slot_omission_max_error_m':truncation});offset+=len(raw);worst_negative=max(worst_negative,truncation)
+                rows.append({'id':p['id'],'model_path':entry['base_url']+p['assets']['model']['path'],'model_sha256':p['assets']['model']['sha256'],'animation_names':[c['animation_name'] for c in p['clips']],'actor_count':len(p['actors']),'samples':samples})
     assert len(rows)>=17 and worst_negative>.00005,'Ninth influence negative must be observable'
-    report={'schema':'oneirifact.motion-browser-independent-position-oracle/v1','method':'Independent Python double-precision TRS, hemisphere SLERP, hierarchical transforms and complete-set linear blend skinning. Compare actual GPU transform feedback for every source skin vertex.','tolerance_m':0.00005,'source_products':rows,'total_position_bytes':offset,'eight_slot_omission_max_error_m':worst_negative}
+    report={'schema':'oneirifact.motion-browser-independent-position-oracle/v1','method':'Independent Python double-precision TRS, hemisphere SLERP, hierarchical transforms, complete-set linear blend skinning and rigid node transforms. Compare actual GPU transform feedback for every source skin and rigid vertex.','tolerance_m':0.00005,'source_products':rows,'total_position_bytes':offset,'eight_slot_omission_max_error_m':worst_negative}
     (out/'oracle.json').write_text(json.dumps(report,indent=2)+'\n');print('MOTION_REFERENCE_READY',len(rows),sum(len(p['samples']) for p in rows),offset,worst_negative)
 
 if __name__=='__main__':

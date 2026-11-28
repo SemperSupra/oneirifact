@@ -1,0 +1,41 @@
+name: R232 female anatomy coverage and mammary recovery
+on:
+  pull_request:
+    branches: [rdte/r226-granular-identity-fair-registration]
+    paths: ['experiments/r232/**','.github/workflows/rdte-r232-coverage.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  coverage:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire exact admitted female and male reference archives
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15238389268/zip > "$RUNNER_TEMP/input/male.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15238269509/zip > "$RUNNER_TEMP/input/female.zip"
+      - name: Audit named structures and preserve actual mammary reference geometry
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 trimesh==4.6.8
+          python experiments/r232/coverage.py "$RUNNER_TEMP/input" "$RUNNER_TEMP/coverage"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r232-female-coverage
+          path: ${{ runner.temp }}/coverage
+          retention-days: 30
+          if-no-files-found: error

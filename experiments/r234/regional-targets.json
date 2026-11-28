@@ -1,0 +1,126 @@
+{
+  "schema": "oneirifact.regional-target-lock/v1",
+  "upstream": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+  "regional": {
+    "shoulder": [
+      [
+        "armslegs/l-upperarm-shoulder-muscle-incr",
+        "8b7a68ae1755075505aae515a367e9ba57312653"
+      ],
+      [
+        "armslegs/r-upperarm-shoulder-muscle-incr",
+        "99375b9747b8b0578035aa9315c33f28aef6dce9"
+      ]
+    ],
+    "upper_arm": [
+      [
+        "armslegs/l-upperarm-muscle-incr",
+        "6d60be62441dddd428523bf1c1f01bb78a237631"
+      ],
+      [
+        "armslegs/r-upperarm-muscle-incr",
+        "3c312e445189d836bf6413903207542955a15ca5"
+      ]
+    ],
+    "thigh": [
+      [
+        "armslegs/l-upperleg-muscle-incr",
+        "534e022f995865ebfe5ac6b8f03107c5dbf81e57"
+      ],
+      [
+        "armslegs/r-upperleg-muscle-incr",
+        "82555abf562bbda689187f655060ee80d0ed1816"
+      ]
+    ],
+    "calf": [
+      [
+        "armslegs/l-lowerleg-muscle-incr",
+        "1bf7eec202cb0507761a45e31895e8b18b16891f"
+      ],
+      [
+        "armslegs/r-lowerleg-muscle-incr",
+        "b9aa5ede5ae8571478692c0981b1915afe0fc9dc"
+      ]
+    ],
+    "back": [
+      [
+        "torso/torso-muscle-dorsi-incr",
+        "c215cf67a90c46fb34d09b9b14ed11cdf8f3de61"
+      ]
+    ],
+    "pectoral": [
+      [
+        "torso/torso-muscle-pectoral-incr",
+        "748ac8f473d9cb45086b662b9891ea71fdf56f04"
+      ]
+    ],
+    "abdomen": [
+      [
+        "stomach/stomach-tone-incr",
+        "8abe26479753391e4f92f2c625e1dee37517a01e"
+      ]
+    ],
+    "hip_width": [
+      [
+        "hip/hip-scale-horiz-incr",
+        "91d49d82de68d8205af3f8be195f295abb76eb12"
+      ]
+    ],
+    "hip_depth": [
+      [
+        "hip/hip-scale-depth-incr",
+        "ae9b308d08bcc4ae8ae8a833726bdce37aab3601"
+      ]
+    ],
+    "upper_leg_length": [
+      [
+        "armslegs/upperlegs-height-incr",
+        "314b4f8ec633568b9af790f3855bc930fc8677f7"
+      ]
+    ],
+    "lower_leg_length": [
+      [
+        "armslegs/lowerlegs-height-incr",
+        "015a59810620d93f87dd2fe814741939bf047c79"
+      ]
+    ]
+  },
+  "breast": {
+    "young": [
+      [
+        "breast/female-young-maxmuscle-averageweight-mincup-minfirmness",
+        "358a1002ee89459e3e809e86ba5680e328e356aa"
+      ],
+      [
+        "breast/female-young-maxmuscle-averageweight-mincup-maxfirmness",
+        "b04b73a7565c843ea3243cd57f5a3a9597135b12"
+      ],
+      [
+        "breast/female-young-maxmuscle-averageweight-maxcup-minfirmness",
+        "433a0f719b3a985e0a3659157e6c73ce9381d8a3"
+      ],
+      [
+        "breast/female-young-maxmuscle-averageweight-maxcup-maxfirmness",
+        "9e25243bef66f4f98472b819247aba0a19f37ba0"
+      ]
+    ],
+    "old": [
+      [
+        "breast/female-old-maxmuscle-averageweight-mincup-minfirmness",
+        "6192ed0080cc6071d8f270cc573f961921a5f30a"
+      ],
+      [
+        "breast/female-old-maxmuscle-averageweight-mincup-maxfirmness",
+        "6192ed0080cc6071d8f270cc573f961921a5f30a"
+      ],
+      [
+        "breast/female-old-maxmuscle-averageweight-maxcup-minfirmness",
+        "6f2a7aa8f5ec845ed0a6fc804a372bb82c4a8740"
+      ],
+      [
+        "breast/female-old-maxmuscle-averageweight-maxcup-maxfirmness",
+        "3c3254ca0cee205b5783e7515f7b5d4faa4cdb1f"
+      ]
+    ]
+  }
+}

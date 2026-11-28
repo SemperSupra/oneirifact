@@ -1,6 +1,7 @@
 const $=id=>document.getElementById(id);
 const state={packages:[],selected:null,clip:null,renderer:null,mode:'poster',playing:false,time:0,last:0,raf:null,loadToken:0};
 const size=n=>n>=1048576?(n/1048576).toFixed(1)+' MB':Math.ceil(n/1024)+' KB';
+const label=s=>String(s).toLowerCase().replaceAll('_',' ').replace(/^./,x=>x.toUpperCase());
 const clean=s=>String(s).replaceAll('_',' ').replaceAll(/\b\w/g,x=>x.toUpperCase());
 const url=(p,a)=>new URL(a.path,p.baseURL).href;
 const el=(tag,text,className)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e};
@@ -19,8 +20,8 @@ function clipDetails(){const c=state.clip,p=state.selected;for(const button of $
 function selectClip(id){const c=state.selected.clips.find(x=>x.id===id);if(!c)return;stop();state.clip=c;clipDetails()}
 function details(p){
   $('actor-summary').textContent=p.actors.map(a=>`${clean(a.sex_variant)} · ${a.stature_m.toFixed(2)} m · ${a.footwear}. ${a.morphology_label}.`).join(' ');
-  $('qualification').replaceChildren(...[['Replay evidence',p.qualification.transport.startsWith('PASS')?'Recorded passes':'Review status','pass'],['Realism','Held',''],['Contact','Not qualified',''],['Physics','Not qualified','']].map(([a,b,c])=>el('span',a+': '+b,c)));
-  if(p.source_kind==='captured')$('qualification').append(el('span','Retarget quality: Held'));
+  $('qualification').replaceChildren(...[['Replay evidence',p.qualification.transport.startsWith('PASS')?'Recorded passes':label(p.qualification.transport),p.qualification.transport.startsWith('PASS')?'pass':''],['Realism',label(p.qualification.realism),''],['Contact',label(p.qualification.contact),''],['Physics',label(p.qualification.physics),'']].map(([a,b,c])=>el('span',a+': '+b,c)));
+  if(p.source_kind==='captured')$('qualification').append(el('span','Retarget quality: '+label(p.qualification.retarget)));
   $('scope-note').textContent=p.notes.join(' ');$('layers').replaceChildren(el('p','Included in the GLB: '+p.included_layers.join('; ')+'.'),el('p','Omitted from this replay: '+p.omitted_layers.join('; ')+'.'),el('p','The browser uses a simple material and lighting treatment. Scene materials, task props, cameras and lights remain in the native scene where supplied.'));
   const labels={model:'Animated GLB',native_scene:'Editable Blender scene',contact_sheet:'Contact sheet',receipt:'Producer receipt',rights:'Source notices'};$('downloads').replaceChildren();
   for(const [k,title] of Object.entries(labels)){const a=p.assets[k],l=link(title,url(p,a));l.append(el('small',size(a.bytes)));if(k==='model'||k==='native_scene')l.download=p.id+(k==='model'?'.glb':'.blend');$('downloads').append(l)}

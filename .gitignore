@@ -1,0 +1,4 @@
+# Restored release assets and local Python caches are reproducible outputs.
+/site/motion/data/
+/site/motion/catalogs.json
+__pycache__/

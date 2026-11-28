@@ -1,0 +1,1544 @@
+{
+  "schema": "oneirifact.actual-organ-source-selection/v1",
+  "selection_scope": "Fixed representative source surfaces, not complete organs or body coverage. No summation of overlapping regions.",
+  "male": [
+    {
+      "id": "FJ2409",
+      "family": "liver",
+      "role": "source liver region; disjointness not established",
+      "source_category": "vascular",
+      "source_labels": [
+        [
+          "FMA15737",
+          "hepatovenous subsector"
+        ],
+        [
+          "FMA15745",
+          "hepatovenous segment vii"
+        ],
+        [
+          "FMA15756",
+          "region of posterior sector of right liver (in-vivo)"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67619",
+          "organ region"
+        ],
+        [
+          "FMA82472",
+          "cardinal organ part"
+        ],
+        [
+          "FMA86140",
+          "organ segment"
+        ]
+      ],
+      "source_triangles": 8534,
+      "source_vertices": 5091
+    },
+    {
+      "id": "FJ2428",
+      "family": "heart",
+      "role": "cardiac wall component; not whole heart",
+      "source_category": "cardiac",
+      "source_labels": [
+        [
+          "FMA13256",
+          "wall of cardiac chamber"
+        ],
+        [
+          "FMA13884",
+          "wall of ventricle"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA82472",
+          "cardinal organ part"
+        ],
+        [
+          "FMA86103",
+          "region of organ component"
+        ],
+        [
+          "FMA86212",
+          "region of wall of heart"
+        ]
+      ],
+      "source_triangles": 37442,
+      "source_vertices": 21053
+    },
+    {
+      "id": "FJ2438",
+      "family": "heart",
+      "role": "cardiac wall component; not whole heart",
+      "source_category": "cardiac",
+      "source_labels": [
+        [
+          "FMA13256",
+          "wall of cardiac chamber"
+        ],
+        [
+          "FMA13883",
+          "wall of atrium"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA82472",
+          "cardinal organ part"
+        ],
+        [
+          "FMA86103",
+          "region of organ component"
+        ],
+        [
+          "FMA86212",
+          "region of wall of heart"
+        ],
+        [
+          "FMA9531",
+          "wall of left atrium"
+        ]
+      ],
+      "source_triangles": 7544,
+      "source_vertices": 4284
+    },
+    {
+      "id": "FJ2439",
+      "family": "heart",
+      "role": "cardiac wall component; not whole heart",
+      "source_category": "cardiac",
+      "source_labels": [
+        [
+          "FMA13256",
+          "wall of cardiac chamber"
+        ],
+        [
+          "FMA13883",
+          "wall of atrium"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA82472",
+          "cardinal organ part"
+        ],
+        [
+          "FMA86103",
+          "region of organ component"
+        ],
+        [
+          "FMA86212",
+          "region of wall of heart"
+        ],
+        [
+          "FMA9457",
+          "wall of right atrium"
+        ]
+      ],
+      "source_triangles": 17784,
+      "source_vertices": 9887
+    },
+    {
+      "id": "FJ2561",
+      "family": "spleen",
+      "role": "whole-organ source reference",
+      "source_category": "other",
+      "source_labels": [
+        [
+          "FMA55661",
+          "parenchymatous organ"
+        ],
+        [
+          "FMA55663",
+          "corticomedullary organ"
+        ],
+        [
+          "FMA55670",
+          "solid organ"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67498",
+          "organ"
+        ],
+        [
+          "FMA7196",
+          "spleen"
+        ]
+      ],
+      "source_triangles": 1330,
+      "source_vertices": 689
+    },
+    {
+      "id": "FJ2564",
+      "family": "stomach",
+      "role": "cavitated-organ source reference; tissue/lumen domain unqualified",
+      "source_category": "digestive",
+      "source_labels": [
+        [
+          "FMA55671",
+          "cavitated organ"
+        ],
+        [
+          "FMA55672",
+          "organ with organ cavity"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67498",
+          "organ"
+        ],
+        [
+          "FMA7148",
+          "stomach"
+        ]
+      ],
+      "source_triangles": 1810,
+      "source_vertices": 914
+    },
+    {
+      "id": "FJ2816",
+      "family": "liver",
+      "role": "source liver region; disjointness not established",
+      "source_category": "digestive",
+      "source_labels": [
+        [
+          "FMA13365",
+          "caudate lobe of liver"
+        ],
+        [
+          "FMA14065",
+          "organ component"
+        ],
+        [
+          "FMA14495",
+          "segment of liver"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA82472",
+          "cardinal organ part"
+        ],
+        [
+          "FMA82478",
+          "lobular organ component"
+        ],
+        [
+          "FMA82494",
+          "lobular segment"
+        ]
+      ],
+      "source_triangles": 5020,
+      "source_vertices": 2526
+    },
+    {
+      "id": "FJ2819",
+      "family": "liver",
+      "role": "source liver region; disjointness not established",
+      "source_category": "vascular",
+      "source_labels": [
+        [
+          "FMA15737",
+          "hepatovenous subsector"
+        ],
+        [
+          "FMA15741",
+          "hepatovenous segment iii"
+        ],
+        [
+          "FMA15757",
+          "region of anterior sector of left liver (in-vivo)"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67619",
+          "organ region"
+        ],
+        [
+          "FMA82472",
+          "cardinal organ part"
+        ],
+        [
+          "FMA86140",
+          "organ segment"
+        ]
+      ],
+      "source_triangles": 10326,
+      "source_vertices": 5487
+    },
+    {
+      "id": "FJ2820",
+      "family": "liver",
+      "role": "source liver region; disjointness not established",
+      "source_category": "vascular",
+      "source_labels": [
+        [
+          "FMA15737",
+          "hepatovenous subsector"
+        ],
+        [
+          "FMA15742",
+          "hepatovenous segment iv"
+        ],
+        [
+          "FMA15757",
+          "region of anterior sector of left liver (in-vivo)"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67619",
+          "organ region"
+        ],
+        [
+          "FMA82472",
+          "cardinal organ part"
+        ],
+        [
+          "FMA86140",
+          "organ segment"
+        ]
+      ],
+      "source_triangles": 17942,
+      "source_vertices": 11418
+    },
+    {
+      "id": "FJ2821",
+      "family": "liver",
+      "role": "source liver region; disjointness not established",
+      "source_category": "vascular",
+      "source_labels": [
+        [
+          "FMA15737",
+          "hepatovenous subsector"
+        ],
+        [
+          "FMA15743",
+          "hepatovenous segment v"
+        ],
+        [
+          "FMA15755",
+          "region of anterior sector of right liver (in-vivo)"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67619",
+          "organ region"
+        ],
+        [
+          "FMA82472",
+          "cardinal organ part"
+        ],
+        [
+          "FMA86140",
+          "organ segment"
+        ]
+      ],
+      "source_triangles": 11442,
+      "source_vertices": 6605
+    },
+    {
+      "id": "FJ2822",
+      "family": "liver",
+      "role": "source liver region; disjointness not established",
+      "source_category": "vascular",
+      "source_labels": [
+        [
+          "FMA15737",
+          "hepatovenous subsector"
+        ],
+        [
+          "FMA15744",
+          "hepatovenous segment vi"
+        ],
+        [
+          "FMA15756",
+          "region of posterior sector of right liver (in-vivo)"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67619",
+          "organ region"
+        ],
+        [
+          "FMA82472",
+          "cardinal organ part"
+        ],
+        [
+          "FMA86140",
+          "organ segment"
+        ]
+      ],
+      "source_triangles": 19450,
+      "source_vertices": 9988
+    },
+    {
+      "id": "FJ2823",
+      "family": "liver",
+      "role": "source liver region; disjointness not established",
+      "source_category": "vascular",
+      "source_labels": [
+        [
+          "FMA15737",
+          "hepatovenous subsector"
+        ],
+        [
+          "FMA15746",
+          "hepatovenous segment viii"
+        ],
+        [
+          "FMA15755",
+          "region of anterior sector of right liver (in-vivo)"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67619",
+          "organ region"
+        ],
+        [
+          "FMA82472",
+          "cardinal organ part"
+        ],
+        [
+          "FMA86140",
+          "organ segment"
+        ]
+      ],
+      "source_triangles": 19156,
+      "source_vertices": 10230
+    },
+    {
+      "id": "FJ2824",
+      "family": "liver",
+      "role": "source liver region; disjointness not established",
+      "source_category": "vascular",
+      "source_labels": [
+        [
+          "FMA15737",
+          "hepatovenous subsector"
+        ],
+        [
+          "FMA15746",
+          "hepatovenous segment viii"
+        ],
+        [
+          "FMA15755",
+          "region of anterior sector of right liver (in-vivo)"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67619",
+          "organ region"
+        ],
+        [
+          "FMA82472",
+          "cardinal organ part"
+        ],
+        [
+          "FMA86140",
+          "organ segment"
+        ]
+      ],
+      "source_triangles": 21592,
+      "source_vertices": 11459
+    },
+    {
+      "id": "FJ3129",
+      "family": "adrenal",
+      "role": "whole-gland source reference",
+      "source_category": "urinary",
+      "source_labels": [
+        [
+          "FMA15630",
+          "left adrenal gland"
+        ],
+        [
+          "FMA55661",
+          "parenchymatous organ"
+        ],
+        [
+          "FMA55663",
+          "corticomedullary organ"
+        ],
+        [
+          "FMA55670",
+          "solid organ"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67498",
+          "organ"
+        ],
+        [
+          "FMA9604",
+          "adrenal gland"
+        ]
+      ],
+      "source_triangles": 3996,
+      "source_vertices": 2000
+    },
+    {
+      "id": "FJ3130",
+      "family": "adrenal",
+      "role": "whole-gland source reference",
+      "source_category": "urinary",
+      "source_labels": [
+        [
+          "FMA15629",
+          "right adrenal gland"
+        ],
+        [
+          "FMA55661",
+          "parenchymatous organ"
+        ],
+        [
+          "FMA55663",
+          "corticomedullary organ"
+        ],
+        [
+          "FMA55670",
+          "solid organ"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67498",
+          "organ"
+        ],
+        [
+          "FMA9604",
+          "adrenal gland"
+        ]
+      ],
+      "source_triangles": 2294,
+      "source_vertices": 1149
+    },
+    {
+      "id": "FJ3138",
+      "family": "testis",
+      "role": "whole-organ source reference",
+      "source_category": "reproductive",
+      "source_labels": [
+        [
+          "FMA55661",
+          "parenchymatous organ"
+        ],
+        [
+          "FMA55662",
+          "lobular organ"
+        ],
+        [
+          "FMA55670",
+          "solid organ"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67498",
+          "organ"
+        ],
+        [
+          "FMA7210",
+          "testis"
+        ],
+        [
+          "FMA7212",
+          "left testis"
+        ]
+      ],
+      "source_triangles": 210,
+      "source_vertices": 107
+    },
+    {
+      "id": "FJ3139",
+      "family": "prostate",
+      "role": "whole-gland source reference",
+      "source_category": "reproductive",
+      "source_labels": [
+        [
+          "FMA55661",
+          "parenchymatous organ"
+        ],
+        [
+          "FMA55662",
+          "lobular organ"
+        ],
+        [
+          "FMA55670",
+          "solid organ"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67498",
+          "organ"
+        ],
+        [
+          "FMA9600",
+          "prostate"
+        ]
+      ],
+      "source_triangles": 442,
+      "source_vertices": 223
+    },
+    {
+      "id": "FJ3142",
+      "family": "testis",
+      "role": "whole-organ source reference",
+      "source_category": "reproductive",
+      "source_labels": [
+        [
+          "FMA55661",
+          "parenchymatous organ"
+        ],
+        [
+          "FMA55662",
+          "lobular organ"
+        ],
+        [
+          "FMA55670",
+          "solid organ"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67498",
+          "organ"
+        ],
+        [
+          "FMA7210",
+          "testis"
+        ],
+        [
+          "FMA7211",
+          "right testis"
+        ]
+      ],
+      "source_triangles": 212,
+      "source_vertices": 108
+    },
+    {
+      "id": "FJ3145",
+      "family": "kidney",
+      "role": "whole-organ source reference",
+      "source_category": "urinary",
+      "source_labels": [
+        [
+          "FMA55661",
+          "parenchymatous organ"
+        ],
+        [
+          "FMA55663",
+          "corticomedullary organ"
+        ],
+        [
+          "FMA55670",
+          "solid organ"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67498",
+          "organ"
+        ],
+        [
+          "FMA7203",
+          "kidney"
+        ],
+        [
+          "FMA7205",
+          "left kidney"
+        ]
+      ],
+      "source_triangles": 2982,
+      "source_vertices": 1497
+    },
+    {
+      "id": "FJ3147",
+      "family": "kidney",
+      "role": "whole-organ source reference",
+      "source_category": "urinary",
+      "source_labels": [
+        [
+          "FMA55661",
+          "parenchymatous organ"
+        ],
+        [
+          "FMA55663",
+          "corticomedullary organ"
+        ],
+        [
+          "FMA55670",
+          "solid organ"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67498",
+          "organ"
+        ],
+        [
+          "FMA7203",
+          "kidney"
+        ],
+        [
+          "FMA7204",
+          "right kidney"
+        ]
+      ],
+      "source_triangles": 2310,
+      "source_vertices": 1163
+    },
+    {
+      "id": "FJ3149",
+      "family": "urinary_bladder",
+      "role": "cavitated-organ source reference; tissue/lumen domain unqualified",
+      "source_category": "urinary",
+      "source_labels": [
+        [
+          "FMA15900",
+          "urinary bladder"
+        ],
+        [
+          "FMA55671",
+          "cavitated organ"
+        ],
+        [
+          "FMA55672",
+          "organ with organ cavity"
+        ],
+        [
+          "FMA61775",
+          "physical anatomical entity"
+        ],
+        [
+          "FMA62955",
+          "anatomical entity"
+        ],
+        [
+          "FMA67135",
+          "anatomical structure"
+        ],
+        [
+          "FMA67165",
+          "material anatomical entity"
+        ],
+        [
+          "FMA67498",
+          "organ"
+        ]
+      ],
+      "source_triangles": 226,
+      "source_vertices": 127
+    }
+  ],
+  "female": [
+    {
+      "id": "hra_0300_VH_F_anterior_wall_of_uterus",
+      "family": "uterus",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "reproductive",
+      "source_labels": [
+        "VH_F_anterior_wall_of_uterus",
+        "VH_F_uterus",
+        "VH_F_reproductive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 10148,
+      "source_vertices": 5584
+    },
+    {
+      "id": "hra_0317_VH_F_bare_area_of_liver",
+      "family": "liver",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "digestive",
+      "source_labels": [
+        "VH_F_bare_area_of_liver",
+        "VH_F_liver",
+        "VH_F_digestive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 5864,
+      "source_vertices": 3048
+    },
+    {
+      "id": "hra_0319_VH_F_body_of_pancreas",
+      "family": "pancreas",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "digestive",
+      "source_labels": [
+        "VH_F_body_of_pancreas",
+        "VH_F_pancreas",
+        "VH_F_digestive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 3595,
+      "source_vertices": 7373
+    },
+    {
+      "id": "hra_0320_VH_F_body_of_uterus",
+      "family": "uterus",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "reproductive",
+      "source_labels": [
+        "VH_F_body_of_uterus",
+        "VH_F_uterus",
+        "VH_F_reproductive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 5344,
+      "source_vertices": 2823
+    },
+    {
+      "id": "hra_0328_VH_F_capsule_of_the_liver",
+      "family": "liver",
+      "role": "source capsule surface; not whole-organ tissue",
+      "source_category": "digestive",
+      "source_labels": [
+        "VH_F_capsule_of_the_liver",
+        "VH_F_liver",
+        "VH_F_digestive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 30034,
+      "source_vertices": 15133
+    },
+    {
+      "id": "hra_0336_VH_F_caudate_lobe",
+      "family": "liver",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "digestive",
+      "source_labels": [
+        "VH_F_caudate_lobe",
+        "VH_F_right_lobe_of_liver",
+        "VH_F_couinaud_liver_segment",
+        "VH_F_liver",
+        "VH_F_digestive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 5354,
+      "source_vertices": 2779
+    },
+    {
+      "id": "hra_0361_VH_F_colic_surface_of_spleen",
+      "family": "spleen",
+      "role": "source spleen surface patch",
+      "source_category": "lymphatic",
+      "source_labels": [
+        "VH_F_colic_surface_of_spleen",
+        "VH_F_spleen",
+        "VH_F_lymphatic_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 130,
+      "source_vertices": 83
+    },
+    {
+      "id": "hra_0372_VH_F_coronary_ligament_of_liver",
+      "family": "liver",
+      "role": "source ligament geometry; no mechanical attachment graph",
+      "source_category": "connective",
+      "source_labels": [
+        "VH_F_coronary_ligament_of_liver",
+        "VH_F_ligament_of_liver",
+        "VH_F_liver",
+        "VH_F_digestive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 2426,
+      "source_vertices": 1232
+    },
+    {
+      "id": "hra_0382_VH_F_diaphragmatic_surface_of_liver",
+      "family": "liver",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "respiratory",
+      "source_labels": [
+        "VH_F_diaphragmatic_surface_of_liver",
+        "VH_F_liver",
+        "VH_F_digestive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 12448,
+      "source_vertices": 6368
+    },
+    {
+      "id": "hra_0383_VH_F_diaphragmatic_surface_of_spleen",
+      "family": "spleen",
+      "role": "source spleen surface patch",
+      "source_category": "lymphatic",
+      "source_labels": [
+        "VH_F_diaphragmatic_surface_of_spleen",
+        "VH_F_spleen",
+        "VH_F_lymphatic_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 4338,
+      "source_vertices": 2239
+    },
+    {
+      "id": "hra_0425_VH_F_fundus_of_urinary_bladder_base",
+      "family": "urinary_bladder",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "urinary",
+      "source_labels": [
+        "VH_F_fundus_of_urinary_bladder_base",
+        "VH_F_urinary_bladder",
+        "VH_F_urinary_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 25526,
+      "source_vertices": 13071
+    },
+    {
+      "id": "hra_0426_VH_F_fundus_of_urinary_bladder_dome",
+      "family": "urinary_bladder",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "urinary",
+      "source_labels": [
+        "VH_F_fundus_of_urinary_bladder_dome",
+        "VH_F_urinary_bladder",
+        "VH_F_urinary_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 11916,
+      "source_vertices": 6138
+    },
+    {
+      "id": "hra_0427_VH_F_fundus_of_uterus",
+      "family": "uterus",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "reproductive",
+      "source_labels": [
+        "VH_F_fundus_of_uterus",
+        "VH_F_uterus",
+        "VH_F_reproductive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 3062,
+      "source_vertices": 1640
+    },
+    {
+      "id": "hra_0431_VH_F_gastric_surface_of_spleen",
+      "family": "spleen",
+      "role": "source spleen surface patch",
+      "source_category": "lymphatic",
+      "source_labels": [
+        "VH_F_gastric_surface_of_spleen",
+        "VH_F_spleen",
+        "VH_F_lymphatic_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 1778,
+      "source_vertices": 974
+    },
+    {
+      "id": "hra_0436_VH_F_head_of_pancreas",
+      "family": "pancreas",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "digestive",
+      "source_labels": [
+        "VH_F_head_of_pancreas",
+        "VH_F_pancreas",
+        "VH_F_digestive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 3733,
+      "source_vertices": 7574
+    },
+    {
+      "id": "hra_0448_VH_F_hilum_of_spleen",
+      "family": "spleen",
+      "role": "source spleen surface patch",
+      "source_category": "lymphatic",
+      "source_labels": [
+        "VH_F_hilum_of_spleen",
+        "VH_F_spleen",
+        "VH_F_lymphatic_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 1506,
+      "source_vertices": 816
+    },
+    {
+      "id": "hra_0510_VH_F_kidney_capsule_L",
+      "family": "kidney",
+      "role": "source capsule surface; not whole-organ tissue",
+      "source_category": "urinary",
+      "source_labels": [
+        "VH_F_kidney_capsule_L",
+        "VH_F_left_kidney",
+        "VH_F_kidney",
+        "VH_F_upper_urinary_tract",
+        "VH_F_urinary_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 10850,
+      "source_vertices": 5427
+    },
+    {
+      "id": "hra_0511_VH_F_kidney_capsule_R",
+      "family": "kidney",
+      "role": "source capsule surface; not whole-organ tissue",
+      "source_category": "urinary",
+      "source_labels": [
+        "VH_F_kidney_capsule_R",
+        "VH_F_right_kidney",
+        "VH_F_kidney",
+        "VH_F_upper_urinary_tract",
+        "VH_F_urinary_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 10642,
+      "source_vertices": 5323
+    },
+    {
+      "id": "hra_0533_VH_F_left_cardiac_atrium",
+      "family": "heart",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "cardiac",
+      "source_labels": [
+        "VH_F_left_cardiac_atrium",
+        "VH_F_cardiac_chamber",
+        "VH_F_heart",
+        "VH_F_circulatory_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 9175,
+      "source_vertices": 4729
+    },
+    {
+      "id": "hra_0557_VH_F_left_ovary",
+      "family": "ovary",
+      "role": "whole-organ source reference",
+      "source_category": "reproductive",
+      "source_labels": [
+        "VH_F_left_ovary",
+        "VH_F_ovary",
+        "VH_F_reproductive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 424,
+      "source_vertices": 214
+    },
+    {
+      "id": "hra_0578_VH_F_left_ventricle",
+      "family": "heart",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "cardiac",
+      "source_labels": [
+        "VH_F_left_ventricle",
+        "VH_F_cardiac_chamber",
+        "VH_F_heart",
+        "VH_F_circulatory_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 9822,
+      "source_vertices": 4913
+    },
+    {
+      "id": "hra_0698_VH_F_outer_cortex_of_kidney_L",
+      "family": "kidney",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "urinary",
+      "source_labels": [
+        "VH_F_outer_cortex_of_kidney_L",
+        "VH_F_cortex_of_kidney_L",
+        "VH_F_left_kidney",
+        "VH_F_kidney",
+        "VH_F_upper_urinary_tract",
+        "VH_F_urinary_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 13784,
+      "source_vertices": 6896
+    },
+    {
+      "id": "hra_0699_VH_F_outer_cortex_of_kidney_R",
+      "family": "kidney",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "urinary",
+      "source_labels": [
+        "VH_F_outer_cortex_of_kidney_R",
+        "VH_F_cortex_of_kidney_R",
+        "VH_F_right_kidney",
+        "VH_F_kidney",
+        "VH_F_upper_urinary_tract",
+        "VH_F_urinary_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 13824,
+      "source_vertices": 6914
+    },
+    {
+      "id": "hra_0729_VH_F_posterior_wall_of_uterus",
+      "family": "uterus",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "reproductive",
+      "source_labels": [
+        "VH_F_posterior_wall_of_uterus",
+        "VH_F_uterus",
+        "VH_F_reproductive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 12022,
+      "source_vertices": 6508
+    },
+    {
+      "id": "hra_0741_VH_F_quadrate_lobe",
+      "family": "heart",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "digestive",
+      "source_labels": [
+        "VH_F_quadrate_lobe",
+        "VH_F_left_inferomedial_segment",
+        "VH_F_liver_left_medial_lobe",
+        "VH_F_left_lobe_of_liver",
+        "VH_F_couinaud_liver_segment",
+        "VH_F_liver",
+        "VH_F_digestive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 2008,
+      "source_vertices": 1066
+    },
+    {
+      "id": "hra_0792_VH_F_renal_surface_of_spleen",
+      "family": "spleen",
+      "role": "source spleen surface patch",
+      "source_category": "lymphatic",
+      "source_labels": [
+        "VH_F_renal_surface_of_spleen",
+        "VH_F_spleen",
+        "VH_F_lymphatic_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 792,
+      "source_vertices": 453
+    },
+    {
+      "id": "hra_0804_VH_F_right_cardiac_atrium",
+      "family": "heart",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "cardiac",
+      "source_labels": [
+        "VH_F_right_cardiac_atrium",
+        "VH_F_cardiac_chamber",
+        "VH_F_heart",
+        "VH_F_circulatory_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 9368,
+      "source_vertices": 4680
+    },
+    {
+      "id": "hra_0826_VH_F_right_ovary",
+      "family": "ovary",
+      "role": "whole-organ source reference",
+      "source_category": "reproductive",
+      "source_labels": [
+        "VH_F_right_ovary",
+        "VH_F_ovary",
+        "VH_F_reproductive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 410,
+      "source_vertices": 207
+    },
+    {
+      "id": "hra_0844_VH_F_right_ventricle",
+      "family": "heart",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "cardiac",
+      "source_labels": [
+        "VH_F_right_ventricle",
+        "VH_F_cardiac_chamber",
+        "VH_F_heart",
+        "VH_F_circulatory_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 17222,
+      "source_vertices": 8653
+    },
+    {
+      "id": "hra_0893_VH_F_suspensory_ligament_of_ovary_L",
+      "family": "ovary",
+      "role": "source ligament geometry; no mechanical attachment graph",
+      "source_category": "reproductive",
+      "source_labels": [
+        "VH_F_suspensory_ligament_of_ovary_L",
+        "VH_F_suspensory_ligament_of_ovary",
+        "VH_F_ligaments_of_uterus_and_ovaries",
+        "VH_F_reproductive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 1270,
+      "source_vertices": 637
+    },
+    {
+      "id": "hra_0894_VH_F_suspensory_ligament_of_ovary_R",
+      "family": "ovary",
+      "role": "source ligament geometry; no mechanical attachment graph",
+      "source_category": "reproductive",
+      "source_labels": [
+        "VH_F_suspensory_ligament_of_ovary_R",
+        "VH_F_suspensory_ligament_of_ovary",
+        "VH_F_ligaments_of_uterus_and_ovaries",
+        "VH_F_reproductive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 880,
+      "source_vertices": 442
+    },
+    {
+      "id": "hra_0897_VH_F_tail_of_pancreas",
+      "family": "pancreas",
+      "role": "source organ surface/region; not whole organ",
+      "source_category": "digestive",
+      "source_labels": [
+        "VH_F_tail_of_pancreas",
+        "VH_F_pancreas",
+        "VH_F_digestive_system",
+        "VH_F",
+        "world"
+      ],
+      "source_triangles": 3997,
+      "source_vertices": 8147
+    }
+  ],
+  "female_spleen_assembly": {
+    "source_parent": "VH_F_spleen",
+    "members": [
+      "hra_0361_VH_F_colic_surface_of_spleen",
+      "hra_0383_VH_F_diaphragmatic_surface_of_spleen",
+      "hra_0431_VH_F_gastric_surface_of_spleen",
+      "hra_0448_VH_F_hilum_of_spleen",
+      "hra_0792_VH_F_renal_surface_of_spleen"
+    ],
+    "policy": "all source surface patches under the exact same source-parent identity; exact coordinate index quotient only"
+  }
+}

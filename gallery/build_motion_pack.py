@@ -90,7 +90,8 @@ def build(inputs,archives,out):
                     clip['preview']={**write(z.read(media_name),'previews/'+name.lower()+'.mp4'),'fps':v['fps'],'frames':v['frames'],'duration_s':v['frames']/v['fps']}
                 clips.append(clip)
             nonuniform=case['id']=='maleolderflat';m=case['morphology'];sex=case['sex_variant'];stature=m['stature_m']
-            footwear='Barefoot' if captured or water else 'Stiletto support proxy' if case['shoe_profile']=='stiletto' else 'Flat support proxy'
+            pack.require(case['shoe_profile'] in ('flats','stilettos'),'unknown producer footwear profile')
+            footwear='Barefoot' if captured or water else 'Stiletto support proxy' if case['shoe_profile']=='stilettos' else 'Flat support proxy'
             group='Captured baselines' if captured else 'Aquatic studies' if water else 'Daily activities' if daily else 'Morphology & footwear'
             title=(('Nonuniform male shape' if nonuniform else sex.title()+' · '+format(stature,'.2f')+' m')+' · '+('capture '+capture if captured else 'aquatic' if water else 'daily' if daily else case['shoe_profile']))
             p={'id':pid,'title':title,'group':group,'source_kind':entry['source_kind'],'actors':[{'id':case['id'],'sex_variant':sex,'stature_m':stature,'morphology_label':'Nonuniform source morph' if nonuniform else 'Athletic exterior with uniform stature adaptation','footwear':footwear,'source_bind_sha256':m['source_bind_sha256']}],

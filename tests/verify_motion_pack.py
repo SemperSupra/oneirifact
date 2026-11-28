@@ -10,13 +10,29 @@ def rejected(fn):
     except (ValueError,KeyError,zipfile.BadZipFile):return True
     return False
 
+def source_assets_unchanged(entries,previous):
+    current={k:v for k,v in entries.items() if k!='catalog.json'}
+    original={k:v for k,v in previous['files'].items() if k!='catalog.json'}
+    pack.require(current==original,'original product bytes changed during catalog correction')
+    return len(original)
+
+def footwear_matches(p,receipt):
+    profile=receipt['case']['shoe_profile'];pack.require(profile in ('flats','stilettos'),'unknown exact producer footwear profile')
+    expected='Barefoot' if p['source_kind']=='captured' or p['id'].startswith('r246-') else {'flats':'Flat support proxy','stilettos':'Stiletto support proxy'}[profile]
+    pack.require(all(a['footwear']==expected for a in p['actors']),'footwear label differs from exact producer')
+
 def verify(source,output):
     lock=pack.parse((builder.HERE/'motion-release-lock.json').read_bytes())['packs'][0]
     entries=pack.verify(source,lock['sha256']);models=[];previews=0;controls={}
+    previous=pack.parse((builder.HERE/'motion-v1-file-lock.json').read_bytes());pack.require(previous['schema']=='oneirifact.motion-source-file-lock/v1','previous product lock schema')
+    unchanged=source_assets_unchanged(entries,previous)
+    mutated=copy.deepcopy(entries);model=next(n for n in mutated if n.endswith('/model.glb'));mutated[model]['sha256']='0'*64
+    controls['original_product_byte_change_rejected']=rejected(lambda:source_assets_unchanged(mutated,previous))
     with zipfile.ZipFile(source) as z:
         c=pack.parse(z.read('catalog.json'))
         pack.require(c['pack_id']==lock['pack_id'] and len(c['packages'])==17,'locked package coverage')
         for p in c['packages']:
+            footwear_matches(p,pack.parse(z.read(p['assets']['receipt']['path'])))
             d,b=builder.glb(z.read(p['assets']['model']['path']));inv=builder.model_inventory(d,b)
             pack.require(inv==p['model_inventory'],'catalog model inventory mismatch')
             pack.require(inv['maximum_positive_influences']==9,'original ninth influence missing')
@@ -36,6 +52,8 @@ def verify(source,output):
         pack.require(previews==32 and previews==lock['previews'],'all produced preview coverage')
         pack.require(len(entries)==lock['files'] and sum(r['bytes'] for r in entries.values())==lock['unpacked_bytes'],'locked delivery bounds')
         pack.require('oneirifact-private' not in json.dumps(c).lower() and 'library_file_id' not in json.dumps(c),'public-only catalog')
+        stiletto=next(p for p in c['packages'] if p['actors'][0]['footwear']=='Stiletto support proxy');bad_label=copy.deepcopy(stiletto);bad_label['actors'][0]['footwear']='Flat support proxy'
+        controls['mislabeled_stiletto_rejected']=rejected(lambda:footwear_matches(bad_label,pack.parse(z.read(stiletto['assets']['receipt']['path']))))
         # A source model with a missing set or a ninth-weight truncation must fail.
         sample=next(p for p in c['packages'] if p['source_kind']=='authored')
         d,b=builder.glb(z.read(sample['assets']['model']['path']))
@@ -64,7 +82,7 @@ def verify(source,output):
                     i=zipfile.ZipInfo('../escape.bin');i.external_attr=(stat.S_IFREG|0o644)<<16;zout.writestr(i,payload)
             controls[label+'_rejected']=rejected(lambda:pack.verify(target,pack.digest(target)))
     pack.require(all(controls.values()),'controlled corruption escaped: '+str(controls))
-    result={'schema':'oneirifact.motion-browser-pack-verification/v1','status':'PASS','archive_sha256':lock['sha256'],'packages':models,'preview_count':previews,'files':len(entries),'unpacked_bytes':sum(r['bytes'] for r in entries.values()),'controls':controls,'limits':['MP4 decode and browser GPU animation are separate site qualification gates.','Transport does not qualify realistic motion, contact, dynamics or internal anatomy.']}
+    result={'schema':'oneirifact.motion-browser-pack-verification/v1','status':'PASS','archive_sha256':lock['sha256'],'packages':models,'preview_count':previews,'files':len(entries),'unpacked_bytes':sum(r['bytes'] for r in entries.values()),'controls':controls,'catalog_correction':{'previous_archive_sha256':previous['archive_sha256'],'unchanged_original_files':unchanged,'permitted_changed_files':['catalog.json','pack-manifest.json'],'footwear_source':'Exact unchanged producer receipts; shoe_profile plural stilettos maps to stiletto support proxy.'},'limits':['MP4 decode and browser GPU animation are separate site qualification gates.','Transport does not qualify realistic motion, contact, dynamics or internal anatomy.']}
     output.write_text(json.dumps(result,indent=2)+'\n');print('MOTION_PACK_QUALIFICATION_PASS',len(models),previews,len(controls))
 
 if __name__=='__main__':verify(Path(sys.argv[1]),Path(sys.argv[2]))

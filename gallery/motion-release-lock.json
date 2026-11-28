@@ -2,13 +2,13 @@
   "schema": "oneirifact.motion-browser-releases/v1",
   "packs": [
     {
-      "pack_id": "motion-r253-v1",
+      "pack_id": "motion-r253-v2",
       "repository": "SemperSupra/oneirifact",
-      "tag": "motion-r253-v1",
-      "asset": "motion-r253-v1.zip",
-      "sha256": "545e295bd657f52fa985d88e216ae7c52d6bd7ce228750a4b3c5333d92e4a007",
+      "tag": "motion-r253-v2",
+      "asset": "motion-r253-v2.zip",
+      "sha256": "724a151c4f0b89f45769d3d3d17b718b73e41d8e28b2957ca5612b2e28d5b498",
       "files": 208,
-      "unpacked_bytes": 197312901,
+      "unpacked_bytes": 197312917,
       "packages": 17,
       "previews": 32
     }

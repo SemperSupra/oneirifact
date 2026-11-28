@@ -1,0 +1,59 @@
+{
+  "schema": "oneirifact.organ-audit-public-source-state/v1",
+  "main_commit": "5608261f29fe42e651e7de68c4eb43fe50e30344",
+  "source_reads": [
+    {
+      "pr": 37,
+      "commit": "7fdffaea5910256fd67a9e4ca62e41324c887f50",
+      "path": "experiments/r218/register.py",
+      "sha256": "2da4c6ac668879617a36545b4126e4feb4dbe9fb6aa1b36c59341b7c78aff761",
+      "finding": "Held shared height/slice-envelope geometric warp; no anatomical landmarks, attachment or mass model"
+    },
+    {
+      "pr": 43,
+      "commit": "6528fbc21c49885e63f9912ea01c09f6c471abed",
+      "path": "experiments/r222/baseline.py",
+      "sha256": "375a6881022ad0acf9738ce925d0e97b47ceafb3c1d77c832a677376e4c6b556",
+      "finding": "Actual static named male BP3D/female HRA source surfaces; no morphology or pose binding"
+    },
+    {
+      "pr": 69,
+      "commit": "e4375d3319e2597f0f9d52a20c1753463afeac8f",
+      "path": "experiments/r234/regional.py",
+      "sha256": "9107ea39a87d4f9c51e5c4f92577e498939fc58596ea4afcb14101db613256d4",
+      "finding": "Exterior regional source targets and helper-joint refit only"
+    },
+    {
+      "pr": 72,
+      "commit": "e66f0b71df4787c7810a8e66ce0d1e21adbb55e8",
+      "path": "experiments/r235/shared.py",
+      "sha256": "bf8551e65c0b52ff257de88891d85b9c00f56f942ec68ace754ef733dd1cd465",
+      "finding": "Shared exterior endpoint and age/mass/region controls; internal_geometry_status NOT_GENERATED"
+    },
+    {
+      "pr": 74,
+      "commit": "3502e24b152dfb1fbcfa4482797ce365f2c5a974",
+      "path": "experiments/r236coupling/coupling.go",
+      "sha256": "5dde7ce40cf689130b46afda31baa1af7e1dbc0559768059c4b9d90ac2f1b4f3",
+      "finding": "Synthetic prisms and carried box organ; not anatomical donor coupling"
+    },
+    {
+      "pr": 79,
+      "commit": "c8d36737a71f3167ea5e36af7aa0b0cf267fdf72",
+      "path": "experiments/r236coupling/coupling.go",
+      "sha256": "cf5459e08c1a7e039c18245c3e9f73af4c0b17376c40f3cc1479909775260396",
+      "finding": "Synthetic fixture revision propagation; no real-organ semantics or dynamics"
+    }
+  ],
+  "current_shipped_morphology_release": {
+    "tag": "shared-design-r237-v1",
+    "sha256": "5f3d2d1126dce81b813f25f392ae3d9571fe35f69d69de89939bcfcfabe61ff4"
+  },
+  "diagnosis": "Real internal geometry propagation, physical mass properties, attachments and dynamic response are missing functionality; source-frame topology fixes do not implement those behaviors.",
+  "boundaries": [
+    "No private engine source",
+    "No clinical claims",
+    "No anatomical overlay or physical density invented",
+    "No uniform scaling passed off as physical organ coupling"
+  ]
+}

@@ -35,10 +35,12 @@ for sex in ("male","female"):
         measurements.append({"key":i,"frame":frame,"max_bidirectional_vertex_error_m":err,"evaluated_vertices":len(actual)})
     status="PASS_NATIVE_CONSUMER" if len(rig.data.bones)==163 and max(x["max_bidirectional_vertex_error_m"] for x in measurements)<.0001 else "HOLD_NATIVE_WEIGHT_OR_ANIMATION_TRANSPORT"
     rows.append({"id":name,"bones":len(rig.data.bones),"actions":len(actions),"samples":measurements,"status":status})
+    (root/"blender-consumer-receipt.json").write_text(json.dumps(rows,indent=2)+"\n")
+    print("R239_BLENDER_VARIANT",json.dumps(rows[-1]),flush=True)
     # Actual surface render of imported posed mesh. Neutral clay, whole-body
     # orthographic inspection; no anatomical or photoreal material claim.
     scene.frame_set(int((frame_start+frame_end)/2))
-    scene.render.engine="BLENDER_EEVEE";scene.render.resolution_x=660;scene.render.resolution_y=780;scene.render.resolution_percentage=100
+    scene.render.engine="CYCLES";scene.cycles.device="CPU";scene.cycles.samples=12;scene.cycles.use_denoising=True;scene.render.resolution_x=660;scene.render.resolution_y=780;scene.render.resolution_percentage=100
     scene.world=bpy.data.worlds.new("inspection-world");scene.world.color=(.18,.18,.18)
     def look(obj,point):obj.rotation_euler=(Vector(point)-obj.location).to_track_quat("-Z","Y").to_euler()
     bpy.ops.object.camera_add(location=(2.5,-4,1.6));cam=bpy.context.object;look(cam,(0,0,.83));cam.data.type="ORTHO";cam.data.ortho_scale=2.08;scene.camera=cam

@@ -1,0 +1,43 @@
+name: R233 separate mammary anatomy browser isolation
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r233/mammary/**','.github/workflows/rdte-r233-mammary.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  mammary:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Build exact source-derived candidate with individual tissue meshes
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/site/anatomy" "$RUNNER_TEMP/site/inspect"
+          cp site/anatomy/{index.html,viewer.js,viewer.css} "$RUNNER_TEMP/site/anatomy/"
+          curl --fail --silent --show-error --location --proto '=https' --max-time 120 --max-filesize 67108864 https://github.com/SemperSupra/oneirifact/releases/download/anatomy-display-r231-v2/anatomy-display-r231-v2.zip -o "$RUNNER_TEMP/base.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15257105199/zip > "$RUNNER_TEMP/mammary.zip"
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 trimesh==4.6.8 fast-simplification==0.1.13 Pillow==12.0.0
+          python experiments/r233/mammary/extend.py "$RUNNER_TEMP/base.zip" "$RUNNER_TEMP/mammary.zip" "$RUNNER_TEMP/site/anatomy/data" "$RUNNER_TEMP/mammary-display-candidate.zip"
+          python -c 'import sys;sys.path.insert(0,"gallery");from pathlib import Path;from build_inspector import vendor;vendor(Path(sys.argv[1]))' "$RUNNER_TEMP/site/inspect"
+      - name: Load all sixteen actual structures and verify UI
+        run: node experiments/r233/mammary/browser.mjs "$RUNNER_TEMP/site"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r233-mammary-isolation-candidate
+          path: |
+            ${{ runner.temp }}/mammary-display-candidate.zip
+            ${{ runner.temp }}/mammary-isolation.png
+          retention-days: 30
+          if-no-files-found: error

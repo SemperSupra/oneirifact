@@ -1,0 +1,41 @@
+name: R240 bounded anatomical roll screen
+on:
+  pull_request:
+    branches: [rdte/r240-ct-skin-coupling]
+    paths: ['experiments/r240/roll/**','.github/workflows/rdte-r240-roll.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  registration:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Restore exact previous integrated CT and skin products
+        run: |
+          set -euo pipefail
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15262795704/zip > "$RUNNER_TEMP/ct-skin.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15260769266/zip > "$RUNNER_TEMP/skin.zip"
+      - name: Evaluate bounded roll and held-out actual bone containment
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0 rtree==1.4.1
+          python experiments/r240/roll/compare.py "$RUNNER_TEMP/ct-skin.zip" "$RUNNER_TEMP/skin.zip" "$RUNNER_TEMP/roll"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r240-ct-skin-roll-candidate
+          path: ${{ runner.temp }}/roll
+          retention-days: 30
+          if-no-files-found: error

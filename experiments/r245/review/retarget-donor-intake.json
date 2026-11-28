@@ -1,0 +1,111 @@
+{
+  "schema": "oneirifact.motion-retarget-donor-research/v1",
+  "checked_utc_date": "2026-11-28",
+  "status": "RESEARCH_AND_NEXT_BAKEOFF_SPEC_ONLY",
+  "adoption": "NOT_RUN",
+  "upstream": {
+    "repository": "https://github.com/Diffeomorphic/retarget_bvh",
+    "tag": "version_5_2_0",
+    "commit": "8501d53f66fffa8d2574a01532c30e195c8d2998",
+    "tag_object_type": "commit",
+    "release": "https://github.com/Diffeomorphic/retarget_bvh/releases/tag/version_5_2_0",
+    "observed_master_commit": "8501d53f66fffa8d2574a01532c30e195c8d2998",
+    "manifest_version": "5.2.0",
+    "manifest_minimum_blender": "4.2.0",
+    "license": "GPL-2.0-or-later",
+    "pinned_file_git_blob_ids": {
+      "LICENSE": "f8b71064e7a2da9b556742ac289a207ea27d6700",
+      "blender_manifest.toml": "33cec2c0c3d0021d8ff3d8bd64bcf83756a451d8",
+      "retarget.py": "0e53a4b0af5a9af9a2e3b020b65419f81ee0f5ba",
+      "load.py": "ac3e30d562b81c82e10d97e830bd6af489722e2b",
+      "source.py": "767c0ef757640d49c445ab5a981c603296822a3f",
+      "target.py": "54d2222739082405fd4fc90bbacb5289fb64935c",
+      "known_rigs/cmu-mb.json": "be57169258030394524920fcd9f01a6a51464efd",
+      "known_rigs/makehuman.json": "65a49435cc726f2089373caa34373909ff0f2a8e"
+    },
+    "documentation": [
+      "https://github.com/Diffeomorphic/retarget_bvh/wiki",
+      "https://github.com/Diffeomorphic/retarget_bvh/blob/8501d53f66fffa8d2574a01532c30e195c8d2998/README.md",
+      "https://diffeomorphic.blogspot.com/2026/04/moving-to-github.html",
+      "https://diffeomorphic.blogspot.com/2026/08/diffeomorphic-add-ons-version-520.html?m=0",
+      "https://static.makehumancommunity.org/oldsite/faq/what_happened_to_makewalk.html"
+    ],
+    "documentation_limits": "Old blog documentation endpoint returned404. Author says migrated wiki includes partially obsolete documentation. Operator/source observations below are from pinned code; runtime qualification is still required.",
+    "no_code_or_dataset_installed": true
+  },
+  "observed_api": {
+    "initialization": "Register the pinned addon and initialize known rigs with mcp.init_known_rigs in an isolated Blender profile; record addon version, build, preferences and active object.",
+    "entry_operator": "bpy.ops.mcp.load_and_retarget",
+    "input_property": "filepath; optional directory/files collection",
+    "required_context": "Active target ARMATURE in suitable object context; explicit validated source and target mapping/T-pose before invocation",
+    "accepted_formats": [".bvh", ".fbx", ".glb", ".gltf"],
+    "unsupported_original_capture_formats": [".asf", ".amc"],
+    "selection_and_verification_operators": ["mcp.init_known_rigs", "mcp.identify_source_rig", "mcp.verify_source_rig", "mcp.identify_target_rig", "mcp.verify_target_rig", "mcp.list_source_rig", "mcp.list_target_rig"],
+    "alternative_existing_source_operator": "mcp.retarget_selected_to_active",
+    "behavior_that_must_be_explicit": [
+      "useAutoTarget must not silently fall back to Automatic on our incompatible default mapping",
+      "useCenterAnimation defaults true; preserve original world/root motion in the baseline or record the explicit coordinate transform",
+      "useBendPositive, useSimplify and useTimeScale must be disabled for an unmodified baseline, or emitted as separate declared postprocessing cases",
+      "useNLA defaults false; multi-action selection and action slots require actual5.2.4 reopen evidence",
+      "LoadAndRetarget deletes its transient source rig in a finally block; retain original capture and independent source observations separately",
+      "Target normalization can mute limits; no physiological limit acceptance follows from donor success"
+    ]
+  },
+  "target_compatibility": {
+    "status": "EXPLICIT_MAPPING_ADAPTER_REQUIRED",
+    "target_rig": "admitted MakeHuman163-bone source hierarchy",
+    "builtin_makehuman_missing_target_names": ["spine4", "spine3", "spine2", "neck", "shoulder02.L", "shoulder02.R"],
+    "observed_target_naming": ["spine05", "spine04", "spine03", "spine02", "spine01", "neck01", "neck02", "neck03", "upperarm01.L", "upperarm01.R"],
+    "required_adapter": "A source-owned explicit joint-role map and T-pose/reference calibration, preserving original rest geometry, all skin influences and rigid intermediate .02 segments; do not rename or mutate the admitted source in place.",
+    "not_established": ["automatic MakeHuman profile compatibility", "retargeted contact quality", "headless operator success", "realistic motion across morphologies"]
+  },
+  "capture_candidates": [
+    {"id": "CMU_07_01", "task": "walking", "official_listing": "https://mocap.cs.cmu.edu/search.php?subjectnumber=7", "listed_source_fps": 120},
+    {"id": "CMU_13_01", "task": "sitting on high stool and standing", "official_listing": "https://mocap.cs.cmu.edu/search.php?subjectnumber=13", "listed_source_fps": 120}
+  ],
+  "capture_rights": {
+    "authority": "https://mocap.cs.cmu.edu/",
+    "permitted_scope": "Research and inclusion in commercial products, subject to the source's current terms.",
+    "restriction": "Direct resale of raw motion data or converted motion data is forbidden. No bulk crawling. Source acknowledgement should accompany products/evidence.",
+    "handling": "Only the two named captures and their matching calibrated skeletons are in scope. Preserve original capture provenance separately from authored activity definitions and retargeted products. Do not relicense capture data under the original-code library license.",
+    "sensor_limits": "Finger/thumb motions were not captured; toe/hand channels can be noisy. These records do not establish exact sole, grip or seat surface contacts."
+  },
+  "format_bridge": {
+    "preferred_candidate": "CMU-linked cgspeed MotionBuilder-friendly BVH conversion, matching the pinned addon CMU(MB) profile",
+    "cmu_conversion_links": "https://mocap.cs.cmu.edu/resources.php",
+    "publisher": "https://sites.google.com/a/cgspeed.com/cgspeed/motion-capture/the-motionbuilder-friendly-bvh-conversion-release-of-cmus-motion-capture-database",
+    "publisher_terms": "https://sites.google.com/a/cgspeed.com/cgspeed/motion-capture/the-motionbuilder-friendly-bvh-conversion-release-of-cmus-motion-capture-database/readme-motionbuilder-2010-release",
+    "observed_conversion_changes": ["Added initial T-pose facing +Z", "Renamed joints for MotionBuilder"],
+    "rights_interpretation": "Conversion publisher states no added restrictions; its older unrestricted summary does not override current CMU no-direct-resale terms.",
+    "remaining_gate": "Acquire and hash exactly two selected converted files with their publisher README and verify source IDs, frame count, timestamps, units, channel mapping and added T-pose. Do not treat a converted file as native capture.",
+    "fallback_candidate": {"repository": "https://github.com/thcopeland/amc2bvh", "observed_license": "MIT in upstreamREADME", "status": "NOT_PINNED_NOT_RUN", "caveat": "Documented possible zero-length bones; separate converter qualification is required. Do not build a new bespoke converter."}
+  },
+  "next_bakeoff": {
+    "status": "PLANNED_NOT_LAUNCHED",
+    "question": "Can the pinned donor replay two rights-admitted captured tasks on two explicitly mapped morphed rigs while preserving geometry and improving contact/phase evidence beyond authored intent?",
+    "targets": ["male155flat", "male185flat"],
+    "target_scope": "Initial same-topology stature comparison only, using exact R245 post-morphology source bind hashes once its public consumer receipt is accepted. Nonuniform older-shape qualification is a later independent case.",
+    "capture_count": 2,
+    "matrix_cases": 4,
+    "runner": "public ubuntu-24.04 standard GitHub-hosted runner",
+    "max_parallel": 2,
+    "timeout_minutes_per_job": 10,
+    "runtime": "Existing exact Blender5.2.4 runtime pin and Node24 action pins from accepted R245 workcell",
+    "time_scope": "Keep original source sampling/time in intake. For first bounded compute, select at most one documented10-second interval per capture, retain exact crop frame range and native duration; no silent time warp or forced looping.",
+    "comparison_arms": ["unmodified source capture observation", "pinned donor baseline with explicit mapping and no optional smoothing/time warping", "R245 authored task comparator kept separately and labelled authored"],
+    "admission_gates": [
+      "Exact capture/conversion/source/addon/runtime/target-bind hashes and terms present",
+      "Explicit compatible target roles and reference pose, no silent Automatic fallback",
+      "Source timing and root displacement retained with explicit unit/axis conversion",
+      "Original target vertex/face/rest-bind/weight payload preservation verified",
+      "Actual evaluated FK, rigid intermediate segments and sampled skin/export transport verified",
+      "Independent plant sliding/height/penetration, limb-length, reachability and phase reports; no silent stretch or clamp",
+      "Contact intervals must be labelled as measured, manually annotated, or heuristic; capture skeleton alone is not sole-contact ground truth",
+      "Seat geometry and pelvis/skin clearance remain NOT_RUN unless independently measured",
+      "Actual save/reopen and exported replay on pinned runtime, plus renders/video for human evaluation"
+    ],
+    "products": ["editable native scene", "retargeted transport product with provenance", "source-versus-target rendered video", "independent observations and critic", "intake and runtime receipts"],
+    "separation": "Original capture files and converted transport belong in separately labelled intake custody; no dataset repackaging or sale. The original authored intent library remains independently identified.",
+    "acceptance_ceiling": "CAPTURE_CONDITIONED_RETARGET_PROTOTYPE; no automatic REALISM_PASS, biomechanics, physiological limits, collision, footwear safety, breathing or organ qualification."
+  }
+}

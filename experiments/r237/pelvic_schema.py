@@ -39,11 +39,13 @@ def parse(raw,author):
     if len(names)!=len(rows) or len(set(names))!=len(names):return None,"author_landmark_order_count"
     if [k for k in names if k in ("age","height","weight")]!=["age","height","weight"]:return None,"author_metadata_order"
     result={}
+    # The exact author reader only consumes the first four columns.
+    # Actual archive also contains four-column rows, with the same order.
     for name,r in zip(names,rows):
         if name in ("age","height","weight"):
             if len(r)!=2:return None,"metadata_width"
             continue
-        if len(r)<14 or len(r)>32:return None,"landmark_width"
+        if len(r)!=4 and not 14<=len(r)<=32:return None,"landmark_width"
         try:x,y,z=(float(r[i]) for i in (1,2,3))
         except ValueError:return None,"coordinate_parse"
         if not np.isfinite([x,y,z]).all():return None,"nonfinite"

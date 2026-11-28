@@ -1,0 +1,53 @@
+name: R239 actual shared human skin animation and independent Blender consumer
+on:
+  pull_request:
+    branches: [rdte/r235-shared-adult-morphology]
+    paths: ['experiments/r239/skin/**','.github/workflows/rdte-r239-skin.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  animation:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Generate and independently replay actual full-weight animated GLBs
+        run: |
+          set -euo pipefail
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15258079477/zip > "$RUNNER_TEMP/shared.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15257080341/zip > "$RUNNER_TEMP/rig.zip"
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r239/skin/animate.py "$RUNNER_TEMP/shared.zip" "$RUNNER_TEMP/rig.zip" "$RUNNER_TEMP/animated"
+      - name: Independently import, evaluate and render actual animations in pinned Blender
+        run: |
+          set -euo pipefail
+          artifact=blender-5.2.4-linux-x64.tar.xz
+          expected=2fd14c50987426897ba60237ee996edf2b4151f4b1a72a460ca20be58c1d2d86
+          root="$RUNNER_TEMP/blender"
+          mkdir "$root"
+          for origin in https://download.blender.org https://mirror.blender.org https://mirror.nju.edu.cn/blender; do
+            if timeout 110s curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error --connect-timeout 12 --max-time 95 "$origin/release/Blender5.2/$artifact" -o "$root/$artifact"; then
+              echo "$expected  $root/$artifact" | sha256sum -c -
+              break
+            fi
+          done
+          echo "$expected  $root/$artifact" | sha256sum -c -
+          timeout 150s tar -xf "$root/$artifact" -C "$root"
+          "$root/blender-5.2.4-linux-x64/blender" -b --factory-startup --python-exit-code 1 --python experiments/r239/skin/blender_witness.py -- "$RUNNER_TEMP/animated"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r239-actual-human-animation
+          path: ${{ runner.temp }}/animated
+          retention-days: 30
+          if-no-files-found: error

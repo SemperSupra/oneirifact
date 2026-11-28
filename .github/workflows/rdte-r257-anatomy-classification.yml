@@ -1,0 +1,85 @@
+name: R257 exact anatomy display classification repair
+on:
+  pull_request:
+    branches: [main]
+    paths: ['gallery/anatomy_classification.py', 'gallery/build_anatomy.py', 'gallery/build_r257_anatomy_pack.py', 'gallery/anatomy-classification-release-lock.json', 'tests/verify_anatomy_classification.py', 'tests/smoke_anatomy_classification.mjs', 'experiments/r257/classification/**', '.github/workflows/rdte-r257-anatomy-classification.yml']
+  push:
+    branches: [main]
+    paths: ['gallery/anatomy_classification.py', 'gallery/build_anatomy.py', 'gallery/build_r257_anatomy_pack.py', 'gallery/anatomy-classification-release-lock.json', 'tests/verify_anatomy_classification.py', 'tests/smoke_anatomy_classification.mjs', 'experiments/r257/classification/**', '.github/workflows/rdte-r257-anatomy-classification.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualify:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      sha: ${{ steps.build.outputs.sha }}
+    env:
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 Node24
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Reclassify exact released source nodes and independently verify transport
+        id: build
+        run: |
+          set -euo pipefail
+          test "${{ github.event.repository.private }}" = false
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD_SHA"
+          curl --proto '=https' --proto-redir '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 4 --max-time 120 --max-filesize 67108864 https://github.com/SemperSupra/oneirifact/releases/download/anatomy-display-r233-v3/anatomy-display-r233-v3.zip -o "$RUNNER_TEMP/base.zip"
+          python3 gallery/build_r257_anatomy_pack.py --source "$RUNNER_TEMP/base.zip" --out "$RUNNER_TEMP/product" --stage "$RUNNER_TEMP/stage/anatomy/data"
+          cmp gallery/anatomy-classification-release-lock.json "$RUNNER_TEMP/product/release-lock.json"
+          python3 tests/verify_anatomy_classification.py "$RUNNER_TEMP/base.zip" "$RUNNER_TEMP/product/anatomy-display-r257-v4.zip" "$RUNNER_TEMP/product/verification.json"
+          echo "sha=$(sha256sum "$RUNNER_TEMP/product/anatomy-display-r257-v4.zip" | cut -d ' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Load all four corrected layers in the actual browser and preserve witnesses
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,shutil,sys,urllib.parse
+          from pathlib import Path
+          sys.path.insert(0,'gallery')
+          from build_inspector import vendor
+          stage=Path(os.environ['RUNNER_TEMP'])/'stage'
+          for name in ['index.html','viewer.js','viewer.css']:
+              shutil.copyfile(Path('site/anatomy')/name,stage/'anatomy'/name)
+          out=stage/'inspect';out.mkdir()
+          vendor(out)
+          PY
+          node tests/smoke_anatomy_classification.mjs "$RUNNER_TEMP/stage" "$RUNNER_TEMP/product"
+          python3 experiments/r257/classification/finalize.py "$RUNNER_TEMP/product"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2 Node24
+        if: always()
+        with:
+          name: r257-qualified-anatomy-classification
+          path: ${{ runner.temp }}/product
+          retention-days: 30
+          if-no-files-found: error
+  publish:
+    needs: qualify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PACK_SHA: ${{ needs.qualify.outputs.sha }}
+      TAG: anatomy-display-r257-v4
+    steps:
+      - name: Publish the qualified version once and verify anonymous exact readback
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/publish"
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name r257-qualified-anatomy-classification --dir "$RUNNER_TEMP/publish"
+          cd "$RUNNER_TEMP/publish"
+          echo "$PACK_SHA  anatomy-display-r257-v4.zip" | sha256sum --check --strict
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Anatomy display classification correction R257" --notes "Exact source-ID regrouping of two male adrenal glands into endocrine and the female diaphragmatic liver surface into digestive. All source geometry, transforms, materials and attribution preserved; 53 models across 7 datasets. Independent transport controls and actual browser membership evidence included. No anatomical registration, morphology coupling or physical organ acceptance. The online release lock is activated separately after immutable readback." --latest=false anatomy-display-r257-v4.zip receipt.json release-lock.json verification.json classification-report.json browser-witness.json *.png
+          fi
+          curl --proto '=https' --proto-redir '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 4 --retry 2 --max-time 120 --max-filesize 67108864 "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/anatomy-display-r257-v4.zip" -o "$RUNNER_TEMP/readback.zip"
+          echo "$PACK_SHA  $RUNNER_TEMP/readback.zip" | sha256sum --check --strict
+          echo R257_ANATOMY_CLASSIFICATION_IMMUTABLE_READBACK_PASS

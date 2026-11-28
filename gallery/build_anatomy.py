@@ -5,6 +5,7 @@ import hashlib,io,json,re,sys,zipfile
 from pathlib import Path
 import numpy as np
 import trimesh
+from anatomy_classification import inventory_correction, relocate_layers
 ROOT=Path(__file__).resolve().parents[1]
 PINS={
  "male":"18c2089c2878a6729515754795779fd34b59e887809646d45fa84d829e6906d9",
@@ -91,17 +92,20 @@ def base(inp,out,sex):
     with checked(inp,sex) as z:
         receipt=json.loads(read(z,"receipt.json"));inv=json.loads(read(z,"inventory.json"))
         assert receipt["sex"]==sex and len(inv)==receipt["named_meshes"]
-        assets=[]
+        assets=[];raw_layers={}
         for category,label in LABELS.items():
             name="layers/"+category+".glb"
             if name not in receipt["files"]:continue
             raw=read(z,name);assert sha(raw)==receipt["files"][name]["sha256"]
-            assets.append(model(out,sex+"-"+category.replace("_","-"),label,raw))
+            raw_layers[category]=raw
+        raw_layers=relocate_layers(raw_layers,sex)
+        for category,label in LABELS.items():
+            if category in raw_layers:assets.append(model(out,sex+"-"+category.replace("_","-"),label,raw_layers[category]))
         assert assets
         rows=[]
         for r in inv:
             names=[v[1] for v in r["concepts"]] if sex=="male" else [r["source_node"]]
-            rows.append({"id":r["id"],"names":names,"category":r["category"],"layer":sex+"-"+r["category"].replace("_","-"),"triangles":r["triangles"]})
+            rows.append(inventory_correction(sex,{"id":r["id"],"names":names,"category":r["category"],"layer":sex+"-"+r["category"].replace("_","-"),"triangles":r["triangles"]}))
         for name in ("baseline-preview.png","ATTRIBUTION.txt","inventory.json"):
             assert sha(read(z,name))==receipt["files"][name]["sha256"]
         return {"id":sex,"label":sex.title()+" reference","source":receipt["provenance"]["source"],"scope":"Reference donor; incomplete anatomy, not articulated or native Oneirifact output. Display grouping is heuristic.","preview":write(out,sex+"-preview.png",read(z,"baseline-preview.png")),"attribution":write(out,sex+"-attribution.txt",read(z,"ATTRIBUTION.txt")),"inventory":write(out,sex+"-inventory.json",json.dumps(rows,separators=(",",":")).encode()),"layers":assets,"source_archive_sha256":PINS[sex]}

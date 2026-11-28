@@ -2,7 +2,7 @@ name: R253 actual motion browser qualification
 on:
   pull_request:
     branches: [main]
-    paths: ['site/motion/**','tests/motion_reference.py','tests/motion-reference-requirements.txt','tests/smoke_motion.mjs','.github/workflows/r253-motion-browser.yml']
+    paths: ['site/motion/**','gallery/motion-release-lock.json','tests/motion_reference.py','tests/motion-reference-requirements.txt','tests/smoke_motion.mjs','.github/workflows/r253-motion-browser.yml']
 permissions:
   contents: read
 jobs:

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Explore actual Oneirifact motion studies: rendered previews, full-weight 3D replay and editable source scenes. Research quality and source provenance stay visible.">
+  <title>Motion Studio · Oneirifact</title>
+  <link rel="stylesheet" href="motion.css">
+  <script type="module" src="motion.js"></script>
+</head>
+<body>
+  <a class="skip" href="#studio">Skip to motion player</a>
+  <header class="topbar">
+    <a class="brand" href="../"><span class="brand-mark" aria-hidden="true">O</span> Oneirifact</a>
+    <nav aria-label="Research previews"><a href="../anatomy/">Anatomy</a><a href="../morph/">Morphology</a><a href="./" aria-current="page">Motion</a></nav>
+    <span class="research">Research preview</span>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="title">
+      <div><p class="eyebrow">MOVEMENT, MADE EXPLORABLE</p><h1 id="title">Motion Studio</h1><p class="lede">Explore the movement. Inspect the source.<br>Carry an editable scene into your own work.</p></div>
+      <div class="intro-note"><p>Actual rendered sequences and source-body animation, from daily activities to captured motion and aquatic studies.</p><p class="quiet">Motion realism, physical contact and tissue behavior remain under review.</p><div class="counts" id="counts" aria-label="Available products">Loading the motion catalog…</div></div>
+    </section>
+    <section class="studio" id="studio" aria-labelledby="package-title">
+      <div class="stage-panel">
+        <div class="stage-heading"><div><p class="eyebrow" id="package-group">MOTION LIBRARY</p><h2 id="package-title">Loading source products…</h2></div><span class="badge" id="kind-label">Research</span></div>
+        <div class="stage" id="stage" data-mode="poster">
+          <img id="poster" alt="Selected actual motion render" fetchpriority="high">
+          <video id="video" controls playsinline preload="none" hidden aria-label="Actual rendered motion preview"></video>
+          <canvas id="canvas" hidden tabindex="0" aria-label="Interactive 3D motion. Drag to orbit; arrow keys orbit, plus or minus zoom, R reframes." aria-describedby="camera-help"></canvas>
+          <div class="stage-caption"><span id="view-label">Actual Blender render</span><span id="stage-scope">Exterior research model</span></div>
+        </div>
+        <div class="mode-bar" role="group" aria-label="Display mode"><button id="show-poster" aria-pressed="true">Still image</button><button id="show-video" disabled aria-pressed="false">Watch preview</button><button id="load-3d" disabled aria-pressed="false">Load 3D</button><span class="file-size" id="model-size"></span></div>
+        <p id="status" class="status" role="status" aria-live="polite" data-state="loading">Reading the versioned catalog…</p>
+        <div id="playback" class="playback" hidden>
+          <div class="play-row"><button id="play" class="primary" aria-label="Play 3D animation">Play</button><label class="timeline"><span class="sr-only">Animation time in seconds</span><input id="seek" type="range" min="0" max="1" step="0.001" value="0"></label><output id="clock" for="seek">0.00 / 0.00 s</output></div>
+          <div class="play-options"><label>Speed<select id="speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><label class="check"><input type="checkbox" id="loop"> Loop clip</label><label class="check"><input type="checkbox" id="follow" checked> Follow root</label><button id="reframe">Reframe</button><button id="front">Front</button><button id="side">Side</button></div>
+          <p class="quiet small" id="camera-help">Drag to orbit. Keyboard: arrows to orbit, + / − to zoom, R to reframe. Camera following preserves the source root motion. Playback starts only when you choose Play.</p>
+        </div>
+      </div>
+      <aside class="clip-panel" aria-labelledby="clip-heading"><div class="panel-title"><h2 id="clip-heading">Choose a movement</h2><span id="clip-count" class="quiet"></span></div><div id="clip-list" class="clip-list" role="group" aria-label="Named animation clips"></div><div class="clip-info"><h3 id="clip-title">Source animation</h3><p id="clip-description"></p><p id="preview-note" class="quiet"></p></div></aside>
+    </section>
+    <section class="detail-grid" aria-label="Selected product details">
+      <article><h2>What you’re seeing</h2><p id="actor-summary"></p><div id="qualification" class="qualifications"></div><p id="scope-note" class="quiet"></p><details><summary>Layers and evaluation scope</summary><div id="layers"></div></details></article>
+      <article><h2>Keep the editable source</h2><p class="quiet">Original files, exact producer receipts and source notices. Downloads are public and need no account.</p><div id="downloads" class="downloads"></div><details><summary>Provenance and exact hashes</summary><div id="provenance" class="provenance"></div></details></article>
+    </section>
+    <section class="library" aria-labelledby="library-title">
+      <div class="library-heading"><div><p class="eyebrow">THE SOURCE COLLECTION</p><h2 id="library-title">Find your next study</h2></div><p id="result-count" class="quiet" aria-live="polite"></p></div>
+      <div class="filters"><label class="search-label">Search<input type="search" id="search" placeholder="Try walking, stiletto, female…" autocomplete="off"></label><label>Collection<select id="group"><option value="">All collections</option></select></label><label>Motion source<select id="source"><option value="">Authored &amp; captured</option><option value="authored">Authored prototypes</option><option value="captured">Captured baselines</option></select></label><button id="clear-filters">Reset filters</button></div>
+      <div id="cards" class="cards"></div><p id="empty" hidden>No studies match these filters. Try another movement or reset the filters.</p>
+    </section>
+    <section class="about" aria-labelledby="about-title"><div><h2 id="about-title">Evidence travels with the motion.</h2><p>These are actual research products created on public CPU runners. Authored sequences are kinematic prototypes; captured sequences are donor baselines whose retargeting quality remains held. Successful replay does not establish natural movement, physical contact or realistic anatomy.</p></div><div><h3>One source, several ways to inspect it</h3><p>Videos retain the original scene context. The optional browser view uses the unchanged GLB, including every source skin influence. Props, comparison skeletons and aquatic context omitted from an export are listed above. Internal organs and tissue dynamics are not part of these body-motion products.</p><div id="pack-downloads" class="pack-downloads"></div></div></section>
+    <noscript><p class="error">The catalog and player require JavaScript. The <a href="https://github.com/SemperSupra/oneirifact/releases/tag/motion-r253-v1">versioned public release</a> contains all videos, images, editable scenes and notices.</p></noscript>
+  </main>
+  <footer><a class="brand" href="../">Oneirifact</a><span>Dreams Made Digital</span><a href="https://github.com/SemperSupra/oneirifact/issues">Questions &amp; feedback</a></footer>
+</body>
+</html>

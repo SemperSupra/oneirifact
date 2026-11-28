@@ -1,0 +1,40 @@
+name: R253 actual motion browser qualification
+on:
+  pull_request:
+    branches: [main]
+    paths: ['site/motion/**','tests/motion_reference.py','tests/motion-reference-requirements.txt','tests/smoke_motion.mjs','.github/workflows/r253-motion-browser.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 Node24
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Restore exact public assets and prepare independent position oracle
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          python3 gallery/restore_motion_release.py
+          python3 -m venv "$RUNNER_TEMP/motion-oracle-env"
+          "$RUNNER_TEMP/motion-oracle-env/bin/pip" install --disable-pip-version-check --require-hashes --only-binary=:all: -r tests/motion-reference-requirements.txt
+          "$RUNNER_TEMP/motion-oracle-env/bin/python" tests/motion_reference.py site "$RUNNER_TEMP/motion-reference"
+      - name: Qualify actual GPU positions, decoded media and browser interactions
+        run: node tests/smoke_motion.mjs "$RUNNER_TEMP/motion-reference"
+      - name: Retain actual browser evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2 Node24
+        with:
+          name: r253-motion-browser-witnesses
+          path: |
+            ${{ runner.temp }}/motion-*.png
+            ${{ runner.temp }}/motion-browser-qualification.json
+            ${{ runner.temp }}/motion-reference/oracle.json
+          retention-days: 30
+          if-no-files-found: error

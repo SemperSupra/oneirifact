@@ -28,15 +28,15 @@
         <div class="stage" id="stage" data-mode="poster">
           <img id="poster" alt="Selected actual motion render" fetchpriority="high">
           <video id="video" controls playsinline preload="none" hidden aria-label="Actual rendered motion preview"></video>
-          <canvas id="canvas" hidden tabindex="0" aria-label="Interactive 3D motion. Drag to orbit; arrow keys orbit, plus or minus zoom, R reframes." aria-describedby="camera-help"></canvas>
+          <canvas id="canvas" hidden tabindex="0" aria-label="Interactive 3D motion. Drag to orbit; arrow keys orbit, plus or minus zoom, R frames the actors." aria-describedby="camera-help"></canvas>
           <div class="stage-caption"><span id="view-label">Actual Blender render</span><span id="stage-scope">Exterior research model</span></div>
         </div>
         <div class="mode-bar" role="group" aria-label="Display mode"><button id="show-poster" aria-pressed="true">Still image</button><button id="show-video" disabled aria-pressed="false">Watch preview</button><button id="load-3d" disabled aria-pressed="false">Load 3D</button><span class="file-size" id="model-size"></span></div>
         <p id="status" class="status" role="status" aria-live="polite" data-state="loading">Reading the versioned catalog…</p>
         <div id="playback" class="playback" hidden>
           <div class="play-row"><button id="play" class="primary" aria-label="Play 3D animation">Play</button><label class="timeline"><span class="sr-only">Animation time in seconds</span><input id="seek" type="range" min="0" max="1" step="0.001" value="0"></label><output id="clock" for="seek">0.00 / 0.00 s</output></div>
-          <div class="play-options"><label>Speed<select id="speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><label class="check"><input type="checkbox" id="loop"> Loop clip</label><label class="check"><input type="checkbox" id="follow" checked> Follow root</label><button id="reframe">Reframe</button><button id="front">Front</button><button id="side">Side</button></div>
-          <p class="quiet small" id="camera-help">Drag to orbit. Keyboard: arrows to orbit, + / − to zoom, R to reframe. Camera following preserves the source root motion. Playback starts only when you choose Play.</p>
+          <div class="play-options"><label>Speed<select id="speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><label class="check"><input type="checkbox" id="loop"> Loop clip</label><label class="check"><input type="checkbox" id="follow" checked> Follow root</label><button id="reframe">Frame actors</button><button id="frame-scene">Frame scene</button><button id="front">Front</button><button id="side">Side</button></div>
+          <p class="quiet small" id="camera-help">Drag to orbit. Keyboard: arrows to orbit, + / − to zoom, R to frame the actors. Frame scene includes the wider support geometry. Camera following preserves the source root motion. Playback starts only when you choose Play.</p>
         </div>
       </div>
       <aside class="clip-panel" aria-labelledby="clip-heading"><div class="panel-title"><h2 id="clip-heading">Choose a movement</h2><span id="clip-count" class="quiet"></span></div><div id="clip-list" class="clip-list" role="group" aria-label="Named animation clips"></div><div class="clip-info"><h3 id="clip-title">Source animation</h3><p id="clip-description"></p><p id="preview-note" class="quiet"></p></div></aside>

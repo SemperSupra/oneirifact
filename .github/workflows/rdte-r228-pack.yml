@@ -1,18 +1,70 @@
-name: R228 durable browser asset pack qualification
+name: R229 durable anatomy display assets
 on:
   pull_request:
     branches: [main]
-    paths: ['gallery/anatomy_pack.py','tests/test_anatomy_pack.py','.github/workflows/rdte-r228-pack.yml']
+    paths: ['gallery/anatomy_pack.py','gallery/qualify_anatomy_pack.py','tests/test_anatomy_pack.py','.github/workflows/rdte-r228-pack.yml']
+  push:
+    branches: [main]
+    paths: ['gallery/anatomy_pack.py','gallery/qualify_anatomy_pack.py','tests/test_anatomy_pack.py','.github/workflows/rdte-r228-pack.yml']
 permissions:
   contents: read
+  actions: read
 jobs:
   pack:
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
-    timeout-minutes: 3
+    timeout-minutes: 6
+    outputs:
+      sha: ${{ steps.actual.outputs.sha }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
       - name: Execute deterministic archive and hostile-input controls
         run: python3 tests/test_anatomy_pack.py -v
+      - name: Repackage and restore actual qualified browser corpus
+        id: actual
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15252399892/zip > "$RUNNER_TEMP/qualified.zip"
+          python3 gallery/qualify_anatomy_pack.py "$RUNNER_TEMP/qualified.zip" "$RUNNER_TEMP/corpus"
+          sha="$(sha256sum "$RUNNER_TEMP/corpus/anatomy-display-r229-v1.zip" | cut -d ' ' -f 1)"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r229-qualified-display-pack
+          path: |
+            ${{ runner.temp }}/corpus/anatomy-display-r229-v1.zip
+            ${{ runner.temp }}/corpus/receipt.json
+          retention-days: 30
+          if-no-files-found: error
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: pack
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PACK_SHA: ${{ needs.pack.outputs.sha }}
+      TAG: anatomy-display-r229-v1
+    steps:
+      - name: Restore exact qualified pack from this run and publish once
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/publish" "$RUNNER_TEMP/readback"
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name r229-qualified-display-pack --dir "$RUNNER_TEMP/publish"
+          cd "$RUNNER_TEMP/publish"
+          echo "$PACK_SHA  anatomy-display-r229-v1.zip" | sha256sum --check --strict
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Existing release must match exactly; no replacement"
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Anatomy Explorer reference display assets R229" --notes "Versioned browser display derivatives from the qualified public reference corpus. Not raw donor data, complete anatomy, medical software or native editable models. Source attribution and limitations are in the catalog and asset pack." --latest=false anatomy-display-r229-v1.zip receipt.json
+          fi
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern anatomy-display-r229-v1.zip --dir "$RUNNER_TEMP/readback"
+          echo "$PACK_SHA  $RUNNER_TEMP/readback/anatomy-display-r229-v1.zip" | sha256sum --check --strict
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json url,tagName,isDraft

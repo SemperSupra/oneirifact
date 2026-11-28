@@ -27,24 +27,29 @@ def diagnostics(raw):
     return {"data_lines":len(lines),"widths":widths}
 def parse(raw):
     text=raw.decode("utf-8-sig")
+    headers=[x.strip() for x in text.splitlines() if x.lstrip().startswith("#")]
+    expected="id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID"
+    cols=[x.split("=",1)[1].strip() for x in headers if x.lower().startswith("# columns") and "=" in x]
+    if cols!=[expected]:return None
     lines=[x.strip() for x in text.splitlines() if x.strip() and not x.lstrip().startswith("#")]
-    need(lines,"empty")
-    # Source documents N,X,Z,Y. Support CSV, semicolon, tab or whitespace,
-    # and a four-line scalar sequence only when the source reader confirms it.
-    opts=[]
-    for delim in (",",";","\t",None):
-        rows=[x.split() if delim is None else [a.strip() for a in x.split(delim)] for x in lines]
-        if rows and [x.lower() for x in rows[0]]==["n","x","z","y"]:rows=rows[1:]
-        if rows and all(len(r)==4 for r in rows):
-            try:
-                a=np.array([[float(x) for x in r] for r in rows])
-            except ValueError:continue
-            if np.isfinite(a).all() and np.all(a[:,0]==np.round(a[:,0])) and len(set(a[:,0]))==len(a):
-                opts.append(a)
-    if not opts:return None
-    need(all(np.array_equal(opts[0],a) for a in opts),"ambiguous delimiter")
-    a=opts[0]
-    return {int(row[0]):row[[1,3,2]] for row in a}
+    try:rows=list(csv.reader(lines,strict=True))
+    except csv.Error:return None
+    # The original author reader explicitly consumes age/height/weight
+    # metadata before landmark rows. Do not parse or expose those values.
+    if len(rows)<4 or any(len(r)!=2 for r in rows[:3]):return None
+    out={}
+    for r in rows[3:]:
+        # The original MATLAB reader consumes columns 2/3/4 regardless of
+        # optional trailing metadata. Require all columns through label.
+        if len(r)<14 or len(r)>32:return None
+        try:x,y,z=(float(r[i]) for i in (1,2,3))
+        except ValueError:return None
+        if not np.isfinite([x,y,z]).all():return None
+        label=r[11].strip()
+        if not label or label in out:return None
+        # Exact author transform: [line{3}, -line{4}, line{2}].
+        out[label]=np.array([y,-z,x])
+    return out if out else None
 def run(out):
     out.mkdir(parents=True,exist_ok=False)
     meta=json.loads(get(API,2<<20))
@@ -53,7 +58,7 @@ def run(out):
     f=next(f for f in meta["files"] if f["key"]=="landmarks.zip")
     need(f["checksum"]=="md5:"+MD5,"source metadata pin")
     raw=get(f["links"]["self"],4<<20);need(hashlib.md5(raw).hexdigest()==MD5 and hashlib.sha256(raw).hexdigest()==SHA,"source archive pin")
-    report={"schema":"oneirifact.pelvic-paired-critic/v1","archive_sha256":SHA,"license":license,"data_order":"N,X,Z,Y; normalized to X,Y,Z","scope":"Paired observer aggregate geometry only; no population anatomy model or individual records."}
+    report={"schema":"oneirifact.pelvic-paired-critic/v1","archive_sha256":SHA,"license":license,"data_order":"Declared Slicer FCSV x,y,z transformed by author getLandmarks.m to y,-z,x","scope":"Paired observer aggregate geometry only; no population anatomy model or individual records."}
     with zipfile.ZipFile(io.BytesIO(raw)) as z:
         need(z.testzip() is None and len(z.infolist())<=1000 and sum(i.file_size for i in z.infolist())<=32<<20,"archive integrity")
         source_readers={}
@@ -65,6 +70,8 @@ def run(out):
                 lines=[line.strip() for line in s.splitlines() if re.search(r"\b(readmatrix|readtable|textscan|fscanf|sscanf|importdata|dlmread|fgetl|fgets|strsplit|split|str2double|str2num|feof)\b|line\s*[({]",line,re.I)]
                 source_readers[p.name]={"sha256":hashlib.sha256(b).hexdigest(),"reader_statements":lines[:40]}
         report["source_readers"]=source_readers
+        author=source_readers.get("getLandmarks.m",{})
+        need(author.get("sha256")=="2deed7b048ab7ba5511f0451b8736a8ff866cc6f69488420ca267d4005e53e82","author reader pin")
         data={1:{},2:{}};counts=Counter();fail=Counter();schema=None
         for i in z.infolist():
             p=PurePosixPath(i.filename)
@@ -74,7 +81,7 @@ def run(out):
             counts[obs]+=1
             b=z.read(i);a=parse(b)
             if a is None:
-                fail["no_documented_four_column_parse"]+=1
+                fail["declared_fcsv_parse_or_label_hold"]+=1
                 if schema is None:
                     schema=diagnostics(b)
                     # FCSV declared column names are format metadata, not patient data.
@@ -85,7 +92,7 @@ def run(out):
         shared=set(data[1])&set(data[2]);per=[];sizes=Counter()
         for case in sorted(shared):
             a,b=data[1][case],data[2][case]
-            if set(a)!=set(b):continue
+            if list(a)!=list(b):continue
             ds=np.array([np.linalg.norm(a[k]-b[k]) for k in sorted(a)])
             per.append(float(np.sqrt(np.mean(ds*ds))));sizes[len(ds)]+=1
         report.update({"observed_files":[counts[1],counts[2]],"parsed_files":[len(data[1]),len(data[2])],"parse_failures":dict(fail),"first_failed_schema":schema,"matched_cases":len(shared),"complete_cases":len(per),"landmark_count_histogram":dict(sizes)})

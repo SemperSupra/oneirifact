@@ -1,0 +1,18 @@
+{
+  "schema": "oneirifact.aquatic-development-regressions/v1",
+  "scope": "Local development findings; each public receipt independently regenerates final evidence.",
+  "cases": [
+    {
+      "id": "rim_proxy_top_offset",
+      "finding": "The initial authored rim proxy bottom used declared rim height minus 25 mm, with 35 mm thickness, so its top was 10 mm too high.",
+      "resolution": "Set its bottom to declared rim height minus its actual 35 mm thickness. Export actual evaluated floor/seat/rim world vertices in native and saved-scene observations.",
+      "acceptance_limit": "Agreement with a static proxy plane does not qualify palm/skin contact, body collision or load support. Body-only GLB explicitly omits context geometry."
+    },
+    {
+      "id": "inherited_footwear_scope",
+      "finding": "The reusable ground consumer's empty shoe list and zero shoe-error fields could be mistaken for aquatic footwear evidence.",
+      "resolution": "Remove unused footwear material/export/check paths and declare both source bodies barefoot, retaining historical case labels only as source provenance.",
+      "acceptance_limit": "No aquatic shoe or stiletto acceptance transfers from earlier ground experiments."
+    }
+  ]
+}

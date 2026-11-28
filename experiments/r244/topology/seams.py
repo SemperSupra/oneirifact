@@ -176,7 +176,7 @@ def main(archive, out):
     draw.text((24, 48), "All original triangle positions and winding retained. No tolerance welding, hole repair or inferred anatomy.", font=font, fill="#cad7df")
     lo, hi = original.bounds
     for col, (mesh, axis, label) in enumerate(((original, 0, "Original / front"), (quotient, 0, "Exact quotient / front"), (quotient, 2, "Exact quotient / side"))):
-        scale = min(790 / (hi[1] - lo[1]), 490 / (hi[axis] - lo[axis]))
+        scale = min(765 / (hi[1] - lo[1]), 490 / (hi[axis] - lo[axis]))
         center = (hi[axis] + lo[axis]) / 2
         def project(v):
             return np.column_stack((col * 550 + 275 + (v[:, axis] - center) * scale, 940 - (v[:, 1] - lo[1]) * scale))

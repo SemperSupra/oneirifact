@@ -1,0 +1,839 @@
+{
+  "schema": "oneirifact.motion-source-file-lock/v1",
+  "archive_url": "https://github.com/SemperSupra/oneirifact/releases/download/motion-r253-v1/motion-r253-v1.zip",
+  "archive_sha256": "545e295bd657f52fa985d88e216ae7c52d6bd7ce228750a4b3c5333d92e4a007",
+  "files": {
+    "catalog.json": {
+      "bytes": 156308,
+      "sha256": "3abc6f14652dbf7d705a5496d5530a1144befa8838ecd23ade203b80dbd207bb"
+    },
+    "r245-female155flat/model.glb": {
+      "bytes": 4838264,
+      "sha256": "fdb5b25c56d9f9d332194bfa8954ac7c3b27dcc2433878c2100b406430af94f5"
+    },
+    "r245-female155flat/producer-receipt.json": {
+      "bytes": 84676,
+      "sha256": "418f9d62574069501f800c3185e1818c5577833124b508ba6b7963af3b05758f"
+    },
+    "r245-female155flat/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r245-female155flat/scene.blend": {
+      "bytes": 2529930,
+      "sha256": "eb29b8bec9ee54f9e5863b4d0ff1c3df07ac66c01f21cc3bb138c17c6c0df63f"
+    },
+    "r245-female155flat/stills/01-standing.png": {
+      "bytes": 258262,
+      "sha256": "22e394d66a458cdd73ab1e0763ea624b0589d3708303f30b28ffc4348b529607"
+    },
+    "r245-female155flat/stills/02-sitting.png": {
+      "bytes": 263015,
+      "sha256": "b71fb8ad0d1196371e07df4a34e121f84fd91db6fbbd1f9366d821ec9cdc0144"
+    },
+    "r245-female155flat/stills/03-squat.png": {
+      "bytes": 261228,
+      "sha256": "5c3ff214475df6bd7f44724cd1480b12d1e4e1139a31481b932fedec30c64ce3"
+    },
+    "r245-female155flat/stills/04-walk.png": {
+      "bytes": 261784,
+      "sha256": "b5fec74d061cb5bbd172b21b85d579f4a053a9631a51ee25e17a7f59844a0a35"
+    },
+    "r245-female155flat/stills/05-brushing.png": {
+      "bytes": 258704,
+      "sha256": "5620e3d3730320e0f392a3fb7014279185a9ec9ff97d9bd33678251d98ca08ae"
+    },
+    "r245-female155flat/stills/06-footwear.png": {
+      "bytes": 248894,
+      "sha256": "7ebbd5941741291f22a4366239b30d28d4e08943273cb7585647362e07a8afb7"
+    },
+    "r245-female155flat/stills/activity-contact-sheet.png": {
+      "bytes": 1040704,
+      "sha256": "3d5e8623ac3cdd8b75e940eec7e7c80c34d1d9bb8c742538cea55d7c88466fff"
+    },
+    "r245-female155stiletto/model.glb": {
+      "bytes": 4838260,
+      "sha256": "55cf1a0e6be7133c863ddf6451b5ed2640ccec528a9da53695558f451a6c45a1"
+    },
+    "r245-female155stiletto/previews/squatting.mp4": {
+      "bytes": 44899,
+      "sha256": "11a4da7d3b90074de97e76282e618273ad772cd749013056b49015914acdbd11"
+    },
+    "r245-female155stiletto/previews/walking.mp4": {
+      "bytes": 40384,
+      "sha256": "b654fb3d63c11ad6dfe702ed4238fef19924665be2b2e631cd48768282d42865"
+    },
+    "r245-female155stiletto/previews/walking_brush.mp4": {
+      "bytes": 40041,
+      "sha256": "582283efd6f5a31a13c43ac3ecb7c3356850d008b27ca33f799de5fc5edc570e"
+    },
+    "r245-female155stiletto/producer-receipt.json": {
+      "bytes": 86878,
+      "sha256": "777fa02b008d33624602b10126b9478567c0b20626f61b48e2184f628268a6d0"
+    },
+    "r245-female155stiletto/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r245-female155stiletto/scene.blend": {
+      "bytes": 2544362,
+      "sha256": "4b9f567082e44dcd46eb5349caf18525fd61a2a0f0b3999aa79d2eab3f3e7c10"
+    },
+    "r245-female155stiletto/stills/01-standing.png": {
+      "bytes": 259108,
+      "sha256": "a164a6272bdbdebb238c3d410eaee56876140afa8ffb1f47eb2afb68ced70fa9"
+    },
+    "r245-female155stiletto/stills/02-sitting.png": {
+      "bytes": 263461,
+      "sha256": "119920b0d8d407d6c90aef92f35928605321a8b9dd8d2c5cc2c11d3a0b9c644a"
+    },
+    "r245-female155stiletto/stills/03-squat.png": {
+      "bytes": 261697,
+      "sha256": "43207a637bccd18a8927189c37fbe888f6fc95a092bf4931c0fbdf6e796fdcee"
+    },
+    "r245-female155stiletto/stills/04-walk.png": {
+      "bytes": 262202,
+      "sha256": "7bc304a1febc5c3205394392d2c5a45cd52977262b4aa0be7152bbdcef9b147b"
+    },
+    "r245-female155stiletto/stills/05-brushing.png": {
+      "bytes": 259471,
+      "sha256": "a9ef5ecfc1a978e1e28d7e82fe269d9633bb6a5e40230d00a9df5e0c2cfb0f50"
+    },
+    "r245-female155stiletto/stills/06-footwear.png": {
+      "bytes": 250233,
+      "sha256": "c4968a0e30888c9d25ffe6c1e161b6ce1f037df498356b5c99f985d8bef57e06"
+    },
+    "r245-female155stiletto/stills/activity-contact-sheet.png": {
+      "bytes": 1045154,
+      "sha256": "e1ce33be5d6e701050e22ffdb2e4b4120338f92ccb90712d3054bd490be2dd37"
+    },
+    "r245-female185flat/model.glb": {
+      "bytes": 4838192,
+      "sha256": "346f6e33f1f237fba5ada6a111262725f75ead188cbf93f650e9571498cbf985"
+    },
+    "r245-female185flat/previews/squatting.mp4": {
+      "bytes": 45223,
+      "sha256": "7743097800681c652e4957c8276c6f40594866927047199a8c0ce7457108e8ce"
+    },
+    "r245-female185flat/previews/walking.mp4": {
+      "bytes": 41242,
+      "sha256": "bdf5473902a3c794335022608871be1baa2a37b13b5b8b9ea1633ea331a548be"
+    },
+    "r245-female185flat/previews/walking_brush.mp4": {
+      "bytes": 40665,
+      "sha256": "a5d9ff177072a254726fdb6610af999ca29c420c817f867ab71462e618ed2dfd"
+    },
+    "r245-female185flat/producer-receipt.json": {
+      "bytes": 86868,
+      "sha256": "bb3e3933e724866e183d6cac35b36c686a3c2e70254a991d9f153fae01074f59"
+    },
+    "r245-female185flat/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r245-female185flat/scene.blend": {
+      "bytes": 2549371,
+      "sha256": "73bf7a015499a6480664fee9612a003dfc3c1bcbd4410f069c6669722f83da02"
+    },
+    "r245-female185flat/stills/01-standing.png": {
+      "bytes": 259939,
+      "sha256": "4cd92a77a316bb88b1b6482d7b947debf2306ba106cb5af2ca49bfe4f7195201"
+    },
+    "r245-female185flat/stills/02-sitting.png": {
+      "bytes": 262673,
+      "sha256": "199c5f0719532bdd04a5903e815877c4ee409fae2a2afeb1a3526e11be691a88"
+    },
+    "r245-female185flat/stills/03-squat.png": {
+      "bytes": 260868,
+      "sha256": "c85afb81f1b98e520add685b4bfeecad3cb4477a3488d757b869ea0293f63a2f"
+    },
+    "r245-female185flat/stills/04-walk.png": {
+      "bytes": 263201,
+      "sha256": "6152cb42ab30c883b4aed6579f7bcd8b8078219ad05191c876a7359eb1fb0ee1"
+    },
+    "r245-female185flat/stills/05-brushing.png": {
+      "bytes": 260638,
+      "sha256": "24823c648f7b015784f28ac5cd1cbd0e0087199105c2482c357b918061ce3ea9"
+    },
+    "r245-female185flat/stills/06-footwear.png": {
+      "bytes": 249335,
+      "sha256": "6c1e7d8810b4e9468a3fa1daeb27f2d4d4acf6f700e453249e981d4767a794fa"
+    },
+    "r245-female185flat/stills/activity-contact-sheet.png": {
+      "bytes": 1049587,
+      "sha256": "a650960e95d0808524b729fdf17e8209760b3473593dab6449a46d5802ec141f"
+    },
+    "r245-female185stiletto/model.glb": {
+      "bytes": 4838192,
+      "sha256": "f941aa0d428b56fdde5f20e831f6776795c14446a2e78ec1c8c6a8d0af9c3574"
+    },
+    "r245-female185stiletto/producer-receipt.json": {
+      "bytes": 84627,
+      "sha256": "93b2b3da7e2ddb49849d390fb697e98836931cb98d0f56c99617b82916e53a4d"
+    },
+    "r245-female185stiletto/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r245-female185stiletto/scene.blend": {
+      "bytes": 2551687,
+      "sha256": "4207310c3c1976626f6314dc562eb7cb1f1588d58d8c42b78c973bb54359251b"
+    },
+    "r245-female185stiletto/stills/01-standing.png": {
+      "bytes": 261143,
+      "sha256": "05f8e321f4375a1edbcfa5e8df4d2d1f9326282abbf59798c81aeda9c02d915e"
+    },
+    "r245-female185stiletto/stills/02-sitting.png": {
+      "bytes": 263554,
+      "sha256": "e2cd5d73340901a87c2fd8554838e34de14190b96cb3fd496090943f152211ed"
+    },
+    "r245-female185stiletto/stills/03-squat.png": {
+      "bytes": 260861,
+      "sha256": "e728cfb09f6d00ab7c8e7c205ff72e54544b8f87a565d548a792b602c1310f42"
+    },
+    "r245-female185stiletto/stills/04-walk.png": {
+      "bytes": 263406,
+      "sha256": "20deaa3adea28895ddcb11d779b811e0337c16cd845f2ca42724b54f295e2086"
+    },
+    "r245-female185stiletto/stills/05-brushing.png": {
+      "bytes": 261371,
+      "sha256": "f01c51cd01de03afe1ba9cf735dc7f71619080201bfffe2a1a300cbea9d5d858"
+    },
+    "r245-female185stiletto/stills/06-footwear.png": {
+      "bytes": 251183,
+      "sha256": "525850d52f68349576aa673beb60ab94214801b367240224ccb37f1cca671429"
+    },
+    "r245-female185stiletto/stills/activity-contact-sheet.png": {
+      "bytes": 1052382,
+      "sha256": "d778fc40d850bb2a92bcc899f9b103abc5fc06e6e816c5f02bb8fcf81c50f1d4"
+    },
+    "r245-male155flat/model.glb": {
+      "bytes": 4839072,
+      "sha256": "4721ba89b69e2ad4d122e7f8d07351587d7b8ad31e729537ebcdf7c92c08bd7f"
+    },
+    "r245-male155flat/previews/squatting.mp4": {
+      "bytes": 45472,
+      "sha256": "82cc237623a9f9db3965e50cc87d977529e657be915739cb9d5d6aa9508e3646"
+    },
+    "r245-male155flat/previews/walking.mp4": {
+      "bytes": 39486,
+      "sha256": "283aad176b4742273057639c086ca350258f683f64040db4e35334d4051810d5"
+    },
+    "r245-male155flat/previews/walking_brush.mp4": {
+      "bytes": 39062,
+      "sha256": "43f2ccf2ac09af3623b80e2f333a708420cd0699c3befe9d18b8674efd139ec0"
+    },
+    "r245-male155flat/producer-receipt.json": {
+      "bytes": 86883,
+      "sha256": "b30ad2fb227ae5092e6f87115a499a24b02e3893b01546d9af60a7766eb3460e"
+    },
+    "r245-male155flat/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r245-male155flat/scene.blend": {
+      "bytes": 2529827,
+      "sha256": "2bce845dc1ec49028574f84c37268c4e46f0af5cec8aba2c404f11fd6459e161"
+    },
+    "r245-male155flat/stills/01-standing.png": {
+      "bytes": 257069,
+      "sha256": "adadb3f35e7929f17ce00a10c1413bb009511df2c25b475b25c2a3847188624c"
+    },
+    "r245-male155flat/stills/02-sitting.png": {
+      "bytes": 261833,
+      "sha256": "b212f10defe4075392266fc20b0d337043a6182d85ef2c6f343b686ba6a866d6"
+    },
+    "r245-male155flat/stills/03-squat.png": {
+      "bytes": 259627,
+      "sha256": "4796d12cd38630a3a977638e309274288ec94b1b9e53f6fa81e98dbc80447e43"
+    },
+    "r245-male155flat/stills/04-walk.png": {
+      "bytes": 260916,
+      "sha256": "730533f673beb1223c5414afd85d121fb52a22adb4fd10801dc46ebbb434aa78"
+    },
+    "r245-male155flat/stills/05-brushing.png": {
+      "bytes": 257204,
+      "sha256": "3c7544f2113139aecd7117c58ec7d8fb8f516d082bc3d98ef31b54cca940dc4a"
+    },
+    "r245-male155flat/stills/06-footwear.png": {
+      "bytes": 246985,
+      "sha256": "2bf70231b0fcedf2af21735b78938da2412b647ddd3808d78f0db48d33516db5"
+    },
+    "r245-male155flat/stills/activity-contact-sheet.png": {
+      "bytes": 1040966,
+      "sha256": "79f677ae831951f541abc4c98191291cda4bdb4682decf0b1c03b8ce58abfe0a"
+    },
+    "r245-male155stiletto/model.glb": {
+      "bytes": 4839068,
+      "sha256": "69af00c6d9f60e7356925ab9e93ecd451c5d167e07625c539f5da1ce38ebf67d"
+    },
+    "r245-male155stiletto/producer-receipt.json": {
+      "bytes": 84629,
+      "sha256": "54c3160fa3135b4a59095dd762cc3e0cd555b3ce954a93d882e92397b25935bb"
+    },
+    "r245-male155stiletto/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r245-male155stiletto/scene.blend": {
+      "bytes": 2529615,
+      "sha256": "9fb3e27554a602260f7575060806ff8be1693e8bae5e7614cf61f666ae261a42"
+    },
+    "r245-male155stiletto/stills/01-standing.png": {
+      "bytes": 257844,
+      "sha256": "730dac38ebc51e156cb85b88fb29d4b2d68ddd8e6728f6990f9407c6280a021c"
+    },
+    "r245-male155stiletto/stills/02-sitting.png": {
+      "bytes": 262612,
+      "sha256": "7a311b362eb33d42046b6db47b546227a236067707d2b86cb5f6657e96a7f45f"
+    },
+    "r245-male155stiletto/stills/03-squat.png": {
+      "bytes": 259406,
+      "sha256": "54dce1889f382d2f12586a61607b4c809c24b95c204462a92c430f7787d5f3fb"
+    },
+    "r245-male155stiletto/stills/04-walk.png": {
+      "bytes": 260437,
+      "sha256": "54a83953adad79dba5ad2492abf025430ba8726002cc44fe4bcd85d887f1ac9a"
+    },
+    "r245-male155stiletto/stills/05-brushing.png": {
+      "bytes": 257576,
+      "sha256": "437ea520e63fa0b0bdd8d7da5616b0c6cf48bd9ccf1fe44b4ee26d242e77f5ec"
+    },
+    "r245-male155stiletto/stills/06-footwear.png": {
+      "bytes": 249489,
+      "sha256": "2fbcd082de2cd658a9faa3ba931759779f2f44dacc6075a21410e2f76d3ad12a"
+    },
+    "r245-male155stiletto/stills/activity-contact-sheet.png": {
+      "bytes": 1045673,
+      "sha256": "4dfcc6e67b36a0ee2a17259b07c5413284bf1dac90569949f32f9fe0ccace9f7"
+    },
+    "r245-male185flat/model.glb": {
+      "bytes": 4838980,
+      "sha256": "00d167fb3403d3e346088523082269eadd0b6286772f2687759d48cde1a8b430"
+    },
+    "r245-male185flat/producer-receipt.json": {
+      "bytes": 84650,
+      "sha256": "03387b27f5dd02068f623e72b090b334de715bdf23b48834a948ea6f98899885"
+    },
+    "r245-male185flat/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r245-male185flat/scene.blend": {
+      "bytes": 2542410,
+      "sha256": "cff47c10587abbc3bb82f438eaa2acb2bf128167dc28e57ee895f84c8bd88a41"
+    },
+    "r245-male185flat/stills/01-standing.png": {
+      "bytes": 260013,
+      "sha256": "efa8c75ca61aebf8179d44d90e97b674ff3633416913eec7358fba7fb269f130"
+    },
+    "r245-male185flat/stills/02-sitting.png": {
+      "bytes": 263132,
+      "sha256": "9f637523a4e07b6decde24ca4fc212f0ee87e31de33004a38034b417cda47bd3"
+    },
+    "r245-male185flat/stills/03-squat.png": {
+      "bytes": 260177,
+      "sha256": "7d81bbaa15a99b58c9e7dc8e7881a797bee26d9730cc45109441f49b2071df47"
+    },
+    "r245-male185flat/stills/04-walk.png": {
+      "bytes": 263352,
+      "sha256": "8cb42c26698cbf7c89c503d23589649349edf9ba59593571e38f03d443b0852a"
+    },
+    "r245-male185flat/stills/05-brushing.png": {
+      "bytes": 259923,
+      "sha256": "22722cf120d793bf92b3c036334728a9eae77ec9919e50d2ed9d95c2fb415da1"
+    },
+    "r245-male185flat/stills/06-footwear.png": {
+      "bytes": 248157,
+      "sha256": "17fcf6367224e619373d817683967a247cfe18dc49b1d27e403654a211bd1f4f"
+    },
+    "r245-male185flat/stills/activity-contact-sheet.png": {
+      "bytes": 1055530,
+      "sha256": "3623580c613b425b86fc12ebc150a4bc3f0c8fc8f9c9463db59302b888a04670"
+    },
+    "r245-male185stiletto/model.glb": {
+      "bytes": 4838976,
+      "sha256": "02bbf7849f28c327826dbe518c1ea49031d58b6c6ac0039b606ab317b0085d4f"
+    },
+    "r245-male185stiletto/previews/squatting.mp4": {
+      "bytes": 45773,
+      "sha256": "83e5b269720950bb163d174e875c2b20b70f70eb7ef949292c9b694aa599233e"
+    },
+    "r245-male185stiletto/previews/walking.mp4": {
+      "bytes": 41308,
+      "sha256": "a74b9c25d89ef8fd2678c0636d30487ce020d337451411f067b93dbceff52d77"
+    },
+    "r245-male185stiletto/previews/walking_brush.mp4": {
+      "bytes": 40716,
+      "sha256": "4383b5e0b49865211a4be6b329e4fe5c07c0f7770eac5c80ac0710e3a234ac31"
+    },
+    "r245-male185stiletto/producer-receipt.json": {
+      "bytes": 86927,
+      "sha256": "65941f31ccc28af0f3e3de5b78d37eb7e137fd16c6351e960278f6ea2f938d6f"
+    },
+    "r245-male185stiletto/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r245-male185stiletto/scene.blend": {
+      "bytes": 2556054,
+      "sha256": "67e176108ea96bcc3dbd17f2de4596ec49f23d528832c55cf16ef734d666929a"
+    },
+    "r245-male185stiletto/stills/01-standing.png": {
+      "bytes": 259703,
+      "sha256": "c3aff2e33a33b40f7e7c9cde03f7b49e67e4be1a0787b4f47a40c50733024d99"
+    },
+    "r245-male185stiletto/stills/02-sitting.png": {
+      "bytes": 262828,
+      "sha256": "27e5f205776dfcbe7f7df878b673718cba768fb761dc46dcc4c98619ddd95968"
+    },
+    "r245-male185stiletto/stills/03-squat.png": {
+      "bytes": 259076,
+      "sha256": "b2d6ec6ba23aa87b3322dc057b2968505211a871a2a535c62d3f426a1aee6392"
+    },
+    "r245-male185stiletto/stills/04-walk.png": {
+      "bytes": 262408,
+      "sha256": "6c114dddec75187027a756877808d3df100ed6cf115a464e8bcf6ddab26b6c58"
+    },
+    "r245-male185stiletto/stills/05-brushing.png": {
+      "bytes": 259154,
+      "sha256": "af2052c712e74a36bec498307bcfcd5fde593018f7881c4b8d3a59b2e1c5eaaa"
+    },
+    "r245-male185stiletto/stills/06-footwear.png": {
+      "bytes": 250405,
+      "sha256": "d477425e38d7c1c4443bfd215755a039ffc90fdbc3c2cbeaf9f361e6cf2b46d9"
+    },
+    "r245-male185stiletto/stills/activity-contact-sheet.png": {
+      "bytes": 1053672,
+      "sha256": "54c18a7503623e6993d740539edcb0725a8e56bc1862ebe9d1715634dd852cf5"
+    },
+    "r245-maleolderflat/model.glb": {
+      "bytes": 4838740,
+      "sha256": "af3d31dfdc4dd994d80573c6eae7f2e98883397cfdf085bda54aa7ee4d793b12"
+    },
+    "r245-maleolderflat/producer-receipt.json": {
+      "bytes": 84995,
+      "sha256": "78e026adf9d0fe65118cf52bff32296249f5ef98e3a856af98b278aba0a85157"
+    },
+    "r245-maleolderflat/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r245-maleolderflat/scene.blend": {
+      "bytes": 2534996,
+      "sha256": "66a86c4a919324cefe2fe5b0be1845fce74e6ea0f3dc8a5841d0a9e29209e3ec"
+    },
+    "r245-maleolderflat/stills/01-standing.png": {
+      "bytes": 259010,
+      "sha256": "5b7bf85976e24fafa1956354f098ec120878193c93f1dfc763051d165f4ebf0d"
+    },
+    "r245-maleolderflat/stills/02-sitting.png": {
+      "bytes": 262948,
+      "sha256": "1ce673749b7844d98dd7c679d033129960f3e0df1af7034d707b37e6c4cac483"
+    },
+    "r245-maleolderflat/stills/03-squat.png": {
+      "bytes": 260290,
+      "sha256": "60a3227e1e4be3c4191b4b45492ca83b6faf532ca24d1a513b6b19371ff28667"
+    },
+    "r245-maleolderflat/stills/04-walk.png": {
+      "bytes": 261760,
+      "sha256": "f62e1d3a79d5f6fda8315a590474e54724064a5a9fc6da83b20789adcd37fdbf"
+    },
+    "r245-maleolderflat/stills/05-brushing.png": {
+      "bytes": 258338,
+      "sha256": "1339dac97ec20c0fc43d0c6ad1a75551c5b51ae8a7556feb9664cfc3933b0fdb"
+    },
+    "r245-maleolderflat/stills/06-footwear.png": {
+      "bytes": 249092,
+      "sha256": "a54314b5fd8de2500c99edd41263b9f8a8105a1755f91875dfac1c55da7002a3"
+    },
+    "r245-maleolderflat/stills/activity-contact-sheet.png": {
+      "bytes": 1052724,
+      "sha256": "723098bda7dcf311d697ff1783e06d09a6eab528dc705fd39b2938622f12fa88"
+    },
+    "r246-female185flat/model.glb": {
+      "bytes": 3373184,
+      "sha256": "165ef5c17e2d14a8cf0264a2f5696313909cbf17504dff4719dc002359f065dd"
+    },
+    "r246-female185flat/previews/bathing_seated_wash.mp4": {
+      "bytes": 56316,
+      "sha256": "73888c3519b55335d7d0f304643108f88859e9a0859b913bc7023a920e62bc2b"
+    },
+    "r246-female185flat/previews/swimming_front_crawl.mp4": {
+      "bytes": 66298,
+      "sha256": "c17b6c553daef449516faf7dcd26d79df6174514c962340f4d0139ec7dc66c43"
+    },
+    "r246-female185flat/producer-receipt.json": {
+      "bytes": 59732,
+      "sha256": "5cd439d972582aa09b7fd6b0462c685419bcb02519081dd3f82f9988905118b5"
+    },
+    "r246-female185flat/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r246-female185flat/scene.blend": {
+      "bytes": 1856727,
+      "sha256": "bd734a21dffaea6311a162438346c09a339919b4c8b0b7b99c7242a64c4dcd04"
+    },
+    "r246-female185flat/stills/01-crawl-entry.png": {
+      "bytes": 329841,
+      "sha256": "bb4fb0914c222907fc0d26ab5401978c0203e04945f88d281e7b8319b89b3168"
+    },
+    "r246-female185flat/stills/02-crawl-recovery.png": {
+      "bytes": 332525,
+      "sha256": "e50ec3e9eb4918f5178826f4b9b0aca0b1f168ac3751c5c689babfa7db81434e"
+    },
+    "r246-female185flat/stills/03-seated-wash.png": {
+      "bytes": 355962,
+      "sha256": "10f9e0ca28f9bb6cc1b00a94bdc844da97f4f12dccd647b8a3acfaab2df16d2f"
+    },
+    "r246-female185flat/stills/04-wash-sweep.png": {
+      "bytes": 356661,
+      "sha256": "460691f018df5246af92af97c6feeda0a8a1e13c130f71162370d380526782dc"
+    },
+    "r246-female185flat/stills/aquatic-native-contact-sheet.png": {
+      "bytes": 799221,
+      "sha256": "8354209849045fc63afd24a649943d986ae68074484fad7924b2fbbf3bc71f89"
+    },
+    "r246-male155flat/model.glb": {
+      "bytes": 3374048,
+      "sha256": "c0353f9f7db96ffc2b1f688572aa16260fd76efd529cb36aa073516cf4c3fb3f"
+    },
+    "r246-male155flat/previews/bathing_seated_wash.mp4": {
+      "bytes": 57135,
+      "sha256": "92757608aee189eb2966fb2b5c54c23a701e9c22b9fbc4bc6e56c9a606574a41"
+    },
+    "r246-male155flat/previews/swimming_front_crawl.mp4": {
+      "bytes": 61024,
+      "sha256": "e4e9464bff2d6b880d25fbf46cfffd2c0f9a9a1ce10520e15b7989939e0f6a35"
+    },
+    "r246-male155flat/producer-receipt.json": {
+      "bytes": 59725,
+      "sha256": "7cf82d784901794120fd0a96487836a593647adcd339a92b10376a9284fab53d"
+    },
+    "r246-male155flat/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r246-male155flat/scene.blend": {
+      "bytes": 1855816,
+      "sha256": "c26237510a94ee0136ec2eb1eeda86b027e83d972c5a5a64787d065a64d53cdd"
+    },
+    "r246-male155flat/stills/01-crawl-entry.png": {
+      "bytes": 322293,
+      "sha256": "9f597a791c7a95d5fbac2ced86f34ba1ebf637fb199611733f8ca8cb6db53804"
+    },
+    "r246-male155flat/stills/02-crawl-recovery.png": {
+      "bytes": 324435,
+      "sha256": "40cc1b57ebc85f19761791f945862f9e372a4cc5633cc2a897bdc00ce3110dd9"
+    },
+    "r246-male155flat/stills/03-seated-wash.png": {
+      "bytes": 355740,
+      "sha256": "d37e4dcc23dad9e75cb310ca4b1e96104e1ccaf34492620f4568b8bddd906448"
+    },
+    "r246-male155flat/stills/04-wash-sweep.png": {
+      "bytes": 355560,
+      "sha256": "56bd6fc3448169a88aac4857d06bf946f74c77362912267fcf7f9097be73ed2d"
+    },
+    "r246-male155flat/stills/aquatic-native-contact-sheet.png": {
+      "bytes": 863152,
+      "sha256": "6289f8e890d9b749c1c9e15dcbd84365b32de6d05072b15733e1527b0cddb159"
+    },
+    "r247-male155flat-07-01/model.glb": {
+      "bytes": 3501000,
+      "sha256": "882fa6459b404003e328e26d607026a6b4383c347f789a12f0de209a2e7891c0"
+    },
+    "r247-male155flat-07-01/previews/cmu_07_01_donor_baseline.mp4": {
+      "bytes": 142297,
+      "sha256": "7e9b283b7cf0d27bb150c5a485c28010d93c991592eb59c2190934e9d70ed6b6"
+    },
+    "r247-male155flat-07-01/producer-receipt.json": {
+      "bytes": 48125,
+      "sha256": "c9eead372833609b4c9fe86fa8db7d50ae4a7bfbb70ab98b8ea04164814415da"
+    },
+    "r247-male155flat-07-01/rights.txt": {
+      "bytes": 37969,
+      "sha256": "76eb18d27489db5d88e72225068cd1592402d1985ec1adb5a12fa901fc102274"
+    },
+    "r247-male155flat-07-01/scene.blend": {
+      "bytes": 2265497,
+      "sha256": "9375349e3483abfcb5d9727f22fb1cfd23b9fbf4808b3a19491c4bbd6edf2c85"
+    },
+    "r247-male155flat-07-01/stills/capture-first.png": {
+      "bytes": 321995,
+      "sha256": "144de1586cab4a3b1c3eb54b880353660c8d42e6f4f28f16f68d937dbe356167"
+    },
+    "r247-male155flat-07-01/stills/captured-motion-review.png": {
+      "bytes": 1199435,
+      "sha256": "326bf8ece9fd5b7b797c1ee455f9904ea45e3b535a7922ef58c1699bea51844e"
+    },
+    "r247-male155flat-13-01/model.glb": {
+      "bytes": 12624028,
+      "sha256": "71e5152927e58067abd47b976dd58a28e5082d2c0b9825d8d6917e2605282b2f"
+    },
+    "r247-male155flat-13-01/previews/cmu_13_01_donor_baseline.mp4": {
+      "bytes": 516736,
+      "sha256": "eb16da0fe719ce93466e2e955b2e0ae8d7b1a58012a95f537164d05643f8a785"
+    },
+    "r247-male155flat-13-01/producer-receipt.json": {
+      "bytes": 60314,
+      "sha256": "3ba547d374fe50bee616957a6e36368091959ef734c05d9d7e1980f716590f56"
+    },
+    "r247-male155flat-13-01/rights.txt": {
+      "bytes": 37969,
+      "sha256": "76eb18d27489db5d88e72225068cd1592402d1985ec1adb5a12fa901fc102274"
+    },
+    "r247-male155flat-13-01/scene.blend": {
+      "bytes": 8787285,
+      "sha256": "598a6b7de12148aa9d3c77ed9d1a11785d93ac0d3e997f5c8be689ef358c468b"
+    },
+    "r247-male155flat-13-01/stills/capture-first.png": {
+      "bytes": 311364,
+      "sha256": "ed8ab950fb257f045080e3bb092c1eb0e1198e63a966a4c4849530e8b66e56d3"
+    },
+    "r247-male155flat-13-01/stills/captured-motion-review.png": {
+      "bytes": 966850,
+      "sha256": "d3bd65cee6b05f48416ccbd82d3330a89c30ea27d7c459a518805abc6a10b092"
+    },
+    "r247-male185flat-07-01/model.glb": {
+      "bytes": 3500912,
+      "sha256": "2f32a71fd65ccc55ea51a6cc82c6e94519eeda122d07cd283b32d96384240454"
+    },
+    "r247-male185flat-07-01/previews/cmu_07_01_donor_baseline.mp4": {
+      "bytes": 144206,
+      "sha256": "4ef10c6d9ec38c684288aacf42e6204fe77d4a0fe629b9a0180fe000cf127407"
+    },
+    "r247-male185flat-07-01/producer-receipt.json": {
+      "bytes": 48126,
+      "sha256": "b986098ea46e2672220a0bf1b7ff5a53ebd894bf6849d06777c249f42027e739"
+    },
+    "r247-male185flat-07-01/rights.txt": {
+      "bytes": 37969,
+      "sha256": "76eb18d27489db5d88e72225068cd1592402d1985ec1adb5a12fa901fc102274"
+    },
+    "r247-male185flat-07-01/scene.blend": {
+      "bytes": 2270548,
+      "sha256": "ae688685ce1b55e5b7156def710b7451e71687281f8254e49fc064e7b468b0c3"
+    },
+    "r247-male185flat-07-01/stills/capture-first.png": {
+      "bytes": 321340,
+      "sha256": "3c76012404daee49ef5bbb7e2fafae52ceabcfad6fc4c06e87b0cae0ef2fba90"
+    },
+    "r247-male185flat-07-01/stills/captured-motion-review.png": {
+      "bytes": 944321,
+      "sha256": "764faa913b4b886483a71e72c0c2076225e50a2a01792a685f1c7ef1da086ce2"
+    },
+    "r247-male185flat-13-01/model.glb": {
+      "bytes": 12623940,
+      "sha256": "c314cb063ba4309a51e18504d31ae01fd140c0a16222bebc6a74091a9bfd2b2c"
+    },
+    "r247-male185flat-13-01/previews/cmu_13_01_donor_baseline.mp4": {
+      "bytes": 554517,
+      "sha256": "b8f1c9706f7a63cf85eb91c09b854793d2930d4601b584182e8235d2e82f360b"
+    },
+    "r247-male185flat-13-01/producer-receipt.json": {
+      "bytes": 60307,
+      "sha256": "a2b47de20b9a0f58522bf5213dae1cddbadc1c4b5ec1bfb155d3a1dc47aa61d1"
+    },
+    "r247-male185flat-13-01/rights.txt": {
+      "bytes": 37969,
+      "sha256": "76eb18d27489db5d88e72225068cd1592402d1985ec1adb5a12fa901fc102274"
+    },
+    "r247-male185flat-13-01/scene.blend": {
+      "bytes": 8792772,
+      "sha256": "6846c54f5a2dc3ce58182341fd89c58c643b6d414cbb0a7a11715b6db3798904"
+    },
+    "r247-male185flat-13-01/stills/capture-first.png": {
+      "bytes": 312973,
+      "sha256": "8e324b281b0340a0d0d70d6c6d9b8cd2b9f7fdf32082d221267de53936c6bc8f"
+    },
+    "r247-male185flat-13-01/stills/captured-motion-review.png": {
+      "bytes": 986509,
+      "sha256": "5eab52a9f5cd5b4afca4d231903f2c376d82d0b5380e13c59d71d19ebc24ae40"
+    },
+    "r248-female155flat/model.glb": {
+      "bytes": 6359416,
+      "sha256": "c11c7b1497fecdf970e2d48401cba9482bc789c464c5daf264fa3c95b0d98ba7"
+    },
+    "r248-female155flat/previews/crouching.mp4": {
+      "bytes": 10430,
+      "sha256": "8a5cd60ab0a825fae191308aadd35302d0211590f5a628de3dd764634f750974"
+    },
+    "r248-female155flat/previews/eating_ice_cream_cone.mp4": {
+      "bytes": 30035,
+      "sha256": "5c18a22bf43fa93975f5a6df6ce81952a77511a60392509561495f9c25d3c9df"
+    },
+    "r248-female155flat/previews/jogging.mp4": {
+      "bytes": 31478,
+      "sha256": "10a79c24e6654708cc2dd7e4a72f0d187f15ce257415e512c1a67e32b87d0615"
+    },
+    "r248-female155flat/previews/running.mp4": {
+      "bytes": 31099,
+      "sha256": "19d5732ea9d844f52117559a03d49f2d834cc110428abad5d00448b9f4a0cbbc"
+    },
+    "r248-female155flat/previews/showering.mp4": {
+      "bytes": 17679,
+      "sha256": "d8929965f9235c4f8f100f44dabffe2b792466f1a0b8b1f34b6bb2141dcd14a2"
+    },
+    "r248-female155flat/previews/sit_to_stand.mp4": {
+      "bytes": 35911,
+      "sha256": "40c6951dde82a34a9b401ea581da6a033eb94aaa6f44147247b409c35a2e0909"
+    },
+    "r248-female155flat/producer-receipt.json": {
+      "bytes": 96782,
+      "sha256": "a4da263a657d5de745d9e0c82ebcc1e59938fb3d123a2285aa82560f68856e49"
+    },
+    "r248-female155flat/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r248-female155flat/scene.blend": {
+      "bytes": 3030367,
+      "sha256": "86135307a9e6b22e2bfb48c035a1bda23a0e46c3b7cd3c5185a42ec579a50a50"
+    },
+    "r248-female155flat/stills/01-standing.png": {
+      "bytes": 259554,
+      "sha256": "976bd6cbb88d85c0078d5656d0ee3bf6b48d4ff8e06cf3ad64b3a59310a8a9a4"
+    },
+    "r248-female155flat/stills/02-sitting.png": {
+      "bytes": 264579,
+      "sha256": "2dd676afde13410442144c3d233a744a8a5b3d451145c54da355cc040f4c423a"
+    },
+    "r248-female155flat/stills/03-squat.png": {
+      "bytes": 262270,
+      "sha256": "5403e46279d3d710634597a398fc84ac814731092762d5882d4257d1d40bed54"
+    },
+    "r248-female155flat/stills/04-walk.png": {
+      "bytes": 262851,
+      "sha256": "a1f9fd386601c33bf7070d12e7005ed75c1ffd5af732f39149958aefab0e4856"
+    },
+    "r248-female155flat/stills/05-brushing.png": {
+      "bytes": 260052,
+      "sha256": "4e740163cbf98789a3bf8917bacf3383b3c1154359aa2fd9586636f87280181a"
+    },
+    "r248-female155flat/stills/06-footwear.png": {
+      "bytes": 249157,
+      "sha256": "0b47e9aa9eaf2c23e5377be9a60c120723c9dec78685bc3a6e5fd068c25cba39"
+    },
+    "r248-female155flat/stills/07-crouching.png": {
+      "bytes": 262734,
+      "sha256": "622d0876fd3643fe6e21af113c295facaa5005c5a73060a1dfc26c02d4883c86"
+    },
+    "r248-female155flat/stills/08-jogging.png": {
+      "bytes": 265029,
+      "sha256": "caa3b5701f3928d8ee4d616706f5b0e7f0634ac80b47ffc995c81d0da2b18f85"
+    },
+    "r248-female155flat/stills/09-running.png": {
+      "bytes": 266767,
+      "sha256": "d8b8f95cc36cf99cfcaefd52b99d385323917ff4a0302ac06a6ee151176e62a0"
+    },
+    "r248-female155flat/stills/10-showering.png": {
+      "bytes": 261592,
+      "sha256": "5827e48839c13b71c1e949b090bc41522732cfed87da2fe2821378ea39360921"
+    },
+    "r248-female155flat/stills/11-ice-cream.png": {
+      "bytes": 260629,
+      "sha256": "065c28949d93a303f54985a770ae7f777ca1ca7bf2f34a7a676e1dd1927c3a3e"
+    },
+    "r248-female155flat/stills/activity-contact-sheet.png": {
+      "bytes": 1048895,
+      "sha256": "44762ffedbad8c057f388685d231c46fccbf4718385dfc44be6fadfe59dbff42"
+    },
+    "r248-female155flat/stills/daily-contact-sheet.png": {
+      "bytes": 1052938,
+      "sha256": "20b70e5e92087ed0241d8108820b07d55b2a0f95653a2f6ba72477299565b22b"
+    },
+    "r248-maleolderflat/model.glb": {
+      "bytes": 6359892,
+      "sha256": "dac1282b0f0b69bc3c45001f5985c87d5be9c1017c2cba804ff4e409dafaf93b"
+    },
+    "r248-maleolderflat/previews/crouching.mp4": {
+      "bytes": 10609,
+      "sha256": "3ec934138b42cb6851dc70e677401cae89e444ac94da9958d4b4935fccccc1ae"
+    },
+    "r248-maleolderflat/previews/eating_ice_cream_cone.mp4": {
+      "bytes": 30895,
+      "sha256": "f9c8cdd1b1d93fca002e16ea59cd6e6e6f31307143067edba866651f5a723bbf"
+    },
+    "r248-maleolderflat/previews/jogging.mp4": {
+      "bytes": 31001,
+      "sha256": "6e092cda6a418a50b6aac33255fa66c339eba3d5bee0265dfe10d14dad1825a6"
+    },
+    "r248-maleolderflat/previews/running.mp4": {
+      "bytes": 31038,
+      "sha256": "b553d1e30cea0dfb1fe744955d50d4b79b1d8861baa6542fc90426f252da98d3"
+    },
+    "r248-maleolderflat/previews/showering.mp4": {
+      "bytes": 17550,
+      "sha256": "5bfe3f4570ff495c7164605162de14ad90635353c204beeafdf5825b7d685156"
+    },
+    "r248-maleolderflat/previews/sit_to_stand.mp4": {
+      "bytes": 36982,
+      "sha256": "e749fffba37bebf88b29b0c18116c3dd1c66898a2a7b17017b182a17c2692c87"
+    },
+    "r248-maleolderflat/producer-receipt.json": {
+      "bytes": 97112,
+      "sha256": "47a233369e4be1385e34af89ae3d7f59ac7a0985ea5edc4ec55c94995109f65d"
+    },
+    "r248-maleolderflat/rights.txt": {
+      "bytes": 10615,
+      "sha256": "392e6570bd2da7c949b244ab672ff2ca6efafd934e8217c702d959910d70a2e6"
+    },
+    "r248-maleolderflat/scene.blend": {
+      "bytes": 3032233,
+      "sha256": "e0066dca4df4484f2c7f709245a502300a6441010773b48b1cd30a44bfe3543b"
+    },
+    "r248-maleolderflat/stills/01-standing.png": {
+      "bytes": 259010,
+      "sha256": "bfd5f8032440e93250d883c356346ab2da0d943b32d0691098917769fc4e675c"
+    },
+    "r248-maleolderflat/stills/02-sitting.png": {
+      "bytes": 262948,
+      "sha256": "a458f99ff7ed4317f4ed2c03c8679af8a850b8a8140e0fd7aed0d8750c19c81a"
+    },
+    "r248-maleolderflat/stills/03-squat.png": {
+      "bytes": 260290,
+      "sha256": "c9c08be9365cd1cd2cbf26e47e81b7be267b13c9c9629c13e44482cbce33de53"
+    },
+    "r248-maleolderflat/stills/04-walk.png": {
+      "bytes": 261760,
+      "sha256": "2918a75723422acf9e2e5dd77ff9caebd5e08d9d9e8c9223865ae3cdad89993a"
+    },
+    "r248-maleolderflat/stills/05-brushing.png": {
+      "bytes": 258338,
+      "sha256": "d6bd310dfb9a74b690825ed2c626344e186c14a543a0918ed15457ef9706fdba"
+    },
+    "r248-maleolderflat/stills/06-footwear.png": {
+      "bytes": 249092,
+      "sha256": "bf3fc3972a2cf6a6084d4f960aaee4659ed4bda63d10bcb9cc56531b791f9a79"
+    },
+    "r248-maleolderflat/stills/07-crouching.png": {
+      "bytes": 262563,
+      "sha256": "f6fed78aa014a99ff925164bad9af346b27bcf2557891fae71ac5e0b39abb71c"
+    },
+    "r248-maleolderflat/stills/08-jogging.png": {
+      "bytes": 264555,
+      "sha256": "7a5116b7d65ee45279058dd3099bb1bbbe269bef907724934eb87986190ede46"
+    },
+    "r248-maleolderflat/stills/09-running.png": {
+      "bytes": 266018,
+      "sha256": "f61db9f9a5d6c88ea8537faef4b929e0f49f733e338674a1275edb435e90941c"
+    },
+    "r248-maleolderflat/stills/10-showering.png": {
+      "bytes": 260973,
+      "sha256": "bb099fef7ffc9f0741318a828c231b3a3717dc145eeb659df880bcea0ba7f833"
+    },
+    "r248-maleolderflat/stills/11-ice-cream.png": {
+      "bytes": 259128,
+      "sha256": "57e11cc99cdaf8f73d184c9fca3a96684f2c11cde1a48365a3680660c7d72248"
+    },
+    "r248-maleolderflat/stills/activity-contact-sheet.png": {
+      "bytes": 1052724,
+      "sha256": "723098bda7dcf311d697ff1783e06d09a6eab528dc705fd39b2938622f12fa88"
+    },
+    "r248-maleolderflat/stills/daily-contact-sheet.png": {
+      "bytes": 1056188,
+      "sha256": "f684924f663fc05508beb4581a4c2a3dda20ded0fc1a35fb5718041bc43aaa0e"
+    }
+  }
+}

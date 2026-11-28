@@ -2,7 +2,7 @@
 import hashlib,json,sys,zipfile,tempfile
 from pathlib import Path
 import numpy as np
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"r232"))
+sys.path.insert(0,str(Path(__file__).resolve().parents[2]/"r232"))
 import morphology as m
 PIN="98f119556087dddfce98028501fe459b61c746f0094cf0e09c6b7f0dc7461e49"
 def main(archive,out):

@@ -1,0 +1,34 @@
+name: R236 original coupled geometry and revision fixture
+on:
+  pull_request:
+    branches: [rdte/r235-shared-adult-morphology]
+    paths: ['experiments/r236coupling/**','.github/workflows/rdte-r236-coupling.yml']
+permissions:
+  contents: read
+jobs:
+  coupling:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    env:
+      GO111MODULE: 'off'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Execute source and pose coupling, geometric oracle and stale-layer negatives
+        working-directory: experiments/r236coupling
+        run: |
+          set -euo pipefail
+          go version
+          gofmt -w coupling.go coupling_test.go
+          go vet coupling.go coupling_test.go
+          go test -race -count=3 -v coupling.go coupling_test.go
+          COUPLING_OUTPUT="$RUNNER_TEMP/coupling" go test -count=1 -run '^TestCoupledGeometry$' -v coupling.go coupling_test.go
+          sha256sum "$RUNNER_TEMP/coupling/"*
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r236-coupled-geometry-fixture
+          path: ${{ runner.temp }}/coupling
+          retention-days: 30
+          if-no-files-found: error

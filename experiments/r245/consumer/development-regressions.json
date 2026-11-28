@@ -1,0 +1,40 @@
+{
+  "schema": "oneirifact.motion-consumer-development-regressions/v1",
+  "scope": "Observed local Blender4.3.2 diagnostics, not public pinned-runtime qualification. Production repeats independent interchange and fractional seeks.",
+  "case_id": "male155stiletto",
+  "source_bind_sha256": "684417c9f6fb92b0a3b9cfc0dd13955b1204670a05545cf6e19054fac99d673b",
+  "incorrect_world_track_glb_sha256": "fdc7812e13076ff966f67770eeab43f75d36cc9fd87043dcd3828076b0a744ec",
+  "regressions": [
+    {
+      "id": "imported-frame-origin",
+      "defect": "Authored blend frame1 used for glTF importer whose actual first frame is0.",
+      "observed_max_transport_error_m": 0.17167368531227112,
+      "selected_checks": [
+        {
+          "phase": "baked_glb_reimported",
+          "activity_id": "walking",
+          "time_s": 0.0,
+          "max_bidirectional_error_m": 0.05388658121228218,
+          "shoe_error_m": 0.01176056731492281
+        },
+        {
+          "phase": "baked_glb_reimported",
+          "activity_id": "running",
+          "time_s": 0.0,
+          "max_bidirectional_error_m": 0.16289307177066803,
+          "shoe_error_m": 0.17167368531227112
+        }
+      ],
+      "correction": "Read exact imported action frame_range origin and preserve 24*time_s fractional times."
+    },
+    {
+      "id": "independently-interpolated-rigid-shoe",
+      "defect": "Root-level baked shoe transforms do not follow the same between-key path as the original foot/toe joint hierarchy.",
+      "observed_dense_walking_time_s": 0.3125,
+      "observed_shoe_toe_error_m": 0.002627359237521887,
+      "observed_sparse_jogging_time_s": 0.3125,
+      "observed_sparse_shoe_error_m": 0.030542518943548203,
+      "correction": "Attach each immutable shoe node beneath its original foot/toe joint with exact source inverse-bind offset; no independent shoe animation track."
+    }
+  ]
+}

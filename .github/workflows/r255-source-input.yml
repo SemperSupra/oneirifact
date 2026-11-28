@@ -1,0 +1,80 @@
+name: R255 immutable source-input publication
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r255/source_input/pack.py', 'experiments/r255/source_input/README.md', '.github/workflows/r255-source-input.yml']
+permissions:
+  contents: write
+  actions: read
+jobs:
+  source-input:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      PYTHONUNBUFFERED: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 Node24
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Rebuild exact admitted source inputs
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD_SHA"
+          mkdir "$RUNNER_TEMP/evidence"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15266855834/zip > "$RUNNER_TEMP/upstream.zip"
+          python3 experiments/r255/source_input/pack.py "$RUNNER_TEMP/upstream.zip" "$RUNNER_TEMP/r255-source-bind-inputs-v1.zip" > "$RUNNER_TEMP/evidence/source-pack-receipt.json"
+          echo "e369da7f5e2f10de8b0117ea8e8cbc4b700a00dfad0a784f713afba5df496e4f  $RUNNER_TEMP/r255-source-bind-inputs-v1.zip" | sha256sum -c -
+      - name: Publish versioned asset without overwrite
+        run: |
+          set -euo pipefail
+          tag=motion-r255-source-inputs-v1
+          asset=r255-source-bind-inputs-v1.zip
+          repo=SemperSupra/oneirifact
+          if gh release view "$tag" --repo "$repo" > /dev/null 2>&1; then
+            mkdir "$RUNNER_TEMP/existing"
+            gh release download "$tag" --repo "$repo" --pattern "$asset" --dir "$RUNNER_TEMP/existing"
+            echo "e369da7f5e2f10de8b0117ea8e8cbc4b700a00dfad0a784f713afba5df496e4f  $RUNNER_TEMP/existing/$asset" | sha256sum -c -
+          else
+            cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
+          Exact source binds and complete fixtures for three admitted R255 morphology cases. Original source bytes and notices are preserved; this is separate from animated display packs.
+
+          Archive SHA256: e369da7f5e2f10de8b0117ea8e8cbc4b700a00dfad0a784f713afba5df496e4f
+          Archive bytes: 14386343; entries: 56; original selected case files: 54.
+          Upstream public artifact: 15266855834; SHA256: e694ab4d06bae33bf829e624d03a2bd81bb28d8b8059c42ae83e36819f33dd68.
+          Source selection does not qualify contact, physiology, technique or realism.
+          NOTES
+            gh release create "$tag" "$RUNNER_TEMP/$asset" --repo "$repo" --target "$SOURCE_HEAD_SHA" --title "R255 exact source binds and fixtures v1" --notes-file "$RUNNER_TEMP/release-notes.md"
+          fi
+          gh api "repos/$repo/releases/tags/$tag" > "$RUNNER_TEMP/evidence/release-metadata.json"
+      - name: Verify actual public asset readback
+        run: |
+          set -euo pipefail
+          url=https://github.com/SemperSupra/oneirifact/releases/download/motion-r255-source-inputs-v1/r255-source-bind-inputs-v1.zip
+          curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 90 "$url" -o "$RUNNER_TEMP/published.zip"
+          echo "e369da7f5e2f10de8b0117ea8e8cbc4b700a00dfad0a784f713afba5df496e4f  $RUNNER_TEMP/published.zip" | sha256sum -c -
+          python3 - <<'PY'
+          import hashlib,json,os,zipfile
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP']);raw=(root/'published.zip').read_bytes();meta=json.loads((root/'evidence/release-metadata.json').read_text())
+          asset=next(a for a in meta['assets'] if a['name']=='r255-source-bind-inputs-v1.zip')
+          assert len(raw)==14386343 and asset['size']==14386343 and asset['state']=='uploaded'
+          with zipfile.ZipFile(root/'published.zip') as z:
+              assert z.testzip() is None and len(z.namelist())==56
+              manifest=json.loads(z.read('source-input-manifest.json'))
+              for f in manifest['files']:
+                  data=z.read(f['path']);assert len(data)==f['bytes'] and hashlib.sha256(data).hexdigest()==f['sha256']
+          receipt={'schema':'oneirifact.exact-source-release-receipt/v1','status':'PASS_PUBLIC_RELEASE_READBACK','producer_head':os.environ['SOURCE_HEAD_SHA'],'run_id':os.environ['GITHUB_RUN_ID'],'release_id':meta['id'],'tag':meta['tag_name'],'asset_id':asset['id'],'url':asset['browser_download_url'],'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'zip_entries':56,'original_case_files':54,'upstream':manifest['upstream'],'scope':'Exact source fixtures only; no realism, contact, physics or morphology-registration admission.'}
+          (root/'evidence/source-release-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt))
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2 Node24
+        if: always()
+        with:
+          name: r255-source-input-release-evidence
+          path: ${{ runner.temp }}/evidence
+          retention-days: 30
+          if-no-files-found: error

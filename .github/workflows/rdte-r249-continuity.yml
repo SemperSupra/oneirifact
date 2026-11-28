@@ -1,0 +1,55 @@
+name: R249 read-only native quaternion continuity audit
+on:
+  pull_request:
+    branches: [rdte/r247-captured-motion]
+    paths: ['experiments/r249/continuity/**', '.github/workflows/rdte-r249-continuity.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        group: [r245, r248, r247]
+    env:
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 Node24
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Verify exact source archives and recover only native scenes and GLBs
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD_SHA"
+          python3 experiments/r249/continuity/intake.py experiments/r249/continuity/inputs.json "${{ matrix.group }}" "$RUNNER_TEMP/inputs" "$RUNNER_TEMP/audit"
+      - name: Actual saved-action sign scan and adaptive native versus GLB midpoint checks
+        run: |
+          set -euo pipefail
+          archive=blender-5.2.4-linux-x64.tar.xz
+          expected=2fd14c50987426897ba60237ee996edf2b4151f4b1a72a460ca20be58c1d2d86
+          blender_root="$RUNNER_TEMP/blender"
+          mkdir "$blender_root"
+          for origin in https://download.blender.org https://mirror.blender.org https://mirror.nju.edu.cn/blender; do
+            if timeout 110s curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error --connect-timeout 12 --max-time 95 "$origin/release/Blender5.2/$archive" -o "$blender_root/$archive"; then
+              echo "$expected  $blender_root/$archive" | sha256sum -c -
+              break
+            fi
+          done
+          echo "$expected  $blender_root/$archive" | sha256sum -c -
+          timeout 150s tar -xf "$blender_root/$archive" -C "$blender_root"
+          "$blender_root/blender-5.2.4-linux-x64/blender" -b --factory-startup --disable-autoexec --threads 2 --python-exit-code 1 --python experiments/r249/continuity/audit.py -- "$RUNNER_TEMP/inputs" "$RUNNER_TEMP/audit"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2 Node24
+        if: always()
+        with:
+          name: r249-${{ matrix.group }}-native-quaternion-audit
+          path: ${{ runner.temp }}/audit
+          retention-days: 30
+          if-no-files-found: error

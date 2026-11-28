@@ -1,0 +1,41 @@
+name: R240 actual CT skin coupling candidate
+on:
+  pull_request:
+    branches: [rdte/r239-fullweight-animated-human]
+    paths: ['experiments/r240/registration/**','.github/workflows/rdte-r240-ct-skin.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  registration:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Restore exact actual CT and full-weight skin products
+        run: |
+          set -euo pipefail
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15260769266/zip > "$RUNNER_TEMP/skin.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15261653436/zip > "$RUNNER_TEMP/ct.zip"
+      - name: Generate actual coupled animated model and containment diagnostics
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0 rtree==1.4.1
+          python experiments/r240/registration/ct_skin.py "$RUNNER_TEMP/skin.zip" "$RUNNER_TEMP/ct.zip" "$RUNNER_TEMP/registered"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r240-ct-skin-candidate
+          path: ${{ runner.temp }}/registered
+          retention-days: 30
+          if-no-files-found: error

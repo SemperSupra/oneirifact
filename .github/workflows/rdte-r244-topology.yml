@@ -1,0 +1,43 @@
+name: R244 exact source skin index-seam diagnostic
+on:
+  pull_request:
+    branches: [rdte/r243-source-envelope-inventory]
+    paths: ['experiments/r244/topology/**', '.github/workflows/rdte-r244-topology.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  topology:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Restore exact public source geometry
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD_SHA"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15263871225/zip > "$RUNNER_TEMP/source.zip"
+      - name: Diagnose exact index seams with immutable triangle geometry
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r244/topology/seams.py "$RUNNER_TEMP/source.zip" "$RUNNER_TEMP/topology"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: r244-exact-source-skin-topology
+          path: ${{ runner.temp }}/topology
+          retention-days: 30
+          if-no-files-found: error

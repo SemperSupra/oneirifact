@@ -33,12 +33,13 @@ let child,ws,stderr="";try{
   function call(method,params={}){return new Promise((r,j)=>{const n=++id;pending.set(n,[r,j]);ws.send(JSON.stringify({id:n,method,params}));setTimeout(()=>{if(pending.delete(n))j(Error("CDP timeout "+method))},20000).unref()})}
   async function val(expression){const r=await call("Runtime.evaluate",{expression,returnByValue:true});if(r.exceptionDetails)throw Error("evaluation failed");return r.result.value}
   async function until(expression){for(let i=0;i<160;i++){try{if(await val(expression))return}catch{}await wait(250)}throw Error("witness timeout: "+expression)}
+  const extended=process.env.ANATOMY_EXTENDED==='1';
   await call("Page.enable");await call("Runtime.enable");
   for(const size of [[1280,900],[768,1024],[390,844],[844,390]]){
     await call("Emulation.setDeviceMetricsOverride",{width:size[0],height:size[1],deviceScaleFactor:1,mobile:false});
     await call("Page.navigate",{url:base+"anatomy/"});
     await until("document.title.includes('Anatomy Explorer') && document.getElementById('status').dataset.state==='image' && document.getElementById('preview').naturalWidth>0");
-    assert(await val("document.getElementById('dataset').options.length===4 && !document.querySelector('model-viewer').hasAttribute('src')"));
+    assert(await val("document.getElementById('dataset').options.length==="+(extended?6:4)+" && !document.querySelector('model-viewer').hasAttribute('src')"));
     const sex=size[0]===390||size[0]===768?'female':'male';
     await val("(()=>{const s=document.getElementById('dataset');s.value='"+sex+"';s.dispatchEvent(new Event('change'));const l=document.getElementById('layer');l.value='"+sex+"-skeletal';l.dispatchEvent(new Event('change'));document.getElementById('start').click();return true})()");
     await until("document.getElementById('status').dataset.state==='loaded' && document.querySelector('model-viewer').loaded");
@@ -60,9 +61,20 @@ let child,ws,stderr="";try{
   // Separate donor candidate and recovered organ must also render, not just list.
   await call("Page.navigate",{url:base+"anatomy/"});
   await until("document.getElementById('status').dataset.state==='image'");
-  for(const id of ['ct','pineal']){
+  for(const id of extended?['ct','pineal','pelvis','digits']:['ct','pineal']){
     await val("(()=>{const d=document.getElementById('dataset');d.value='"+id+"';d.dispatchEvent(new Event('change'));document.getElementById('start').click();return true})()");
     await until("document.getElementById('status').dataset.state==='loaded' && document.querySelector('model-viewer').loaded");
+    if(extended&&['pelvis','digits'].includes(id)){
+      assert(await val("!document.getElementById('dataset-receipt').hidden"));
+      await until("document.getElementById('inventory').children.length>0");
+      if(id==='digits'){
+        for(const k of ['digit-hand-right','digit-foot-left','digit-foot-right']){
+          await val("(()=>{const l=document.getElementById('layer');l.value='"+k+"';l.dispatchEvent(new Event('change'));return true})()");
+          await until("document.getElementById('status').dataset.state==='loaded' && document.querySelector('model-viewer').loaded");
+        }
+      }
+      const shot=await call("Page.captureScreenshot",{format:"png"});if(process.env.RUNNER_TEMP)await writeFile(join(process.env.RUNNER_TEMP,"anatomy-"+id+".png"),Buffer.from(shot.data,"base64"));
+    }
     await val("document.getElementById('image').click()");
     console.log("ANATOMY_SEPARATE_REFERENCE_PASS",id);
   }

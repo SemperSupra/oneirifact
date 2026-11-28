@@ -50,6 +50,9 @@ let child,ws,stderr="";try{
     assert(await val("document.documentElement.scrollWidth<=innerWidth+1"));
     await val("(()=>{const s=document.getElementById('search');s.value='femur';s.dispatchEvent(new Event('input'));return true})()");
     assert(await val("document.getElementById('inventory').children.length>0"));
+    if(size[1]<=550&&size[0]>740)assert(await val("(()=>{const r=document.querySelector('model-viewer').getBoundingClientRect();return Math.min(innerHeight,r.bottom)-Math.max(0,r.top)>=160})()"),"landscape visible model area");
+    await val("document.getElementById('display').scrollIntoView({block:'start',behavior:'instant'})");
+    await wait(250);
     const shot=await call("Page.captureScreenshot",{format:"png"});if(process.env.RUNNER_TEMP)await writeFile(join(process.env.RUNNER_TEMP,"anatomy-"+size[0]+"x"+size[1]+".png"),Buffer.from(shot.data,"base64"));
     await val("document.getElementById('image').click()");
     await until("document.getElementById('status').dataset.state==='image' && document.getElementById('preview').naturalWidth>0");
@@ -73,6 +76,9 @@ let child,ws,stderr="";try{
           await until("document.getElementById('status').dataset.state==='loaded' && document.querySelector('model-viewer').loaded");
         }
       }
+      await val("document.getElementById('display').scrollIntoView({block:'start',behavior:'instant'})");
+      await wait(250);
+      assert(await val("(()=>{const r=document.querySelector('model-viewer').getBoundingClientRect();return Math.min(innerHeight,r.bottom)-Math.max(0,r.top)>=160})()"));
       const shot=await call("Page.captureScreenshot",{format:"png"});if(process.env.RUNNER_TEMP)await writeFile(join(process.env.RUNNER_TEMP,"anatomy-"+id+".png"),Buffer.from(shot.data,"base64"));
     }
     await val("document.getElementById('image').click()");

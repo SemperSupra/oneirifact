@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import trimesh
 from PIL import Image,ImageDraw,ImageFont
-sys.path.insert(0,str(Path(__file__).resolve().parents[2]/"gallery"))
+sys.path.insert(0,str(Path(__file__).resolve().parents[3]/"gallery"))
 import anatomy_pack as p
 from build_anatomy import compact
 BASE="ffac8867db9951a3d721558e7aad8ae9250b00798d4bf65b8c53e3d811ec0947"

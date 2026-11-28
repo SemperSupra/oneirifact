@@ -1,0 +1,693 @@
+{
+  "schema": "oneirifact.graph/v0.1",
+  "name": "brick_8x2",
+  "unit": "m",
+  "detail": 32,
+  "root": "f72",
+  "features": [
+    {
+      "id": "f0",
+      "op": "box",
+      "params": {
+        "width": 0.6379999999999999,
+        "depth": 0.15800000000000003,
+        "height": 0.09599999999999999
+      }
+    },
+    {
+      "id": "f1",
+      "op": "box",
+      "params": {
+        "width": 0.6079999999999999,
+        "depth": 0.12800000000000003,
+        "height": 0.08499999999999999
+      }
+    },
+    {
+      "id": "f2",
+      "op": "translate",
+      "params": {
+        "x": 0,
+        "y": 0,
+        "z": -0.0095
+      },
+      "inputs": [
+        "f1"
+      ]
+    },
+    {
+      "id": "f3",
+      "op": "difference",
+      "inputs": [
+        "f0",
+        "f2"
+      ]
+    },
+    {
+      "id": "f4",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.023999999999999997,
+        "height": 0.02
+      }
+    },
+    {
+      "id": "f5",
+      "op": "translate",
+      "params": {
+        "x": -0.28,
+        "y": -0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f6",
+      "op": "union",
+      "inputs": [
+        "f3",
+        "f5"
+      ]
+    },
+    {
+      "id": "f7",
+      "op": "translate",
+      "params": {
+        "x": -0.28,
+        "y": 0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f8",
+      "op": "union",
+      "inputs": [
+        "f6",
+        "f7"
+      ]
+    },
+    {
+      "id": "f9",
+      "op": "translate",
+      "params": {
+        "x": -0.2,
+        "y": -0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f10",
+      "op": "union",
+      "inputs": [
+        "f8",
+        "f9"
+      ]
+    },
+    {
+      "id": "f11",
+      "op": "translate",
+      "params": {
+        "x": -0.2,
+        "y": 0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f12",
+      "op": "union",
+      "inputs": [
+        "f10",
+        "f11"
+      ]
+    },
+    {
+      "id": "f13",
+      "op": "translate",
+      "params": {
+        "x": -0.12,
+        "y": -0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f14",
+      "op": "union",
+      "inputs": [
+        "f12",
+        "f13"
+      ]
+    },
+    {
+      "id": "f15",
+      "op": "translate",
+      "params": {
+        "x": -0.12,
+        "y": 0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f16",
+      "op": "union",
+      "inputs": [
+        "f14",
+        "f15"
+      ]
+    },
+    {
+      "id": "f17",
+      "op": "translate",
+      "params": {
+        "x": -0.04,
+        "y": -0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f18",
+      "op": "union",
+      "inputs": [
+        "f16",
+        "f17"
+      ]
+    },
+    {
+      "id": "f19",
+      "op": "translate",
+      "params": {
+        "x": -0.04,
+        "y": 0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f20",
+      "op": "union",
+      "inputs": [
+        "f18",
+        "f19"
+      ]
+    },
+    {
+      "id": "f21",
+      "op": "translate",
+      "params": {
+        "x": 0.04,
+        "y": -0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f22",
+      "op": "union",
+      "inputs": [
+        "f20",
+        "f21"
+      ]
+    },
+    {
+      "id": "f23",
+      "op": "translate",
+      "params": {
+        "x": 0.04,
+        "y": 0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f24",
+      "op": "union",
+      "inputs": [
+        "f22",
+        "f23"
+      ]
+    },
+    {
+      "id": "f25",
+      "op": "translate",
+      "params": {
+        "x": 0.12,
+        "y": -0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f26",
+      "op": "union",
+      "inputs": [
+        "f24",
+        "f25"
+      ]
+    },
+    {
+      "id": "f27",
+      "op": "translate",
+      "params": {
+        "x": 0.12,
+        "y": 0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f28",
+      "op": "union",
+      "inputs": [
+        "f26",
+        "f27"
+      ]
+    },
+    {
+      "id": "f29",
+      "op": "translate",
+      "params": {
+        "x": 0.2,
+        "y": -0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f30",
+      "op": "union",
+      "inputs": [
+        "f28",
+        "f29"
+      ]
+    },
+    {
+      "id": "f31",
+      "op": "translate",
+      "params": {
+        "x": 0.2,
+        "y": 0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f32",
+      "op": "union",
+      "inputs": [
+        "f30",
+        "f31"
+      ]
+    },
+    {
+      "id": "f33",
+      "op": "translate",
+      "params": {
+        "x": 0.28,
+        "y": -0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f34",
+      "op": "union",
+      "inputs": [
+        "f32",
+        "f33"
+      ]
+    },
+    {
+      "id": "f35",
+      "op": "translate",
+      "params": {
+        "x": 0.28,
+        "y": 0.04,
+        "z": 0.056
+      },
+      "inputs": [
+        "f4"
+      ]
+    },
+    {
+      "id": "f36",
+      "op": "union",
+      "inputs": [
+        "f34",
+        "f35"
+      ]
+    },
+    {
+      "id": "f37",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.032,
+        "height": 0.083
+      }
+    },
+    {
+      "id": "f38",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.023999999999999997,
+        "height": 0.087
+      }
+    },
+    {
+      "id": "f39",
+      "op": "difference",
+      "inputs": [
+        "f37",
+        "f38"
+      ]
+    },
+    {
+      "id": "f40",
+      "op": "translate",
+      "params": {
+        "x": -0.24,
+        "y": 0.0,
+        "z": -0.0065
+      },
+      "inputs": [
+        "f39"
+      ]
+    },
+    {
+      "id": "f41",
+      "op": "union",
+      "inputs": [
+        "f36",
+        "f40"
+      ]
+    },
+    {
+      "id": "f42",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.032,
+        "height": 0.083
+      }
+    },
+    {
+      "id": "f43",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.023999999999999997,
+        "height": 0.087
+      }
+    },
+    {
+      "id": "f44",
+      "op": "difference",
+      "inputs": [
+        "f42",
+        "f43"
+      ]
+    },
+    {
+      "id": "f45",
+      "op": "translate",
+      "params": {
+        "x": -0.16,
+        "y": 0.0,
+        "z": -0.0065
+      },
+      "inputs": [
+        "f44"
+      ]
+    },
+    {
+      "id": "f46",
+      "op": "union",
+      "inputs": [
+        "f41",
+        "f45"
+      ]
+    },
+    {
+      "id": "f47",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.032,
+        "height": 0.083
+      }
+    },
+    {
+      "id": "f48",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.023999999999999997,
+        "height": 0.087
+      }
+    },
+    {
+      "id": "f49",
+      "op": "difference",
+      "inputs": [
+        "f47",
+        "f48"
+      ]
+    },
+    {
+      "id": "f50",
+      "op": "translate",
+      "params": {
+        "x": -0.08,
+        "y": 0.0,
+        "z": -0.0065
+      },
+      "inputs": [
+        "f49"
+      ]
+    },
+    {
+      "id": "f51",
+      "op": "union",
+      "inputs": [
+        "f46",
+        "f50"
+      ]
+    },
+    {
+      "id": "f52",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.032,
+        "height": 0.083
+      }
+    },
+    {
+      "id": "f53",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.023999999999999997,
+        "height": 0.087
+      }
+    },
+    {
+      "id": "f54",
+      "op": "difference",
+      "inputs": [
+        "f52",
+        "f53"
+      ]
+    },
+    {
+      "id": "f55",
+      "op": "translate",
+      "params": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -0.0065
+      },
+      "inputs": [
+        "f54"
+      ]
+    },
+    {
+      "id": "f56",
+      "op": "union",
+      "inputs": [
+        "f51",
+        "f55"
+      ]
+    },
+    {
+      "id": "f57",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.032,
+        "height": 0.083
+      }
+    },
+    {
+      "id": "f58",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.023999999999999997,
+        "height": 0.087
+      }
+    },
+    {
+      "id": "f59",
+      "op": "difference",
+      "inputs": [
+        "f57",
+        "f58"
+      ]
+    },
+    {
+      "id": "f60",
+      "op": "translate",
+      "params": {
+        "x": 0.08,
+        "y": 0.0,
+        "z": -0.0065
+      },
+      "inputs": [
+        "f59"
+      ]
+    },
+    {
+      "id": "f61",
+      "op": "union",
+      "inputs": [
+        "f56",
+        "f60"
+      ]
+    },
+    {
+      "id": "f62",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.032,
+        "height": 0.083
+      }
+    },
+    {
+      "id": "f63",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.023999999999999997,
+        "height": 0.087
+      }
+    },
+    {
+      "id": "f64",
+      "op": "difference",
+      "inputs": [
+        "f62",
+        "f63"
+      ]
+    },
+    {
+      "id": "f65",
+      "op": "translate",
+      "params": {
+        "x": 0.16,
+        "y": 0.0,
+        "z": -0.0065
+      },
+      "inputs": [
+        "f64"
+      ]
+    },
+    {
+      "id": "f66",
+      "op": "union",
+      "inputs": [
+        "f61",
+        "f65"
+      ]
+    },
+    {
+      "id": "f67",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.032,
+        "height": 0.083
+      }
+    },
+    {
+      "id": "f68",
+      "op": "cylinder",
+      "params": {
+        "radius": 0.023999999999999997,
+        "height": 0.087
+      }
+    },
+    {
+      "id": "f69",
+      "op": "difference",
+      "inputs": [
+        "f67",
+        "f68"
+      ]
+    },
+    {
+      "id": "f70",
+      "op": "translate",
+      "params": {
+        "x": 0.24,
+        "y": 0.0,
+        "z": -0.0065
+      },
+      "inputs": [
+        "f69"
+      ]
+    },
+    {
+      "id": "f71",
+      "op": "union",
+      "inputs": [
+        "f66",
+        "f70"
+      ]
+    },
+    {
+      "id": "f72",
+      "op": "scale",
+      "params": {
+        "factor": 0.1
+      },
+      "inputs": [
+        "f71"
+      ]
+    }
+  ]
+}

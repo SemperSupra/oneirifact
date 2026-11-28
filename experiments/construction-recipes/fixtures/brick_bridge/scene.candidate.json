@@ -1,0 +1,188 @@
+{
+  "schema": "oneirifact.scene/v0.1",
+  "id": "brick_bridge",
+  "name": "brick bridge",
+  "composition_mode": "scene_assembly",
+  "instances": [
+    {
+      "id": "pier_left_0",
+      "definition_id": "brick_2x2",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.024,
+          0,
+          0.0048
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "pier_left_1",
+      "definition_id": "brick_2x2",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.024,
+          0,
+          0.0144
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "pier_left_2",
+      "definition_id": "brick_2x2",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.024,
+          0,
+          0.023999999999999997
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "pier_right_0",
+      "definition_id": "brick_2x2",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.024,
+          0,
+          0.0048
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "pier_right_1",
+      "definition_id": "brick_2x2",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.024,
+          0,
+          0.0144
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "pier_right_2",
+      "definition_id": "brick_2x2",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.024,
+          0,
+          0.023999999999999997
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "bridge_deck",
+      "definition_id": "brick_8x2",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          0,
+          0.0336
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "parapet_7",
+      "definition_id": "brick_2x2",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.024,
+          0,
+          0.043199999999999995
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "parapet_8",
+      "definition_id": "brick_2x2",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          0,
+          0.043199999999999995
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "parapet_9",
+      "definition_id": "brick_2x2",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.024,
+          0,
+          0.043199999999999995
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    }
+  ]
+}

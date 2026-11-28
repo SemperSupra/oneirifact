@@ -1,0 +1,189 @@
+{
+  "schema": "oneirifact.graph/v0.1",
+  "name": "brick_2x2",
+  "unit": "m",
+  "detail": 32,
+  "root": "f18",
+  "features": [
+    {
+      "id": "f0",
+      "op": "box",
+      "params": {
+        "depth": 0.15800000000000003,
+        "height": 0.09599999999999999,
+        "width": 0.15800000000000003
+      }
+    },
+    {
+      "id": "f1",
+      "op": "box",
+      "params": {
+        "depth": 0.12800000000000003,
+        "height": 0.08499999999999999,
+        "width": 0.12800000000000003
+      }
+    },
+    {
+      "id": "f2",
+      "op": "translate",
+      "inputs": [
+        "f1"
+      ],
+      "params": {
+        "x": 0,
+        "y": 0,
+        "z": -0.0095
+      }
+    },
+    {
+      "id": "f3",
+      "op": "difference",
+      "inputs": [
+        "f0",
+        "f2"
+      ]
+    },
+    {
+      "id": "f4",
+      "op": "cylinder",
+      "params": {
+        "height": 0.02,
+        "radius": 0.023999999999999997
+      }
+    },
+    {
+      "id": "f5",
+      "op": "translate",
+      "inputs": [
+        "f4"
+      ],
+      "params": {
+        "x": -0.04,
+        "y": -0.04,
+        "z": 0.056
+      }
+    },
+    {
+      "id": "f6",
+      "op": "union",
+      "inputs": [
+        "f3",
+        "f5"
+      ]
+    },
+    {
+      "id": "f7",
+      "op": "translate",
+      "inputs": [
+        "f4"
+      ],
+      "params": {
+        "x": -0.04,
+        "y": 0.04,
+        "z": 0.056
+      }
+    },
+    {
+      "id": "f8",
+      "op": "union",
+      "inputs": [
+        "f6",
+        "f7"
+      ]
+    },
+    {
+      "id": "f9",
+      "op": "translate",
+      "inputs": [
+        "f4"
+      ],
+      "params": {
+        "x": 0.04,
+        "y": -0.04,
+        "z": 0.056
+      }
+    },
+    {
+      "id": "f10",
+      "op": "union",
+      "inputs": [
+        "f8",
+        "f9"
+      ]
+    },
+    {
+      "id": "f11",
+      "op": "translate",
+      "inputs": [
+        "f4"
+      ],
+      "params": {
+        "x": 0.04,
+        "y": 0.04,
+        "z": 0.056
+      }
+    },
+    {
+      "id": "f12",
+      "op": "union",
+      "inputs": [
+        "f10",
+        "f11"
+      ]
+    },
+    {
+      "id": "f13",
+      "op": "cylinder",
+      "params": {
+        "height": 0.083,
+        "radius": 0.032
+      }
+    },
+    {
+      "id": "f14",
+      "op": "cylinder",
+      "params": {
+        "height": 0.087,
+        "radius": 0.023999999999999997
+      }
+    },
+    {
+      "id": "f15",
+      "op": "difference",
+      "inputs": [
+        "f13",
+        "f14"
+      ]
+    },
+    {
+      "id": "f16",
+      "op": "translate",
+      "inputs": [
+        "f15"
+      ],
+      "params": {
+        "x": 0,
+        "y": 0,
+        "z": -0.0065
+      }
+    },
+    {
+      "id": "f17",
+      "op": "union",
+      "inputs": [
+        "f12",
+        "f16"
+      ]
+    },
+    {
+      "id": "f18",
+      "op": "scale",
+      "inputs": [
+        "f17"
+      ],
+      "params": {
+        "factor": 0.1
+      }
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "description": "Ten-piece hollow studded-block bridge with two reusable piers and a spanning beam.",
+  "assembly_sequence": [
+    "Place two piers on a six-stud center spacing.",
+    "Stack three two-by-two blocks per pier.",
+    "Seat the eight-by-two beam on the two piers.",
+    "Place three two-by-two parapet blocks on the beam."
+  ],
+  "construction_invariants": {
+    "stud_pitch_m": 0.008,
+    "course_height_m": 0.0096,
+    "pier_center_separation_m": 0.048,
+    "beam_support_overlap_m": 0.0158
+  },
+  "connection_scope": "Source lattice alignment; meshed clearance and mechanical retention remain separate.",
+  "schema": "oneirifact.construction-review/v1",
+  "id": "brick_bridge",
+  "length_unit": "m",
+  "rotation_unit": "degrees",
+  "euler_order": "XYZ",
+  "geometry_authority": "canonical feature graphs evaluated by native Oneirifact",
+  "definition_pin_status": "COMPUTE_WITH_NATIVE_COMPONENT_HASH_BEFORE_ADMISSION",
+  "bom": {
+    "brick_2x2": 9,
+    "brick_8x2": 1
+  },
+  "instance_count": 10,
+  "families": {
+    "brick_2x2": {
+      "family": "studded hollow block",
+      "pitch_m": 0.008,
+      "stud_grid": [
+        2,
+        2
+      ],
+      "body_size_m": [
+        0.0158,
+        0.0158,
+        0.0096
+      ],
+      "wall_m": 0.0015,
+      "stud_radius_m": 0.0024,
+      "tube_wall_m": 0.0008,
+      "physical_fit": "NOT_QUALIFIED"
+    },
+    "brick_8x2": {
+      "family": "studded hollow block",
+      "pitch_m": 0.008,
+      "stud_grid": [
+        8,
+        2
+      ],
+      "body_size_m": [
+        0.0638,
+        0.0158,
+        0.0096
+      ],
+      "wall_m": 0.0015,
+      "stud_radius_m": 0.0024,
+      "tube_wall_m": 0.0008,
+      "physical_fit": "NOT_QUALIFIED"
+    }
+  },
+  "physical_fit": "NOT_QUALIFIED",
+  "structural_loads": "NOT_QUALIFIED"
+}

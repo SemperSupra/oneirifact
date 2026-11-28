@@ -1,0 +1,20 @@
+{
+  "schema": "oneirifact.engine-job/v0.1",
+  "source_schema": "oneirifact.graph/v0.1",
+  "source_revision": "sha256:91de11281ee0ca72128f9ecec6aa2623832f233052be8dbc6f3fa0473aa28be9",
+  "source_sha256": "sha256:a0a5e9e925d9c97ec13182f95faba7573154f68a3f7c8aef294ffca304f31ccb",
+  "blender_program_sha256": "sha256:a424cfd36a6b2bb5bb37a99957315631c6678f0aec98d02e119eb83487b9c6e7",
+  "openscad_program_sha256": "sha256:54eb67eb9951c45be659353d0c51f4db4dbec5da6a39b1d091219a05d94c1438",
+  "blender_execution": "NOT_RUN",
+  "openscad_execution": "NOT_RUN",
+  "fidelity": "UNVERIFIED_EXTERNAL_OUTPUT",
+  "editability": "SOURCE_GRAPH_PRESERVED; BLENDER_NATIVE_MODIFIER_EDITABILITY_UNVERIFIED",
+  "limits": [
+    "Only oneirifact.graph/v0.1 primitive, transform and CSG operations compiled",
+    "No material, rig, animation, physics or implicit-field lossless round-trip",
+    "OpenSCAD and Blender output topology and export fidelity require independent checks",
+    "Blender native modifier stacks retain CSG where supported; glTF is a baked derived export",
+    "No external executable, plugin, script or file path is invoked by this compiler",
+    "The Blender script requires controlled isolated execution and pinned Blender version"
+  ]
+}

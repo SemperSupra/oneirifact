@@ -1,0 +1,47 @@
+{
+  "schema": "oneirifact.construction-recipes/v1",
+  "cases": [
+    {
+      "case": "brick_bridge",
+      "instances": 10,
+      "definitions": 2
+    },
+    {
+      "case": "log_cabin",
+      "instances": 15,
+      "definitions": 2
+    },
+    {
+      "case": "rod_hub_frame",
+      "instances": 10,
+      "definitions": 5
+    }
+  ],
+  "source_authority": "Native Oneirifact; this script constructs JSON only.",
+  "files": {
+    "brick_bridge/assembly-plan.json": "0381f7e579069264c94d2c8f50bae4290b0399450d21bfc4abfb05eb288e9bff",
+    "brick_bridge/brick_2x2.graph.json": "07271bffa9e19ce752bd924e91f915532829ea5b537404954ea567909d0d3f02",
+    "brick_bridge/brick_8x2.graph.json": "77a6e2844135b4f98533ea06ad35d7a4bc745123c33b2a56e06f3b7c3e06272f",
+    "brick_bridge/components/brick_2x2.json": "43196e19fbe25a9c14326d0bff7f3fb276fde8061631365431e27c3758caf830",
+    "brick_bridge/components/brick_8x2.json": "28d3441df13bb8f05413e6970c60ba49cf34a8e1f91c145f850b577ccdcc8d6b",
+    "brick_bridge/scene.candidate.json": "6ec9e93eb507981f43c88198fcb1c13b87ab8f0f1b7ad76e0d66be93c4576fb6",
+    "log_cabin/assembly-plan.json": "b3f639539423dbac03a478d57c9cf43d252882bc2ea7784d55e09159b01f2551",
+    "log_cabin/components/notched_log.json": "59c2af6b060f11b8a41851841ac2c661e5a2125cc042ce63df26cc0a84f36bf4",
+    "log_cabin/components/roof_panel.json": "35253674d9cb389a08370d899e31e541897815364852ae479c8a93dcce65fc6a",
+    "log_cabin/notched_log.graph.json": "4fc33a02f9f49540ddd29529007b36cdeb676a74701b8d7c05421a9495426b7e",
+    "log_cabin/roof_panel.graph.json": "84293a06823005f8f866476938d1174b1efb01d0b9305f419b8e8418cf03ef77",
+    "log_cabin/scene.candidate.json": "7cb01a14de78e530b488e6bde8c2382acd0c55b0c9ba33102077d2501085035b",
+    "rod_hub_frame/assembly-plan.json": "9a8bdeb9009fe0ab32973d1f346fd690c32e835015ccc03ae924a79d917fc562",
+    "rod_hub_frame/components/frame_rod.json": "87f44a1ae193ef75085b5ad36c55472632b1985974f0839c44ff68847d899ef9",
+    "rod_hub_frame/components/socket_hub_0.json": "e4e659f57d650737f713c3edb9ee10fb83d430000d9f1f4fb5a77eaccbc52af9",
+    "rod_hub_frame/components/socket_hub_1.json": "c9b0e61f2852737d6e3c1a72f046c0c8e8229481119da57097bbcd42358d7e4f",
+    "rod_hub_frame/components/socket_hub_2.json": "e9cf45043ec25409b9c0a4ad1c4feebd3b1527a67094438bafe3f37064c8ca6b",
+    "rod_hub_frame/components/socket_hub_3.json": "111a837dcf605856bc283bc9ee0898664ec9ea15ebb028e870f9665ba8c1e171",
+    "rod_hub_frame/frame_rod.graph.json": "5eef01c9eced242f5e0b2309136bcab066b5e6249229293cc870d428786696c4",
+    "rod_hub_frame/scene.candidate.json": "93af02497b99f74db0bfe3cd0d46cdaedaa7a54d6e9b2ef0487a390fa37c785f",
+    "rod_hub_frame/socket_hub_0.graph.json": "0ab8b560aabb5ba90f239e570ff846562c79eceeec6948a183b5f1af0935a88a",
+    "rod_hub_frame/socket_hub_1.graph.json": "e0acad971c541944008d71302c249d936390be774c2e5dacf2b4b9bed5d3598b",
+    "rod_hub_frame/socket_hub_2.graph.json": "ae1b672f45f72bf300de7a2029e5c91d407c8dbbb64153db954948d10d401de1",
+    "rod_hub_frame/socket_hub_3.graph.json": "c116aba1e085e1fcc44b5e242437aff0cde96df587a45514988531425d701df4"
+  }
+}

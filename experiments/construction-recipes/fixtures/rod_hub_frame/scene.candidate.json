@@ -1,0 +1,188 @@
+{
+  "schema": "oneirifact.scene/v0.1",
+  "id": "rod_hub_frame",
+  "name": "rod hub frame",
+  "composition_mode": "scene_assembly",
+  "instances": [
+    {
+      "id": "hub_0",
+      "definition_id": "socket_hub_0",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.03,
+          -0.017320508075688773,
+          0.006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_0_1",
+      "definition_id": "frame_rod",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.0,
+          -0.017320508075688773,
+          0.006
+        ],
+        "rotation": [
+          0,
+          90.0,
+          0.0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_0_2",
+      "definition_id": "frame_rod",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.015,
+          0.008660254037844387,
+          0.006
+        ],
+        "rotation": [
+          0,
+          90.0,
+          60.00000000000001
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_0_3",
+      "definition_id": "frame_rod",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.015,
+          -0.008660254037844387,
+          0.030494897427831777
+        ],
+        "rotation": [
+          0,
+          35.264389682754654,
+          30.000000000000004
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "hub_1",
+      "definition_id": "socket_hub_1",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.03,
+          -0.017320508075688773,
+          0.006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_1_2",
+      "definition_id": "frame_rod",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.015,
+          0.008660254037844387,
+          0.006
+        ],
+        "rotation": [
+          0,
+          90.0,
+          119.99999999999999
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_1_3",
+      "definition_id": "frame_rod",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.015,
+          -0.008660254037844387,
+          0.030494897427831777
+        ],
+        "rotation": [
+          0,
+          35.264389682754654,
+          150.0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "hub_2",
+      "definition_id": "socket_hub_2",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          0.034641016151377546,
+          0.006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_2_3",
+      "definition_id": "frame_rod",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.0,
+          0.017320508075688773,
+          0.030494897427831777
+        ],
+        "rotation": [
+          0,
+          35.264389682754654,
+          -90.0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "hub_3",
+      "definition_id": "socket_hub_3",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          0,
+          0.054989794855663555
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    }
+  ]
+}

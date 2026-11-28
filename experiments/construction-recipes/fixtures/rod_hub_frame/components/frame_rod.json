@@ -1,0 +1,33 @@
+{
+  "schema": "oneirifact.component/v0.1",
+  "id": "frame_rod",
+  "name": "frame rod",
+  "unit": "m",
+  "graph": {
+    "schema": "oneirifact.graph/v0.1",
+    "name": "frame_rod",
+    "unit": "m",
+    "detail": 32,
+    "root": "f1",
+    "features": [
+      {
+        "id": "f0",
+        "op": "cylinder",
+        "params": {
+          "radius": 0.016,
+          "height": 0.57
+        }
+      },
+      {
+        "id": "f1",
+        "op": "scale",
+        "params": {
+          "factor": 0.1
+        },
+        "inputs": [
+          "f0"
+        ]
+      }
+    ]
+  }
+}

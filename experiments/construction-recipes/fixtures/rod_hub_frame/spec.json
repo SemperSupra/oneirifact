@@ -1,0 +1,198 @@
+{
+  "schema": "oneirifact.scene/v0.1",
+  "id": "rod_hub_frame",
+  "name": "rod hub frame",
+  "composition_mode": "scene_assembly",
+  "instances": [
+    {
+      "id": "hub_0",
+      "definition_id": "socket_hub_0",
+      "definition_hash": "sha256:64d33dd331a14305f3ae51faebe1807de850583fb4b2d74662093cb752d532d3",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.03,
+          -0.017320508075688773,
+          0.006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_0_1",
+      "definition_id": "frame_rod",
+      "definition_hash": "sha256:f5d66d9dc3f5508081e609441a29945ac85d900fd2ad06401eb619864d6f0ef8",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          -0.017320508075688773,
+          0.006
+        ],
+        "rotation": [
+          0,
+          90,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_0_2",
+      "definition_id": "frame_rod",
+      "definition_hash": "sha256:f5d66d9dc3f5508081e609441a29945ac85d900fd2ad06401eb619864d6f0ef8",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.015,
+          0.008660254037844387,
+          0.006
+        ],
+        "rotation": [
+          0,
+          90,
+          60.00000000000001
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_0_3",
+      "definition_id": "frame_rod",
+      "definition_hash": "sha256:f5d66d9dc3f5508081e609441a29945ac85d900fd2ad06401eb619864d6f0ef8",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          -0.015,
+          -0.008660254037844387,
+          0.030494897427831777
+        ],
+        "rotation": [
+          0,
+          35.264389682754654,
+          30.000000000000004
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "hub_1",
+      "definition_id": "socket_hub_1",
+      "definition_hash": "sha256:dfcdf556e4053dbfc6bc9d01f70d46e5d7ff441eded47a56f1e6d8ed5027ee9d",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.03,
+          -0.017320508075688773,
+          0.006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_1_2",
+      "definition_id": "frame_rod",
+      "definition_hash": "sha256:f5d66d9dc3f5508081e609441a29945ac85d900fd2ad06401eb619864d6f0ef8",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.015,
+          0.008660254037844387,
+          0.006
+        ],
+        "rotation": [
+          0,
+          90,
+          119.99999999999999
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_1_3",
+      "definition_id": "frame_rod",
+      "definition_hash": "sha256:f5d66d9dc3f5508081e609441a29945ac85d900fd2ad06401eb619864d6f0ef8",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0.015,
+          -0.008660254037844387,
+          0.030494897427831777
+        ],
+        "rotation": [
+          0,
+          35.264389682754654,
+          150
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "hub_2",
+      "definition_id": "socket_hub_2",
+      "definition_hash": "sha256:15166f012447c8ee3ee871933f0cfe9e3714d3e370674489783af1db49ec55d0",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          0.034641016151377546,
+          0.006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "rod_2_3",
+      "definition_id": "frame_rod",
+      "definition_hash": "sha256:f5d66d9dc3f5508081e609441a29945ac85d900fd2ad06401eb619864d6f0ef8",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          0.017320508075688773,
+          0.030494897427831777
+        ],
+        "rotation": [
+          0,
+          35.264389682754654,
+          -90
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "id": "hub_3",
+      "definition_id": "socket_hub_3",
+      "definition_hash": "sha256:24acd16b5516f107fc2b53623e270b0319ff0a9df2234928266e50bb656477fb",
+      "composition_mode": "scene_assembly",
+      "transform": {
+        "translation": [
+          0,
+          0,
+          0.054989794855663555
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    }
+  ]
+}

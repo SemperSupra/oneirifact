@@ -1,0 +1,57 @@
+name: R254 actual organ geometry and morphology response audit
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r254/organs/**', '.github/workflows/rdte-r254-organs.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        sex: [male, female]
+    env:
+      SEX: ${{ matrix.sex }}
+      SOURCE_HEAD_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      OMP_NUM_THREADS: 1
+      OPENBLAS_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact source and acquire admitted immutable inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD_COMMIT"
+          if test "$SEX" = male; then artifact=15238389268; else artifact=15238269509; fi
+          gh api "repos/SemperSupra/oneirifact/actions/artifacts/$artifact/zip" > "$RUNNER_TEMP/atlas.zip"
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 4 --max-time 120 --max-filesize 16777216 https://github.com/SemperSupra/oneirifact/releases/download/shared-design-r237-v1/shared-design-r237-v1.zip -o "$RUNNER_TEMP/design.zip"
+          python3 gallery/restore_adult_design_release.py --source "$RUNNER_TEMP/design.zip" --dest "$RUNNER_TEMP/design"
+      - name: Qualify actual source geometry and actual exterior response
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install --disable-pip-version-check numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          node experiments/r254/organs/morph_audit.mjs "$RUNNER_TEMP/design" "$RUNNER_TEMP/morphology"
+          "$RUNNER_TEMP/venv/bin/python" experiments/r254/organs/audit.py "$SEX" "$RUNNER_TEMP/atlas.zip" "$RUNNER_TEMP/morphology" "$RUNNER_TEMP/product"
+          "$RUNNER_TEMP/venv/bin/python" experiments/r254/organs/oracles.py "$RUNNER_TEMP/product"
+      - name: Render measured source and before-after morphology products
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/venv/bin/python" experiments/r254/organs/render.py "$RUNNER_TEMP/product" "$RUNNER_TEMP/morphology"
+          "$RUNNER_TEMP/venv/bin/python" experiments/r254/organs/finish.py "$RUNNER_TEMP/product" "$RUNNER_TEMP/morphology"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: r254-${{ matrix.sex }}-actual-organ-audit
+          path: ${{ runner.temp }}/product
+          retention-days: 30
+          if-no-files-found: error

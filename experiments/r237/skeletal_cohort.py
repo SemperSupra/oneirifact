@@ -9,7 +9,7 @@ V1_MD5="4e6786008d423ea797e1af4987dd2cdf"
 CAP=600_000_000
 def need(q,msg):
     if not q:raise ValueError(msg)
-def run(out,scratch):
+def run(out,scratch,v2_research=False):
     out.mkdir(parents=True,exist_ok=False)
     report={"schema":"oneirifact.skeletal-cohort-intake/v1","source":API,"scope":"Rights, exact lower-extremity/torso MAT archive and schema only. No subject records, trained model, clinical or anatomical admission."}
     try:
@@ -23,7 +23,11 @@ def run(out,scratch):
         # Resolve earlier version separately. Never infer v2 rights from a mirror
         # or simply from an open-access flag. Identical bytes from an expressly
         # licensed version may be used under that version's license.
-        if rights.lower() not in ("cc-by-4.0","cc0-1.0","cc-by-3.0"):
+        if v2_research:
+            need(md.get("access_right")=="open","v2 must remain open access")
+            report["admitted_source"]=API;report["admitted_license"]=rights or "UNVERIFIED"
+            report["admission_scope"]="Research-only intake; raw source ephemeral; aggregate receipt only. Redistribution rights not inferred."
+        elif rights.lower() not in ("cc-by-4.0","cc0-1.0","cc-by-3.0"):
             v1="https://zenodo.org/api/records/22833546"
             with urllib.request.urlopen(v1,timeout=30) as response:
                 need(response.status==200 and urllib.parse.urlparse(response.geturl()).hostname=="zenodo.org","v1 metadata origin")
@@ -43,7 +47,7 @@ def run(out,scratch):
         need(f["checksum"]=="md5:"+expected and 0<f["size"]<=CAP,"source pin/budget")
         url=f["links"]["self"];need(url.startswith("https://zenodo.org/"),"source origin")
         path=scratch/"NM_LEXT.mat"
-        subprocess.run(["curl","--fail","--silent","--show-error","--location","--max-redirs","3","--proto","=https","--proto-redir","=https","--connect-timeout","15","--max-time","220","--max-filesize",str(CAP),url,"-o",str(path)],check=True,timeout=235)
+        subprocess.run(["curl","--fail","--silent","--show-error","--location","--max-redirs","3","--proto","=https","--proto-redir","=https","--connect-timeout","15","--max-time","540","--max-filesize",str(CAP),url,"-o",str(path)],check=True,timeout=555)
         need(path.stat().st_size==f["size"],"source length")
         with path.open("rb") as b:need(hashlib.file_digest(b,"md5").hexdigest()==expected,"source MD5")
         with path.open("rb") as b:report["archive_sha256"]=hashlib.file_digest(b,"sha256").hexdigest()
@@ -73,4 +77,8 @@ def run(out,scratch):
     finally:
         (out/"receipt.json").write_text(json.dumps(report,indent=2)+"\n")
         print("R237_SKELETAL_COHORT",json.dumps(report,sort_keys=True),flush=True)
-if __name__=="__main__":run(Path(sys.argv[1]),Path(sys.argv[2]))
+if __name__=="__main__":
+    import argparse
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("out",type=Path);parser.add_argument("scratch",type=Path);parser.add_argument("--v2-research",action="store_true")
+    args=parser.parse_args();run(args.out,args.scratch,args.v2_research)

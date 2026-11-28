@@ -74,6 +74,7 @@ scene=bpy.context.scene
 skin=next(o for o in scene.objects if o.type=="MESH" and any(m.type=="ARMATURE" for m in o.modifiers))
 rig=next(o for o in scene.objects if o.type=="ARMATURE")
 assert len(rig.data.bones)==163
+print("R242_IMPORTED_OBJECTS",json.dumps([{"name":o.name,"type":o.type,"data":getattr(o.data,"name",None),"vertices":len(o.data.vertices) if o.type=="MESH" else None,"parent":o.parent.name if o.parent else None,"parent_type":o.parent_type,"parent_bone":o.parent_bone} for o in scene.objects]),flush=True)
 assert len([o for o in scene.objects if o.type=="MESH"])==10,"mesh inventory"
 skin_name=skin.name
 assert all(bpy.data.objects.get(n["name"]) is not None for _,n in bone_nodes),"named bone objects"

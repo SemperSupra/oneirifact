@@ -1,0 +1,59 @@
+name: R246 source-measured aquatic activity intent
+on:
+  pull_request:
+    branches: [rdte/r245-reusable-motion]
+    paths: ['experiments/r246/aquatic/**', '.github/workflows/rdte-r246-aquatic.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  aquatic-intent:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+      PYTHONUNBUFFERED: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 Node24
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Restore exact public source preparation and admitted artifacts
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD_SHA"
+          mkdir -p "$RUNNER_TEMP/dependency" "$RUNNER_TEMP/product"
+          prep_head=7fc8141fef8e2133ecceb2474005e82da4da69ad
+          for file in prepare.py gltf.py; do
+            gh api "repos/SemperSupra/oneirifact/contents/experiments/r245/consumer/$file?ref=$prep_head" --jq .content | base64 --decode > "$RUNNER_TEMP/dependency/$file"
+          done
+          echo "9c1ff2571f4ed5515b3c05d377fabd217e7f49eacf2ee4347a86bb34ffa2d66d  $RUNNER_TEMP/dependency/prepare.py" | sha256sum -c -
+          echo "efce3c66622cc303fef03cc552c29f7e369d13206bf2fb53a2598d24d69aec1e  $RUNNER_TEMP/dependency/gltf.py" | sha256sum -c -
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15260769266/zip > "$RUNNER_TEMP/source.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15258079477/zip > "$RUNNER_TEMP/shared.zip"
+          echo "f40250cbed7a5758aac5ffe9bec9f9a535b282e2b0b10f5b9d75dfad316bd34f  $RUNNER_TEMP/source.zip" | sha256sum -c -
+          echo "025145c2af4dc0c0d8936e764b88dd03a06a9e389197cadf97eb9b1d634d54fc  $RUNNER_TEMP/shared.zip" | sha256sum -c -
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install numpy==2.3.5 scipy==1.17.0 Pillow==12.0.0
+      - name: Regenerate post-morph sources, measure actual limbs and emit authored aquatic clips
+        run: |
+          set -euo pipefail
+          for case_id in male155flat male155stiletto male185flat male185stiletto female155flat female155stiletto female185flat female185stiletto maleolderflat; do
+            "$RUNNER_TEMP/venv/bin/python" "$RUNNER_TEMP/dependency/prepare.py" "$RUNNER_TEMP/source.zip" "$RUNNER_TEMP/shared.zip" "$RUNNER_TEMP/product/$case_id" "$case_id"
+            "$RUNNER_TEMP/venv/bin/python" experiments/r246/aquatic/measure.py "$RUNNER_TEMP/product/$case_id" "$RUNNER_TEMP/dependency" "$RUNNER_TEMP/product/$case_id/aquatic-inputs.json"
+          done
+          cp experiments/r246/aquatic/library.json "$RUNNER_TEMP/product/activity-library.json"
+          cp experiments/r246/aquatic/context-templates.json "$RUNNER_TEMP/product/context-templates.json"
+          cp experiments/r246/aquatic/API.md "$RUNNER_TEMP/product/API.md"
+          "$RUNNER_TEMP/venv/bin/python" experiments/r246/aquatic/validate.py "$RUNNER_TEMP/product"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2 Node24
+        if: always()
+        with:
+          name: r246-source-measured-aquatic-intent
+          path: ${{ runner.temp }}/product
+          retention-days: 30
+          if-no-files-found: error

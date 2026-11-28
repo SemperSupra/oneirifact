@@ -1,0 +1,50 @@
+name: Reference-first human anatomical baselines
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r222/**','.github/workflows/rdte-r222.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  baseline:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        sex: [male,female]
+    env:
+      SEX: ${{ matrix.sex }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire exact source reference geometry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          if test "$SEX" = male; then
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/15236959584/zip > "$RUNNER_TEMP/input/atlas.zip"
+          else
+            curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 3 --max-time 240 --max-filesize 400000000 https://cdn.humanatlas.io/digital-objects/ref-organ/united-female/v1.10/assets/3d-vh-f-united.glb -o "$RUNNER_TEMP/input/female.glb"
+          fi
+      - name: Assemble actual named reference geometry without approximation
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r222/baseline.py "$SEX" "$RUNNER_TEMP/input" "$RUNNER_TEMP/results"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r222-baseline-${{ matrix.sex }}
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+          if-no-files-found: error

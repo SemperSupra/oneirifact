@@ -14,7 +14,7 @@ def require(x,msg):
 def run():
     # The archive restore is independent of live web delivery and needs no token.
     with tempfile.TemporaryDirectory() as td:
-        folder=Path(td);al=a.restore(dest=folder/"anatomy");dl=d.restore(dest=folder/"morph")
+        folder=Path(td);al=a.restore(dest=folder/"anatomy");d.restore(dest=folder/"morph");dl=json.loads(d.LOCK.read_text())
         raw=v.fetch(v.BASE+v.MANIFEST,v.MAX_MANIFEST)
         rows=v.validate(json.loads(raw));index={r["path"]:r for r in rows}
         for prefix,src in (("anatomy/data",folder/"anatomy"),("morph",folder/"morph")):

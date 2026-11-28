@@ -75,7 +75,16 @@ skin=next(o for o in scene.objects if o.type=="MESH" and any(m.type=="ARMATURE" 
 rig=next(o for o in scene.objects if o.type=="ARMATURE")
 assert len(rig.data.bones)==163
 print("R242_IMPORTED_OBJECTS",json.dumps([{"name":o.name,"type":o.type,"data":getattr(o.data,"name",None),"vertices":len(o.data.vertices) if o.type=="MESH" else None,"parent":o.parent.name if o.parent else None,"parent_type":o.parent_type,"parent_bone":o.parent_bone} for o in scene.objects]),flush=True)
-assert len([o for o in scene.objects if o.type=="MESH"])==10,"mesh inventory"
+source_names={skin.name}|{n["name"] for _,n in bone_nodes}
+source_objects={o for o in scene.objects if o.type=="MESH" and o.name in source_names}
+custom_shapes={b.custom_shape for b in rig.pose.bones if b.custom_shape is not None}
+extra_meshes={o for o in scene.objects if o.type=="MESH"}-source_objects
+assert len(source_objects)==10 and extra_meshes<=custom_shapes,"source mesh inventory or unexplained extra object"
+helper_inventory=[{"name":o.name,"vertices":len(o.data.vertices),"referenced_by_bones":sum(b.custom_shape==o for b in rig.pose.bones)} for o in sorted(extra_meshes,key=lambda o:o.name)]
+for obj in extra_meshes:
+    obj.hide_render=True
+    obj.hide_set(True)
+print("R242_IMPORT_HELPERS",json.dumps(helper_inventory),flush=True)
 skin_name=skin.name
 assert all(bpy.data.objects.get(n["name"]) is not None for _,n in bone_nodes),"named bone objects"
 actions=list(bpy.data.actions);assert actions,"animation missing"
@@ -187,7 +196,7 @@ checks.append(qualify(1,"saved-reopened"))
 receipt={"status":"PASS_INDEPENDENT_BLENDER_CONSUMER","anatomical_admission":"HOLD","inputs":meta,
  "blender_version":bpy.app.version_string,"source_commit":os.environ.get("GITHUB_SHA"),
  "source_head_commit":os.environ.get("SOURCE_HEAD_SHA"),"run_id":os.environ.get("GITHUB_RUN_ID"),
- "rig_bones":163,"anatomical_meshes":9,"skin_meshes":1,"checks":checks,
+ "rig_bones":163,"anatomical_meshes":9,"skin_meshes":1,"importer_helper_meshes":helper_inventory,"checks":checks,
  "scope":"Exact candidate geometry and full-weight skin consumed by independent Blender 5.2.4. All skin vertices and up to 4096 bone vertices per direction queried against full point-cloud indices at three keys; full bounds and triangle counts checked. Saved .blend reopened at pose. Rigid parent motion, not tissue deformation, articular contact or native Oneirifact acceptance. Render lighting/material presentation only; source GLB byte-identical.",
  "files":{}}
 for p in sorted(out.iterdir()):

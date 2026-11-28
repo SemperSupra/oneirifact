@@ -1,0 +1,32 @@
+name: R245 reusable activity intent contract
+on:
+  pull_request:
+    branches: [rdte/r242-integrated-blender-witness]
+    paths: ['experiments/r245/motion/**', 'experiments/r245/review/compiler_audit.py', '.github/workflows/rdte-r245-motion.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, Node24
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Execute original intent library and independent boundary critic
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD_SHA"
+          python3 experiments/r245/motion/validate.py "$RUNNER_TEMP/motion"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, Node24
+        if: always()
+        with:
+          name: r245-reusable-motion-contract
+          path: ${{ runner.temp }}/motion
+          retention-days: 30
+          if-no-files-found: error

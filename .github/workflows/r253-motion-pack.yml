@@ -1,0 +1,73 @@
+name: R253 durable public motion asset pack
+on:
+  pull_request:
+    branches: [main]
+    paths: ['gallery/motion-inputs.json','gallery/motion_pack.py','gallery/build_motion_pack.py','gallery/motion-release-lock.json','gallery/restore_motion_release.py','tests/verify_motion_pack.py','.github/workflows/r253-motion-pack.yml']
+  push:
+    branches: [main]
+    paths: ['gallery/motion-inputs.json','gallery/motion_pack.py','gallery/build_motion_pack.py','gallery/motion-release-lock.json','gallery/restore_motion_release.py','tests/verify_motion_pack.py','.github/workflows/r253-motion-pack.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualify-pack:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      sha: ${{ steps.pack.outputs.sha }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 Node24
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Rebuild exact immutable source products and verify every full-weight model
+        id: pack
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD_SHA"
+          python3 gallery/build_motion_pack.py --archives "$RUNNER_TEMP/archives" --out "$RUNNER_TEMP/motion-pack"
+          cmp gallery/motion-release-lock.json "$RUNNER_TEMP/motion-pack/release-lock.json"
+          python3 gallery/restore_motion_release.py --source "$RUNNER_TEMP/motion-pack/motion-r253-v1.zip" --dest "$RUNNER_TEMP/restored/data"
+          python3 tests/verify_motion_pack.py "$RUNNER_TEMP/motion-pack/motion-r253-v1.zip" "$RUNNER_TEMP/motion-pack/verification.json"
+          echo "sha=$(sha256sum "$RUNNER_TEMP/motion-pack/motion-r253-v1.zip" | cut -d ' ' -f1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2 Node24
+        if: always()
+        with:
+          name: r253-durable-motion-pack
+          path: |
+            ${{ runner.temp }}/motion-pack/motion-r253-v1.zip
+            ${{ runner.temp }}/motion-pack/receipt.json
+            ${{ runner.temp }}/motion-pack/release-lock.json
+            ${{ runner.temp }}/motion-pack/verification.json
+          retention-days: 30
+          if-no-files-found: error
+  publish:
+    needs: qualify-pack
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PACK_SHA: ${{ needs.qualify-pack.outputs.sha }}
+      TAG: motion-r253-v1
+    steps:
+      - name: Publish once and verify anonymous immutable readback
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/publish"
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name r253-durable-motion-pack --dir "$RUNNER_TEMP/publish"
+          cd "$RUNNER_TEMP/publish"
+          echo "$PACK_SHA  motion-r253-v1.zip" | sha256sum --check --strict
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Motion research browser assets R253" --notes "Seventeen original source-body motion products and thirty-two actual rendered previews. Full source skin influences and original notices preserved. Authored/captured status, context omissions and held realism/contact/physics are explicit. No internal anatomy or clinical acceptance." --latest=false motion-r253-v1.zip receipt.json release-lock.json verification.json
+          fi
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --max-time 180 --max-filesize 268435456 "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/motion-r253-v1.zip" -o "$RUNNER_TEMP/readback.zip"
+          echo "$PACK_SHA  $RUNNER_TEMP/readback.zip" | sha256sum --check --strict
+          echo R253_MOTION_ANONYMOUS_RELEASE_READBACK_PASS

@@ -1,0 +1,32 @@
+name: R237 population skeletal source intake
+on:
+  pull_request:
+    branches: [rdte/r235-shared-adult-morphology]
+    paths: ['experiments/r237/skeletal_cohort.py','.github/workflows/rdte-r237-skeleton.yml']
+permissions:
+  contents: read
+jobs:
+  intake:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Check license and bounded exact lower-extremity data/schema
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 h5py==3.15.1
+          python experiments/r237/skeletal_cohort.py "$RUNNER_TEMP/receipt" "$RUNNER_TEMP"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r237-skeletal-cohort-intake-receipt
+          path: ${{ runner.temp }}/receipt
+          retention-days: 30
+          if-no-files-found: error

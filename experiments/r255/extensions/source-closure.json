@@ -1,0 +1,37 @@
+{
+  "schema": "oneirifact.motion-integration-source-closure/v1",
+  "qualified_producer_head": "53a49b7387cb01675f75cea10d8de15d89a09bac",
+  "qualified_run_id": 46168671427,
+  "unchanged_motion_and_solver_files": [
+    {
+      "path": "produce.py",
+      "sha256": "1ca6a1e5ec6fae572bf8a4e172ad4a78c140cd0006f9910c4377f60a982cf37c",
+      "bytes": 17505,
+      "unchanged_from_qualified_producer": true
+    },
+    {
+      "path": "choreography.py",
+      "sha256": "ca5fb3730ebfa036df05c4c54816e127a008cb7cc523ceb709ccbde50358435d",
+      "bytes": 15302,
+      "unchanged_from_qualified_producer": true
+    },
+    {
+      "path": "baseline_choreography.py",
+      "sha256": "acbbf10c99c05f5797a918e1f1861b683eed2416d395d48a6079dbb996f38cc4",
+      "bytes": 12334,
+      "unchanged_from_qualified_producer": true
+    },
+    {
+      "path": "contact_fit.py",
+      "sha256": "26ec942663384162edf3a840f4c113877e533e5f6e4b32a87f33bb6a21732eb7",
+      "bytes": 9012,
+      "unchanged_from_qualified_producer": true
+    }
+  ],
+  "integration_changes": {
+    "runtime.py": "Replace historical parent path with frozen local vendor; verify exact vendor bytes before importing/executing allowlisted definitions. No actor or transport function changes.",
+    "package.py": "Optional unique replay revision and actual published-source provenance. Motion/render/encoder behavior unchanged.",
+    "compare_replay.py": "Compare exact source/scope fields, GLB hash and metrics against retained v2 product values; no contact gate relaxation."
+  },
+  "vendor_provenance": "vendor/r246_native/provenance.json"
+}

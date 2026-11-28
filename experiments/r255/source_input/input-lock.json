@@ -1,0 +1,33 @@
+{
+  "schema": "oneirifact.exact-source-input-lock/v1",
+  "id": "r255-source-bind-inputs-v1",
+  "repository": "SemperSupra/oneirifact",
+  "release_id": 461731200,
+  "tag": "motion-r255-source-inputs-v1",
+  "asset_id": 805385474,
+  "url": "https://github.com/SemperSupra/oneirifact/releases/download/motion-r255-source-inputs-v1/r255-source-bind-inputs-v1.zip",
+  "bytes": 14386343,
+  "sha256": "e369da7f5e2f10de8b0117ea8e8cbc4b700a00dfad0a784f713afba5df496e4f",
+  "publication": {
+    "producer_head": "b7070b0e6732b4d1e110660703e7f3fc8a978bee",
+    "run_id": 46170638249,
+    "event": "pull_request",
+    "head_branch": "integrate/r255-source-input-release",
+    "status": "PASS_PUBLIC_RELEASE_READBACK",
+    "scope": "Published by this exact same-repository PR head before its later main merge. No main-branch producer attribution."
+  },
+  "upstream_archive_sha256": "e694ab4d06bae33bf829e624d03a2bd81bb28d8b8059c42ae83e36819f33dd68",
+  "upstream": {
+    "archive_sha256": "e694ab4d06bae33bf829e624d03a2bd81bb28d8b8059c42ae83e36819f33dd68",
+    "artifact_id": 15266855834,
+    "head": "2e93628bbda838887bd51133789aca56e31f3a08",
+    "repository": "SemperSupra/oneirifact",
+    "run_id": 46153095988
+  },
+  "cases": [
+    "male155flat",
+    "female155flat",
+    "female185flat"
+  ],
+  "source_entries": "54 original case files plus exact upstream receipt; original bind/preparation bytes, no reconstruction"
+}

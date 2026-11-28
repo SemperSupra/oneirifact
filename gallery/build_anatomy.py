@@ -73,12 +73,12 @@ def base(inp,out,sex):
             name="layers/"+category+".glb"
             if name not in receipt["files"]:continue
             raw=read(z,name);assert sha(raw)==receipt["files"][name]["sha256"]
-            assets.append(model(out,sex+"-"+category,label,raw))
+            assets.append(model(out,sex+"-"+category.replace("_","-"),label,raw))
         assert assets
         rows=[]
         for r in inv:
             names=[v[1] for v in r["concepts"]] if sex=="male" else [r["source_node"]]
-            rows.append({"id":r["id"],"names":names,"category":r["category"],"layer":sex+"-"+r["category"],"triangles":r["triangles"]})
+            rows.append({"id":r["id"],"names":names,"category":r["category"],"layer":sex+"-"+r["category"].replace("_","-"),"triangles":r["triangles"]})
         for name in ("baseline-preview.png","ATTRIBUTION.txt","inventory.json"):
             assert sha(read(z,name))==receipt["files"][name]["sha256"]
         return {"id":sex,"label":sex.title()+" reference","source":receipt["provenance"]["source"],"scope":"Reference donor; incomplete anatomy, not articulated or native Oneirifact output. Display grouping is heuristic.","preview":write(out,sex+"-preview.png",read(z,"baseline-preview.png")),"attribution":write(out,sex+"-attribution.txt",read(z,"ATTRIBUTION.txt")),"inventory":write(out,sex+"-inventory.json",json.dumps(rows,separators=(",",":")).encode()),"layers":assets,"source_archive_sha256":PINS[sex]}

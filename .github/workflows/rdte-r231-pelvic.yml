@@ -1,0 +1,43 @@
+name: R231 bilateral pelvic surface registration screen
+on:
+  pull_request:
+    branches: [rdte/r228-pelvic-reference-recovery]
+    paths: ['experiments/r231/**','.github/workflows/rdte-r231-pelvic.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  surface:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve pinned independent donor and registration archives
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          for row in 'ct 15238834402' 'female 15238269509' 'pelvis 15252379819' 'registration 15252200930'; do
+            read -r name id <<< "$row"
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/$id/zip > "$RUNNER_TEMP/input/$name.zip"
+          done
+      - name: Compare fixed withheld surface patches and preserve separate source meshes
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.16.3 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r231/pelvis_surface.py "$RUNNER_TEMP/input" "$RUNNER_TEMP/surface"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r231-pelvic-surface-screen
+          path: ${{ runner.temp }}/surface
+          retention-days: 30
+          if-no-files-found: error

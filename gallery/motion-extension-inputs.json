@@ -1,0 +1,9 @@
+{
+  "schema": "oneirifact.motion-extension-inputs/v1",
+  "repository": "SemperSupra/oneirifact",
+  "inputs": [
+    {"pack_id":"r255-support-events-v2","archive":"oneirifact-r255-support-events-corrected-v2.zip","artifact_id":15272701335,"archive_bytes":12922697,"archive_sha256":"ef5674988cc349b75e37524dd39b415926830500bda6578cd09c72607c39f321","producer_head":"53a49b7387cb01675f75cea10d8de15d89a09bac","producer_run_id":46168671427,"packages":4},
+    {"pack_id":"r255-acrobatics-combat-v2","archive":"oneirifact-r255-acrobatics-combat-corrected-v2.zip","artifact_id":15273065720,"archive_bytes":22582676,"archive_sha256":"d0fbafad6c1a7f0a646cf7409d0f01905adf6ae3e69afd7746c01601083dd58a","producer_head":"53a49b7387cb01675f75cea10d8de15d89a09bac","producer_run_id":46168671427,"packages":5},
+    {"pack_id":"r255-exercise-dance-v2","archive":"oneirifact-r255-exercise-dance-corrected-v2.zip","artifact_id":15272956536,"archive_bytes":13071658,"archive_sha256":"db76068942a746c9c93a9e90110cc8cfc7c9a535d9055571bb3705b7520baeaa","producer_head":"53a49b7387cb01675f75cea10d8de15d89a09bac","producer_run_id":46168671427,"packages":4}
+  ]
+}

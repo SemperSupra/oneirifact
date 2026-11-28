@@ -1,0 +1,20 @@
+{
+  "id": "synthetic-contract-fixture-172cm",
+  "source_bind_sha256": "UNVERIFIED_SYNTHETIC",
+  "source_revision": "original authored dimensions; not a measured person or production model",
+  "stature_m": 1.72,
+  "hip_center_m": [0.0, 0.95, 0.0],
+  "hips_m": {"L": [0.095, 0.95, 0.0], "R": [-0.095, 0.95, 0.0]},
+  "knees_m": {"L": [0.105, 0.52, 0.015], "R": [-0.105, 0.52, 0.015]},
+  "ankles_m": {"L": [0.105, 0.09, 0.02], "R": [-0.105, 0.09, 0.02]},
+  "feet": {
+    "L": {"heel_from_ankle_m": [0.0, -0.09, -0.08], "forefoot_from_ankle_m": [0.0, -0.09, 0.11], "toe_from_ankle_m": [0.0, -0.09, 0.17], "toe_pivot_from_ankle_m": [0.0, -0.055, 0.11], "width_m": 0.09},
+    "R": {"heel_from_ankle_m": [0.0, -0.09, -0.08], "forefoot_from_ankle_m": [0.0, -0.09, 0.11], "toe_from_ankle_m": [0.0, -0.09, 0.17], "toe_pivot_from_ankle_m": [0.0, -0.055, 0.11], "width_m": 0.09}
+  },
+  "shoulder_width_m": 0.39,
+  "thigh_radius_m": 0.06,
+  "clearance_m": 0.015,
+  "landmarks_m": {"mouth": [0.0, 1.56, 0.06], "head": [0.0, 1.64, 0.01], "shoulder_L": [0.19, 1.40, 0.0], "shoulder_R": [-0.19, 1.40, 0.0], "wrist_L": [0.52, 1.02, 0.0], "wrist_R": [-0.52, 1.02, 0.0]},
+  "dominant_hand": "R",
+  "measurement_notes": "Synthetic validation fixture only. Real consumer must supply measured post-morph positions, actual toe pivots and source bind hash."
+}

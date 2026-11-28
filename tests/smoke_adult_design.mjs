@@ -38,13 +38,15 @@ let child,ws,stderr="";try{
     await call("Emulation.setDeviceMetricsOverride",{width:size[0],height:size[1],deviceScaleFactor:1,mobile:false});
     await call("Page.navigate",{url:base+"morph/"});
     await until("document.getElementById('status')?.dataset.state==='loaded' && document.querySelector('model-viewer').loaded");
-    assert(await val("document.documentElement.scrollWidth<=innerWidth+1"));
+    assert(await val("document.getElementById('blend').hidden && document.getElementById('gender').options.length===2"));
     const old=await val("document.querySelector('model-viewer').src");
-    await val("(()=>{let x=document.getElementById('height_m');x.value='1.8';x.dispatchEvent(new Event('input'));document.getElementById('apply').click();return true})()");
-    await until("document.getElementById('status').dataset.state==='loaded' && document.querySelector('model-viewer').loaded");
+    await val("document.getElementById('male').click()");await until("document.getElementById('status').dataset.state==='loaded' && document.querySelector('model-viewer').loaded");
     assert.notEqual(await val("document.querySelector('model-viewer').src"),old);
-    await val("document.getElementById('view').scrollIntoView({block:'start'})");await wait(300);
-    const shot=await call("Page.captureScreenshot",{format:"png"});if(process.env.RUNNER_TEMP)await writeFile(join(process.env.RUNNER_TEMP,"morph-browser-"+size[0]+".png"),Buffer.from(shot.data,"base64"));
-    console.log("INTERACTIVE_MORPH_BROWSER_PASS",size.join("x"));
+    await val("(()=>{let x=document.getElementById('mode');x.value='advanced';x.dispatchEvent(new Event('change'));let m=document.getElementById('mix');m.value='.4';m.dispatchEvent(new Event('input'));x.value='binary';x.dispatchEvent(new Event('change'));return true})()");
+    assert(await val("document.getElementById('mode').value==='advanced' && document.getElementById('status').dataset.state==='held' && document.getElementById('anatomy').value==='male_reference'"));
+    await val("(()=>{let x=document.getElementById('presentation');x.value='feminine';x.dispatchEvent(new Event('change'));let m=document.getElementById('mode');m.value='binary';m.dispatchEvent(new Event('change'));let s=document.getElementById('shoulder');s.value='.8';s.dispatchEvent(new Event('input'));document.getElementById('apply').click();return true})()");
+    await until("document.getElementById('status').dataset.state==='loaded' && document.querySelector('model-viewer').loaded");
+    assert(await val("document.getElementById('mode').value==='binary' && document.getElementById('anatomy').value==='male_reference' && document.documentElement.scrollWidth<=innerWidth+1"));
+    await val("document.getElementById('view').scrollIntoView({block:'start'})");await wait(300);const shot=await call("Page.captureScreenshot",{format:"png"});if(process.env.RUNNER_TEMP)await writeFile(join(process.env.RUNNER_TEMP,"morph-browser-"+size[0]+".png"),Buffer.from(shot.data,"base64"));console.log("R236_BROWSER_MODE_PASS",size.join("x"));
   }
 }catch(e){console.error("CHROMIUM_DIAGNOSTIC",stderr);throw e;}finally{if(ws)ws.close();if(child)child.kill();server.close();await wait(300);await rm(profile,{recursive:true,force:true,maxRetries:2});}

@@ -1,0 +1,24 @@
+{
+  "schema": "oneirifact.aquatic-context-templates/v1",
+  "water": {
+    "id": "unbounded-pool-context",
+    "surface_y_m": 0.0,
+    "origin_xz_m": [0.0, 0.0],
+    "root_depth_stature_ratio": 0.025,
+    "forward_speed_stature_per_second": 0.20,
+    "depth_stature_ratio": 1.2
+  },
+  "tub": {
+    "id": "source-sized-tub-context",
+    "floor_y_m": 0.0,
+    "center_xz_m": [0.0, 0.0],
+    "interior_width_shoulder_ratio": 1.65,
+    "interior_length_leg_ratio": 1.8,
+    "rim_height_leg_ratio": 0.65,
+    "seat_height_leg_ratio": 0.30,
+    "seat_back_length_ratio": 0.29,
+    "seat_width_hip_ratio": 1.5,
+    "seat_depth_leg_ratio": 0.27,
+    "rim_hand_forward_leg_ratio": 0.12
+  }
+}

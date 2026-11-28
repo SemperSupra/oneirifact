@@ -1,0 +1,66 @@
+name: R242 integrated anatomy independent Blender consumer
+on:
+  pull_request:
+    branches: [rdte/r241-male-anatomical-registration]
+    paths: ['experiments/r242/blender/**', '.github/workflows/rdte-r242-blender.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  consumer:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - sex: male
+            artifact: 15262213014
+          - sex: female
+            artifact: 15262026648
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify and prepare exact model and reference archives
+        run: |
+          set -euo pipefail
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/${{ matrix.artifact }}/zip > "$RUNNER_TEMP/model.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15260769266/zip > "$RUNNER_TEMP/reference.zip"
+          python3 experiments/r242/blender/prepare.py "${{ matrix.sex }}" "$RUNNER_TEMP/model.zip" "$RUNNER_TEMP/reference.zip" "$RUNNER_TEMP/product"
+      - name: Actual Blender import, pose replay, rendering and saved-scene reopen
+        run: |
+          set -euo pipefail
+          archive=blender-5.2.4-linux-x64.tar.xz
+          expected=2fd14c50987426897ba60237ee996edf2b4151f4b1a72a460ca20be58c1d2d86
+          blender_root="$RUNNER_TEMP/blender"
+          mkdir "$blender_root"
+          for origin in https://download.blender.org https://mirror.blender.org https://mirror.nju.edu.cn/blender; do
+            if timeout 110s curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error --connect-timeout 12 --max-time 95 "$origin/release/Blender5.2/$archive" -o "$blender_root/$archive"; then
+              echo "$expected  $blender_root/$archive" | sha256sum -c -
+              break
+            fi
+          done
+          echo "$expected  $blender_root/$archive" | sha256sum -c -
+          timeout 150s tar -xf "$blender_root/$archive" -C "$blender_root"
+          "$blender_root/blender-5.2.4-linux-x64/blender" -b --factory-startup --threads 2 --python-exit-code 1 --python experiments/r242/blender/witness.py -- "$RUNNER_TEMP/product"
+      - name: Assemble actual geometry review board
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install Pillow==12.0.0
+          "$RUNNER_TEMP/venv/bin/python" experiments/r242/blender/compose.py "$RUNNER_TEMP/product" "${{ matrix.sex }}"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: r242-${{ matrix.sex }}-integrated-blender-consumer
+          path: ${{ runner.temp }}/product
+          retention-days: 30
+          if-no-files-found: error

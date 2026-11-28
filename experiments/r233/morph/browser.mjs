@@ -7,7 +7,7 @@ import {join,resolve,extname} from "node:path";
 import {tmpdir} from "node:os";
 import assert from "node:assert/strict";
 const root=resolve(process.argv[2]);
-const mime={".html":"text/html",".js":"text/javascript",".css":"text/css",".json":"application/json",".png":"image/png",".glb":"model/gltf-binary",".txt":"text/plain",".svg":"image/svg+xml"};
+const mime={".html":"text/html",".js":"text/javascript",".mjs":"text/javascript",".css":"text/css",".json":"application/json",".png":"image/png",".glb":"model/gltf-binary",".txt":"text/plain",".svg":"image/svg+xml"};
 const server=createServer(async(req,res)=>{
   try{
     let path=new URL(req.url,"http://127.0.0.1").pathname;

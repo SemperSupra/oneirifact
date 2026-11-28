@@ -1,0 +1,62 @@
+name: Anatomical completeness and researched missing structures
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r224/**','.github/workflows/rdte-r224.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  worklist:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve exact anatomical baseline inventories
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15238389268/zip > "$RUNNER_TEMP/male.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15238269509/zip > "$RUNNER_TEMP/female.zip"
+      - name: Evaluate explicit sex and laterality coverage
+        run: python3 experiments/r224/worklist.py "$RUNNER_TEMP/male.zip" "$RUNNER_TEMP/female.zip" "$RUNNER_TEMP/worklist"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r224-anatomical-worklist
+          path: ${{ runner.temp }}/worklist
+          retention-days: 30
+          if-no-files-found: error
+  research:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        sex: [male, female]
+    env:
+      SEX: ${{ matrix.sex }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Generate original research-constrained anatomical candidates
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r224/research_models.py "$SEX" "$RUNNER_TEMP/models"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r224-research-${{ matrix.sex }}
+          path: ${{ runner.temp }}/models
+          retention-days: 30
+          if-no-files-found: error

@@ -11,7 +11,7 @@ function chooseDataset(){
  $('layer').replaceChildren();for(const m of active.layers)option($('layer'),m.id,m.label);
  $('layer').disabled=false;$('scope').textContent=active.source+'. '+active.scope;
  $('preview').src=path(active.preview);$('preview').alt=active.label+' — rendered reference';
- link('attribution',active.attribution);link('attribution2',active.additional_attribution);
+ link('attribution',active.attribution);link('attribution2',active.additional_attribution);link('dataset-receipt',active.receipt);
  $('search').value='';inventory=[];const epoch=++request;$('inventory-panel').hidden=!active.inventory;
  if(active.inventory)data(active.inventory).then(rows=>{if(epoch===request){inventory=rows;list();}}).catch(()=>{$('count').textContent='Inventory unavailable';});
  chooseLayer();

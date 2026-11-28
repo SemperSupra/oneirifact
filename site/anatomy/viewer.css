@@ -7,4 +7,10 @@ nav,.toolbar{display:flex;gap:.45rem;flex-wrap:wrap;margin:.8rem 0}button,select
 .layout{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);gap:1rem}.stage,.controls{min-width:0}.controls{border:1px solid var(--line);border-radius:.75rem;padding:1rem}.controls label{font-size:.9rem;font-weight:600;display:block;margin:.65rem 0 .25rem}.controls select,.controls input{width:100%;max-width:100%}
 #display{min-height:300px;background:#17232f;border-radius:.65rem;overflow:hidden;display:grid;place-items:center}#preview{width:100%;max-height:75vh;object-fit:contain}model-viewer{display:block;width:100%;height:clamp(320px,64vh,740px);background:#17232f}model-viewer:not(:defined){visibility:hidden}[hidden]{display:none!important}#status{min-height:2rem;font-size:.9rem}.controls ul{max-height:34vh;overflow:auto;padding-left:1.2rem;font-size:.87rem;overflow-wrap:anywhere}.controls li{padding:.25rem 0;border-bottom:1px solid var(--line)}details{margin-top:1rem}summary{cursor:pointer;font-weight:600}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}th,td{text-align:left;border-bottom:1px solid var(--line);padding:.5rem;font-size:.9rem}#evidence img{width:100%;max-width:960px;height:auto}#evidence-content{overflow:auto}
 @media(max-width:740px){.layout{grid-template-columns:minmax(0,1fr)}#display{min-height:200px}model-viewer{height:clamp(300px,53vh,540px)}.controls ul{max-height:24vh}header label{margin-inline-start:0}.toolbar button{flex:1 0 auto}}
-@media(max-height:550px) and (min-width:741px){model-viewer{height:68vh}}
+@media(max-height:550px) and (min-width:741px) and (orientation:landscape){
+  header{padding:.2rem .75rem}main{padding:.4rem .75rem}h1{font-size:1.2rem;margin:.2rem 0}
+  .intro{display:none}.notice{margin:.25rem 0;padding:.25rem .55rem;font-size:.75rem;line-height:1.25}
+  nav,.toolbar{margin:.3rem 0;gap:.3rem}#display{min-height:0;height:clamp(180px,46dvh,270px)}
+  model-viewer{height:100%}#preview{height:100%;max-height:100%;object-fit:contain}
+  .controls{padding:.5rem}.controls label{margin:.3rem 0 .15rem}
+}

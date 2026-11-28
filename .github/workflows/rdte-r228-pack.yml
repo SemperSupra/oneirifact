@@ -75,8 +75,10 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
+          # Witness the released base, not the unmerged candidate.
+          ref: ${{ github.event.pull_request.base.sha }}
           persist-credentials: false
-      - name: Verify live published anatomy route and manifest
+      - name: Verify live released-base anatomy route and manifest
         run: |
           set -euo pipefail
           python3 - <<'PY'
@@ -85,6 +87,7 @@ jobs:
           sys.path.insert(0,"tests")
           import verify_delivery as v
           base=v.BASE
+          lock=json.loads(Path("gallery/anatomy-release-lock.json").read_text())
           for attempt in range(5):
               try:
                   # The site manifest is fetched independently; compare source
@@ -97,7 +100,7 @@ jobs:
                       assert index[n]["sha256"]==hashlib.sha256(b).hexdigest(),n
                   catalog=json.loads(v.fetch(base+"anatomy/data/catalog.json",1<<20))
                   models=[m for d in catalog["datasets"] for m in d["layers"]]
-                  assert catalog["schema"]=="oneirifact.reference-viewer/v1" and len(catalog["datasets"])==4 and len(models)==32
+                  assert catalog["schema"]=="oneirifact.reference-viewer/v1" and len(catalog["datasets"])==lock["datasets"] and len(models)==lock["models"]
                   for m in models:
                       r=index["anatomy/"+m["file"]]
                       assert r["sha256"]==m["sha256"] and r["bytes"]==m["bytes"]

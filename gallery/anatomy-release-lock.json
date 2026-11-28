@@ -1,11 +1,11 @@
 {
   "schema": "oneirifact.browser-display-release/v1",
   "repository": "SemperSupra/oneirifact",
-  "tag": "anatomy-display-r229-v1",
-  "asset": "anatomy-display-r229-v1.zip",
-  "sha256": "d71b9df7a88c3811e343de3d34313af718d429da0664f1f516b846d07f0c1c9c",
-  "assets": 47,
-  "models": 32,
-  "datasets": 4,
-  "unpacked_bytes": 49541257
+  "tag": "anatomy-display-r231-v2",
+  "asset": "anatomy-display-r231-v2.zip",
+  "sha256": "ffac8867db9951a3d721558e7aad8ae9250b00798d4bf65b8c53e3d811ec0947",
+  "assets": 60,
+  "models": 37,
+  "datasets": 6,
+  "unpacked_bytes": 53773461
 }

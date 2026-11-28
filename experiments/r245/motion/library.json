@@ -1,0 +1,328 @@
+{
+  "schema": "oneirifact.activity-library/v0.1",
+  "id": "original-authored-daily-fitness-intents",
+  "version": "0.1.0",
+  "authorship": "Original authored kinematic intent parameters; no captured human motion or physiological calibration.",
+  "coordinates": {
+    "units": "m",
+    "up": "+Y",
+    "forward": "+Z",
+    "left": "+X",
+    "quaternion_order": "xyzw"
+  },
+  "evaluation_order": [
+    "source rest",
+    "identity and morphology",
+    "measured rig and sole landmarks",
+    "footwear support geometry",
+    "activity intent",
+    "native consumer IK",
+    "skin deformation",
+    "independent critics"
+  ],
+  "realism_qualification": "NOT_QUALIFIED",
+  "composition": {
+    "implemented": [
+      "deterministic seek and phase",
+      "travelling loop root delta",
+      "authored sit_to_stand transition",
+      "masked upper-body additive intent"
+    ],
+    "unsupported": [
+      "arbitrary contact-aware clip crossfade",
+      "terrain or stairs",
+      "obstacle avoidance",
+      "ground reaction forces",
+      "balance controller",
+      "water or wet-contact mechanics",
+      "learned age or gender gait inference"
+    ]
+  },
+  "activities": {
+    "standing": {
+      "implementation": "AUTHORED_KINEMATIC_INTENT",
+      "kind": "posture",
+      "duration_s": 2.0,
+      "loop": true,
+      "contacts": [
+        "left sole/ground",
+        "right sole/ground"
+      ],
+      "props": []
+    },
+    "sitting": {
+      "implementation": "AUTHORED_KINEMATIC_INTENT",
+      "kind": "posture",
+      "duration_s": 2.0,
+      "loop": true,
+      "hip_height_leg_ratio": 0.52,
+      "hip_back_leg_ratio": 0.31,
+      "spine_flexion_deg": 8.0,
+      "contacts": [
+        "left sole/ground",
+        "right sole/ground",
+        "pelvis/chair"
+      ],
+      "props": [
+        "chair"
+      ],
+      "limits": [
+        "Seat and pelvis target are authored proxies; actual seat/body clearance and contact require consumer measurements."
+      ]
+    },
+    "sit_to_stand": {
+      "implementation": "AUTHORED_KINEMATIC_INTENT",
+      "kind": "transition",
+      "from": "sitting",
+      "to": "standing",
+      "duration_s": 3.0,
+      "loop": false,
+      "contacts": [
+        "left sole/ground",
+        "right sole/ground",
+        "initial pelvis/chair"
+      ],
+      "props": [
+        "chair"
+      ],
+      "limits": [
+        "One explicit transition; this is not an arbitrary contact blending solver."
+      ]
+    },
+    "crouching": {
+      "implementation": "AUTHORED_KINEMATIC_INTENT",
+      "kind": "posture",
+      "duration_s": 2.0,
+      "loop": true,
+      "hip_height_leg_ratio": 0.69,
+      "hip_back_leg_ratio": 0.14,
+      "stagger_leg_ratio": 0.1,
+      "spine_flexion_deg": 18.0,
+      "contacts": [
+        "left sole/ground",
+        "right sole/ground"
+      ],
+      "props": []
+    },
+    "squatting": {
+      "implementation": "AUTHORED_KINEMATIC_INTENT",
+      "kind": "cycle",
+      "duration_s": 4.0,
+      "period_s": 4.0,
+      "loop": true,
+      "hip_height_leg_ratio": 0.56,
+      "hip_back_leg_ratio": 0.22,
+      "spine_flexion_deg": 24.0,
+      "contacts": [
+        "left sole/ground",
+        "right sole/ground"
+      ],
+      "props": [],
+      "limits": [
+        "Depth is authored and may be infeasible for a morphology/footwear combination; critics must not silently stretch the rig."
+      ]
+    },
+    "walking": {
+      "implementation": "AUTHORED_KINEMATIC_INTENT",
+      "kind": "gait",
+      "period_s": 1.1,
+      "duration_s": 2.2,
+      "loop": true,
+      "stride_leg_ratio": 1.08,
+      "stance_fraction": 0.64,
+      "hip_height_leg_ratio": 0.92,
+      "hip_bounce_leg_ratio": 0.009,
+      "swing_clearance_leg_ratio": 0.065,
+      "heel_strike_deg": 10.0,
+      "toe_off_deg": 16.0,
+      "arm_swing_deg": 17.0,
+      "spine_flexion_deg": 4.0,
+      "contacts": [
+        "phase-authored alternating sole/ground"
+      ],
+      "props": []
+    },
+    "jogging": {
+      "implementation": "AUTHORED_KINEMATIC_INTENT",
+      "kind": "gait",
+      "period_s": 0.75,
+      "duration_s": 1.5,
+      "loop": true,
+      "stride_leg_ratio": 1.58,
+      "stance_fraction": 0.44,
+      "hip_height_leg_ratio": 0.88,
+      "hip_bounce_leg_ratio": 0.025,
+      "swing_clearance_leg_ratio": 0.105,
+      "heel_strike_deg": 4.0,
+      "toe_off_deg": 20.0,
+      "arm_swing_deg": 28.0,
+      "spine_flexion_deg": 8.0,
+      "contacts": [
+        "phase-authored stance and flight"
+      ],
+      "props": [],
+      "limits": [
+        "Authored flight timing; no ballistic or force consistency claim."
+      ]
+    },
+    "running": {
+      "implementation": "AUTHORED_KINEMATIC_INTENT",
+      "kind": "gait",
+      "period_s": 0.65,
+      "duration_s": 1.3,
+      "loop": true,
+      "stride_leg_ratio": 2.05,
+      "stance_fraction": 0.32,
+      "hip_height_leg_ratio": 0.84,
+      "hip_bounce_leg_ratio": 0.035,
+      "swing_clearance_leg_ratio": 0.15,
+      "heel_strike_deg": 0.0,
+      "toe_off_deg": 25.0,
+      "arm_swing_deg": 38.0,
+      "spine_flexion_deg": 12.0,
+      "contacts": [
+        "phase-authored stance and flight"
+      ],
+      "props": [],
+      "limits": [
+        "Not a dynamically balanced run; joint range, contact, footwear stability and appearance remain unqualified."
+      ]
+    },
+    "swimming": {
+      "implementation": "PLANNED",
+      "kind": "aquatic",
+      "duration_s": 4.0,
+      "loop": true,
+      "contacts": [
+        "water interaction"
+      ],
+      "props": [
+        "water volume"
+      ],
+      "blocked_by": [
+        "missing authored stroke/breathing and floating-root orientation implementation",
+        "actual native consumer and motion critics"
+      ],
+      "physics_qualification": "NOT_RUN; fluid simulation is separate from kinematic activity coverage"
+    },
+    "showering": {
+      "implementation": "AUTHORED_TASK_PROTOTYPE",
+      "kind": "upper_body",
+      "base": "standing",
+      "duration_s": 4.0,
+      "period_s": 4.0,
+      "loop": true,
+      "required_landmarks": [
+        "head"
+      ],
+      "contacts": [
+        "soles/ground",
+        "hands/head task targets"
+      ],
+      "props": [
+        "shower stream context"
+      ],
+      "limits": [
+        "Hand-to-head reach target only; water, washing mechanics, slip and tissue contact are not simulated."
+      ]
+    },
+    "bathing": {
+      "implementation": "PLANNED",
+      "kind": "aquatic",
+      "duration_s": 4.0,
+      "loop": false,
+      "contacts": [
+        "pelvis/tub",
+        "back/tub",
+        "water interaction"
+      ],
+      "props": [
+        "measured tub",
+        "water volume"
+      ],
+      "blocked_by": [
+        "missing tub-seated washing and tub-entry/support contact implementation",
+        "actual native consumer and motion critics"
+      ],
+      "physics_qualification": "NOT_RUN; fluid simulation is separate from kinematic activity coverage"
+    },
+    "brushing_teeth": {
+      "implementation": "AUTHORED_TASK_PROTOTYPE",
+      "kind": "upper_body",
+      "base": "standing",
+      "duration_s": 3.0,
+      "period_s": 1.0,
+      "loop": true,
+      "required_landmarks": [
+        "mouth"
+      ],
+      "contacts": [
+        "soles/ground",
+        "hand/brush",
+        "brush/mouth target"
+      ],
+      "props": [
+        "toothbrush"
+      ],
+      "limits": [
+        "Authored wrist/brush-tip target; no dental surface, wrist orientation, bristle deformation or safe brushing claim."
+      ]
+    },
+    "eating_ice_cream_cone": {
+      "implementation": "AUTHORED_TASK_PROTOTYPE",
+      "kind": "upper_body",
+      "base": "standing",
+      "duration_s": 4.0,
+      "period_s": 4.0,
+      "loop": true,
+      "required_landmarks": [
+        "mouth"
+      ],
+      "contacts": [
+        "soles/ground",
+        "hand/cone",
+        "cone/mouth target"
+      ],
+      "props": [
+        "ice cream cone"
+      ],
+      "limits": [
+        "Hand and prop approach target only; mouth, tongue, grip, ingestion and collision remain unsupported."
+      ]
+    }
+  },
+  "footwear_profiles": {
+    "flats": {
+      "heel_stack_foot_length_ratio": 0.035,
+      "forefoot_stack_foot_length_ratio": 0.035,
+      "heel_width_foot_width_ratio": 0.68,
+      "heel_length_foot_length_ratio": 0.22,
+      "forefoot_width_foot_width_ratio": 0.95,
+      "forefoot_length_foot_length_ratio": 0.3
+    },
+    "block_heels": {
+      "heel_stack_foot_length_ratio": 0.25,
+      "forefoot_stack_foot_length_ratio": 0.04,
+      "heel_width_foot_width_ratio": 0.62,
+      "heel_length_foot_length_ratio": 0.2,
+      "forefoot_width_foot_width_ratio": 0.95,
+      "forefoot_length_foot_length_ratio": 0.3
+    },
+    "platform_heels": {
+      "heel_stack_foot_length_ratio": 0.34,
+      "forefoot_stack_foot_length_ratio": 0.13,
+      "heel_width_foot_width_ratio": 0.6,
+      "heel_length_foot_length_ratio": 0.2,
+      "forefoot_width_foot_width_ratio": 0.98,
+      "forefoot_length_foot_length_ratio": 0.32
+    },
+    "stilettos": {
+      "heel_stack_foot_length_ratio": 0.35,
+      "forefoot_stack_foot_length_ratio": 0.04,
+      "heel_width_foot_width_ratio": 0.13,
+      "heel_length_foot_length_ratio": 0.045,
+      "forefoot_width_foot_width_ratio": 0.95,
+      "forefoot_length_foot_length_ratio": 0.3
+    }
+  }
+}

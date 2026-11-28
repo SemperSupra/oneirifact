@@ -1,0 +1,5 @@
+import {readFile} from "node:fs/promises";import assert from "node:assert/strict";import {evaluate,glb,validate,preset} from "./morph-core.mjs";
+const root=process.argv[2],buf=async n=>{const b=await readFile(root+"/"+n);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength)};
+const basis=new Float32Array(await buf("basis.bin")),faces=new Uint32Array(await buf("faces.bin")),rig=JSON.parse(await readFile(root+"/rig.json","utf8")),refs=JSON.parse(await readFile(root+"/witness.json","utf8"));
+for(const r of refs){const p=evaluate(r.spec,basis,rig);assert.equal(p.length,r.positions.length);let err=0;for(let i=0;i<p.length;i++)err=Math.max(err,Math.abs(p[i]-r.positions[i]));assert(err<.000002,r.id+" max error "+err);const b=glb(p,faces);assert.equal(new DataView(b.buffer).getUint32(8,true),b.length);console.log("BROWSER_MORPH_PARITY_PASS",r.id,err)}
+for(const x of [{...preset,age_years:17},{...preset,height_m:0},{...preset,muscularity:NaN}])assert.throws(()=>validate(x));console.log("BROWSER_NEGATIVE_CONTROLS_PASS");

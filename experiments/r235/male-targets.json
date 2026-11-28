@@ -1,0 +1,62 @@
+{
+  "young": {
+    "anchors": [
+      [
+        "african-male-young",
+        "dd5743e48700267d76596f575bf17b4b5cc3b3e0"
+      ],
+      [
+        "asian-male-young",
+        "8cd3ef3e9ddb06ee2d166f75f9ac10871251f938"
+      ],
+      [
+        "caucasian-male-young",
+        "c3b82f92c5ced85599199cd184b0faf3b3fc6881"
+      ]
+    ],
+    "macro": [
+      [
+        "universal-male-young-maxmuscle-minweight",
+        "6b21e86b3800e7bd736b8d9aa98cd98040acd334"
+      ],
+      [
+        "universal-male-young-maxmuscle-averageweight",
+        "b7c039c7f463fe1f1721b9ab269c7248d9c4f2f7"
+      ],
+      [
+        "universal-male-young-averagemuscle-minweight",
+        "0a53c15a2d6cf23120c786d95b36d7a618c61acf"
+      ]
+    ]
+  },
+  "old": {
+    "anchors": [
+      [
+        "african-male-old",
+        "3e67c58f7e0f56495e7f4fbf20f0076ffb6f92ab"
+      ],
+      [
+        "asian-male-old",
+        "d327b85e0b3de07b113cf4fc756f410668880359"
+      ],
+      [
+        "caucasian-male-old",
+        "07b1f5526a3139dbd528efe07452d0a454106d0d"
+      ]
+    ],
+    "macro": [
+      [
+        "universal-male-old-maxmuscle-minweight",
+        "9cf196719df98a3deabd59482a91945f8399b9e8"
+      ],
+      [
+        "universal-male-old-maxmuscle-averageweight",
+        "0af509d898e9aa551c48493c3510b7f13a0385e6"
+      ],
+      [
+        "universal-male-old-averagemuscle-minweight",
+        "83893d9fdbd41122191a7cf20bde5872cf0a8a80"
+      ]
+    ]
+  }
+}

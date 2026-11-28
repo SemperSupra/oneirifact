@@ -1,0 +1,51 @@
+name: R235 shared adult exterior and joint refit
+on:
+  pull_request:
+    branches: [rdte/r234-regional-athletic-morphology]
+    paths: ['experiments/r235/**','.github/workflows/rdte-r235-morph.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  shared:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire pinned male adult and shared regional CC0 targets
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/targets"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15257080341/zip > "$RUNNER_TEMP/base.zip"
+          python3 - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          male=json.loads(Path("experiments/r235/male-targets.json").read_text())
+          reg=json.loads(Path("experiments/r234/regional-targets.json").read_text())
+          root="https://raw.githubusercontent.com/makehumancommunity/makehuman/"+reg["upstream"]+"/makehuman/data/targets/"
+          rows=[("macrodetails/"+n,h) for s in male.values() for n,h in s["anchors"]+s["macro"]]
+          for group in list(reg["regional"].values())+list(reg["breast"].values()):rows.extend(group)
+          for name,h in rows:
+              dest=Path(os.environ["RUNNER_TEMP"])/"targets"/(Path(name).name+".target")
+              subprocess.run(["curl","--fail","--silent","--show-error","--location","--proto","=https","--proto-redir","=https","--max-time","40","--max-filesize","16000000",root+name+".target","-o",str(dest)],check=True)
+          PY
+      - name: Generate actual common morphology and refitted rigs
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r235/shared.py "$RUNNER_TEMP/base.zip" "$RUNNER_TEMP/targets" "$RUNNER_TEMP/results"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r235-shared-adult-morphology
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+          if-no-files-found: error

@@ -1,0 +1,35 @@
+name: R239 heldout knee condyle contact correction
+on:
+  pull_request:
+    branches: [rdte/r239-ct-articulated-leg]
+    paths: ['experiments/r239/knee/**','.github/workflows/rdte-r239-knee.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  contact:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Compare broad and opposing-surface selected fits on identical spatial holdout
+        run: |
+          set -euo pipefail
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15238834402/zip > "$RUNNER_TEMP/ct.zip"
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r239/knee/contact.py "$RUNNER_TEMP/ct.zip" "$RUNNER_TEMP/results"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r239-knee-contact-screen
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+          if-no-files-found: error

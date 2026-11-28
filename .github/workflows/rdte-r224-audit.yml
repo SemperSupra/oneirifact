@@ -1,0 +1,43 @@
+name: Independently audit researched anatomical structures
+on:
+  pull_request:
+    branches: [rdte/r224-completeness-and-gap-models]
+    paths: ['experiments/r224/audit_models.py','.github/workflows/rdte-r224-audit.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve exact independent artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/inputs"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15249771719/zip > "$RUNNER_TEMP/inputs/worklist.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15249915192/zip > "$RUNNER_TEMP/inputs/male.zip"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15248968293/zip > "$RUNNER_TEMP/inputs/female.zip"
+      - name: Independent model geometry and worklist audit
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r224/audit_models.py "$RUNNER_TEMP/inputs" "$RUNNER_TEMP/audit"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r224-model-audit
+          path: ${{ runner.temp }}/audit
+          retention-days: 30
+          if-no-files-found: error

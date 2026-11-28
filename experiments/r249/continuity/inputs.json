@@ -1,0 +1,220 @@
+{
+  "schema": "oneirifact.quaternion-continuity-audit-inputs/v1",
+  "reason": "Concrete 0.646\u20130.659m aquatic native-vs-GLB midpoint defect from adjacent q/-q keys; broaden only to shared animation-writing pattern.",
+  "groups": {
+    "r245": [
+      {
+        "id": "female155stiletto",
+        "artifact_id": 15266267965,
+        "sha256": "9a93eda50dc0546d906dff05043cded6d877e15b63bf23d409751c35b23796f4",
+        "bytes": 10034571,
+        "receipt": "consumer-receipt.json",
+        "producer_head": "7fc8141fef8e2133ecceb2474005e82da4da69ad",
+        "blend": "activity-prototypes.blend",
+        "glb": "activity-prototypes.glb",
+        "family": "r245",
+        "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s"
+      },
+      {
+        "id": "maleolderflat",
+        "artifact_id": 15266376027,
+        "sha256": "d08432a2deaeb77cc7d8be3cfeb612713ccf00ee1b2595ec642f08c36f6d2248",
+        "bytes": 9877552,
+        "receipt": "consumer-receipt.json",
+        "producer_head": "7fc8141fef8e2133ecceb2474005e82da4da69ad",
+        "blend": "activity-prototypes.blend",
+        "glb": "activity-prototypes.glb",
+        "family": "r245",
+        "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s"
+      },
+      {
+        "id": "female185stiletto",
+        "artifact_id": 15266301714,
+        "sha256": "123cd95275e79c163b360e0d8c26115e32b42e184d60d0c2cf2500c59e0f6319",
+        "bytes": 9907264,
+        "receipt": "consumer-receipt.json",
+        "producer_head": "7fc8141fef8e2133ecceb2474005e82da4da69ad",
+        "blend": "activity-prototypes.blend",
+        "glb": "activity-prototypes.glb",
+        "family": "r245",
+        "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s"
+      },
+      {
+        "id": "female155flat",
+        "artifact_id": 15266108723,
+        "sha256": "aa00aa15f45951336a4604b44ff0253c4fe7fdede724ecfaa554b0797e917531",
+        "bytes": 9867248,
+        "receipt": "consumer-receipt.json",
+        "producer_head": "7fc8141fef8e2133ecceb2474005e82da4da69ad",
+        "blend": "activity-prototypes.blend",
+        "glb": "activity-prototypes.glb",
+        "family": "r245",
+        "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s"
+      },
+      {
+        "id": "male155flat",
+        "artifact_id": 15266262966,
+        "sha256": "02189e313e29a85cf6f3220db831521b332f8eee2a5f8b2da17888ad56558aee",
+        "bytes": 9966052,
+        "receipt": "consumer-receipt.json",
+        "producer_head": "7fc8141fef8e2133ecceb2474005e82da4da69ad",
+        "blend": "activity-prototypes.blend",
+        "glb": "activity-prototypes.glb",
+        "family": "r245",
+        "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s"
+      },
+      {
+        "id": "female185flat",
+        "artifact_id": 15266366631,
+        "sha256": "985a9c697de794efdeb53f974a7b28a24c29bd41edcd0af4e5a566e213f79e6a",
+        "bytes": 10048187,
+        "receipt": "consumer-receipt.json",
+        "producer_head": "7fc8141fef8e2133ecceb2474005e82da4da69ad",
+        "blend": "activity-prototypes.blend",
+        "glb": "activity-prototypes.glb",
+        "family": "r245",
+        "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s"
+      },
+      {
+        "id": "male185flat",
+        "artifact_id": 15265669959,
+        "sha256": "238b6a16b5a653e1b70e236853cebc3aa7a3e825b584cc7aa004a444be371fbf",
+        "bytes": 9861531,
+        "receipt": "consumer-receipt.json",
+        "producer_head": "7fc8141fef8e2133ecceb2474005e82da4da69ad",
+        "blend": "activity-prototypes.blend",
+        "glb": "activity-prototypes.glb",
+        "family": "r245",
+        "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s"
+      },
+      {
+        "id": "male185stiletto",
+        "artifact_id": 15266466284,
+        "sha256": "bc34ed0e51a5d33380b313bb111606284ea9bfe05cedd5987b2497490001388b",
+        "bytes": 9993363,
+        "receipt": "consumer-receipt.json",
+        "producer_head": "7fc8141fef8e2133ecceb2474005e82da4da69ad",
+        "blend": "activity-prototypes.blend",
+        "glb": "activity-prototypes.glb",
+        "family": "r245",
+        "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s"
+      },
+      {
+        "id": "male155stiletto",
+        "artifact_id": 15265403864,
+        "sha256": "6a2d97e821a43d0107209ca6231fa00de6091db79b20dfe079deab7dba2d2691",
+        "bytes": 9809578,
+        "receipt": "consumer-receipt.json",
+        "producer_head": "7fc8141fef8e2133ecceb2474005e82da4da69ad",
+        "blend": "activity-prototypes.blend",
+        "glb": "activity-prototypes.glb",
+        "family": "r245",
+        "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s"
+      }
+    ],
+    "r248": [
+      {
+        "id": "maleolderflat",
+        "artifact_id": 15266702087,
+        "sha256": "c1d023badda9666e0bce749558b09d6d2d3d44020d914fa08ce470d44622a33a",
+        "bytes": 13897012,
+        "receipt": "consumer-receipt.json",
+        "producer_head": "6292d82cc2757416152ae7c4a0d7b2a2f9de459b",
+        "blend": "activity-prototypes.blend",
+        "glb": "activity-prototypes.glb",
+        "family": "r248",
+        "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s"
+      },
+      {
+        "id": "female155flat",
+        "artifact_id": 15266607497,
+        "sha256": "bf87546d4a45a0ba0d8b502a80c93a6343a041f508fb1b066e7f9bc028811c76",
+        "bytes": 13893428,
+        "receipt": "consumer-receipt.json",
+        "producer_head": "6292d82cc2757416152ae7c4a0d7b2a2f9de459b",
+        "blend": "activity-prototypes.blend",
+        "glb": "activity-prototypes.glb",
+        "family": "r248",
+        "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s"
+      }
+    ],
+    "r247": [
+      {
+        "id": "r247-male185flat-cmu-07_01-captured-motion",
+        "artifact_id": 15267282703,
+        "sha256": "c31308929ca9af33f612246bcec7d34d98541402a127b18d78c91c2636c8efb2",
+        "bytes": 16615483,
+        "receipt": "capture-receipt.json",
+        "producer_head": "025437f2a671ef37fec4b921ccc1d738ddb4fd34",
+        "family": "r247",
+        "time_mapping": "native frame=2+time_s/0.0083333; GLB importer uses observed action.frame_range[0] + time_s*scene.render.fps with fps_base=1",
+        "blend": "captured-motion-baseline.blend",
+        "glb": "captured-motion-baseline.glb"
+      },
+      {
+        "id": "r247-male185flat-cmu-13_01-captured-motion",
+        "artifact_id": 15267207471,
+        "sha256": "f3a2310b51253d7c0cdff875c30befa7ac8c86cfbb25283f56bda2a1dedb1b51",
+        "bytes": 57906252,
+        "receipt": "capture-receipt.json",
+        "producer_head": "025437f2a671ef37fec4b921ccc1d738ddb4fd34",
+        "family": "r247",
+        "time_mapping": "native frame=2+time_s/0.0083333; GLB importer uses observed action.frame_range[0] + time_s*scene.render.fps with fps_base=1",
+        "blend": "captured-motion-baseline.blend",
+        "glb": "captured-motion-baseline.glb"
+      },
+      {
+        "id": "r247-male155flat-cmu-13_01-captured-motion",
+        "artifact_id": 15266932468,
+        "sha256": "2cfb284b492d507b88d3fe247ba7ac1655d72f68a6b5c083f7a0118fd489ea0e",
+        "bytes": 57601688,
+        "receipt": "capture-receipt.json",
+        "producer_head": "025437f2a671ef37fec4b921ccc1d738ddb4fd34",
+        "family": "r247",
+        "time_mapping": "native frame=2+time_s/0.0083333; GLB importer uses observed action.frame_range[0] + time_s*scene.render.fps with fps_base=1",
+        "blend": "captured-motion-baseline.blend",
+        "glb": "captured-motion-baseline.glb"
+      },
+      {
+        "id": "r247-male155flat-cmu-07_01-captured-motion",
+        "artifact_id": 15266858400,
+        "sha256": "a4322cec39322bfa25eb612f996be2b775b071a7104549e3215fa8d137270c60",
+        "bytes": 16879235,
+        "receipt": "capture-receipt.json",
+        "producer_head": "025437f2a671ef37fec4b921ccc1d738ddb4fd34",
+        "family": "r247",
+        "time_mapping": "native frame=2+time_s/0.0083333; GLB importer uses observed action.frame_range[0] + time_s*scene.render.fps with fps_base=1",
+        "blend": "captured-motion-baseline.blend",
+        "glb": "captured-motion-baseline.glb"
+      }
+    ]
+  },
+  "negative_controls": [
+    {
+      "id": "female185flat-old-aquatic",
+      "artifact_id": 15267630942,
+      "sha256": "593d05d59124ebdbf91489c943a5ac9b7ce68928a5245cc20e36f68d4868f763",
+      "bytes": 9495863,
+      "receipt": "consumer-receipt.json",
+      "producer_head": "dd8e6b1d3c2d47b4687ade1ff4d0245353c10abc",
+      "family": "r246_negative",
+      "blend": "aquatic-prototypes.blend",
+      "glb": "aquatic-prototypes.glb",
+      "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s",
+      "expected_status": "LOCAL_SOURCE_LOGIC_REGRESSION_REQUIRES_ACTUAL_PUBLIC_ARTIFACT_MEASUREMENT"
+    },
+    {
+      "id": "male155flat-old-aquatic",
+      "artifact_id": 15267398122,
+      "sha256": "d9a0f19f5b5e7a0c7023dbfcfed384ab0a7cb7457c30a7a23297a144df4026a6",
+      "bytes": 9489581,
+      "receipt": "consumer-receipt.json",
+      "producer_head": "dd8e6b1d3c2d47b4687ade1ff4d0245353c10abc",
+      "family": "r246_negative",
+      "blend": "aquatic-prototypes.blend",
+      "glb": "aquatic-prototypes.glb",
+      "time_mapping": "native frame=1+24*time_s; imported glb first action frame+24*time_s",
+      "expected_status": "LOCAL_SOURCE_LOGIC_REGRESSION_REQUIRES_ACTUAL_PUBLIC_ARTIFACT_MEASUREMENT"
+    }
+  ]
+}

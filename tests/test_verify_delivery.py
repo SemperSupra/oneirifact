@@ -113,6 +113,8 @@ class DeliveryTests(unittest.TestCase):
                                    ("assets/worker.js", "application/javascript; charset=UTF-8"),
                                    ("assets/core.wasm", "application/wasm"),
                                    ("assets/style.css", "text/css"),
+                                   ("motion/preview.mp4", "video/mp4"),
+                                   ("motion/favicon.svg", "image/svg+xml"),
                                    (delivery.MANIFEST, "application/json")):
             with self.subTest(name=name):
                 headers = Message()
@@ -124,6 +126,8 @@ class DeliveryTests(unittest.TestCase):
                                    ("assets/main.mjs", "text/html"),
                                    ("assets/worker.js", "text/plain"),
                                    ("assets/style.css", "application/javascript"),
+                                   ("motion/preview.mp4", "text/html"),
+                                   ("motion/favicon.svg", "text/plain"),
                                    (delivery.MANIFEST, "text/plain"),
                                    ("index.html", None)):
             with self.subTest(name=name):

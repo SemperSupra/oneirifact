@@ -33,7 +33,7 @@ def validate_catalog(c,entries):
     seen=set()
     for d in c["datasets"]:
         require(d["id"] not in seen,"duplicate dataset");seen.add(d["id"])
-        for k in ("preview","attribution","additional_attribution","inventory"):
+        for k in ("preview","attribution","additional_attribution","inventory","receipt"):
             if k in d:link(d[k])
         require(bool(d["layers"]),"empty dataset")
         for m in d["layers"]:

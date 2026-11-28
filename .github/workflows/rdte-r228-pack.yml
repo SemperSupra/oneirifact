@@ -1,0 +1,18 @@
+name: R228 durable browser asset pack qualification
+on:
+  pull_request:
+    branches: [main]
+    paths: ['gallery/anatomy_pack.py','tests/test_anatomy_pack.py','.github/workflows/rdte-r228-pack.yml']
+permissions:
+  contents: read
+jobs:
+  pack:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Execute deterministic archive and hostile-input controls
+        run: python3 tests/test_anatomy_pack.py -v

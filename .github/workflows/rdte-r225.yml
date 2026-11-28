@@ -1,0 +1,71 @@
+name: Anatomical identity recovery and source mesh extraction
+on:
+  pull_request:
+    branches: [rdte/r224-completeness-and-gap-models]
+    paths: ['experiments/r225/**','.github/workflows/rdte-r225.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  ontology:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve pinned baseline inventory, worklist and human-view ontology
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          for row in 'worklist 15249771719' 'male 15238389268' 'female 15238269509' 'ct 15238834402'; do
+            read -r name id <<< "$row"
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/$id/zip > "$RUNNER_TEMP/input/$name.zip"
+          done
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 4 --max-time 120 --max-filesize 20000000 https://github.com/obophenotype/uberon/releases/download/v2026-11-05/human-view.obo -o "$RUNNER_TEMP/input/human-view.obo"
+          echo "002450b72156f1bdaf16e12374c3693a55117124a72e7eda90a4e7b045d399fd  $RUNNER_TEMP/input/human-view.obo" | sha256sum -c -
+      - name: Recover conservative semantic and donor candidates
+        run: python3 experiments/r225/recover.py "$RUNNER_TEMP/input" "$RUNNER_TEMP/recovery"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r225-identity-recovery
+          path: ${{ runner.temp }}/recovery
+          retention-days: 30
+          if-no-files-found: error
+  pineal:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve exact anatomical baseline and research hypotheses
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/input"
+          for row in 'male 15238389268' 'female 15238269509' 'research-male 15249915192' 'research-female 15248968293'; do
+            read -r name id <<< "$row"
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/$id/zip > "$RUNNER_TEMP/input/$name.zip"
+          done
+      - name: Extract exact donor mesh subregions and compare research models
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r225/pineal.py "$RUNNER_TEMP/input" "$RUNNER_TEMP/pineal"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r225-pineal-recovery
+          path: ${{ runner.temp }}/pineal
+          retention-days: 30
+          if-no-files-found: error

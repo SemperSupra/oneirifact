@@ -1,0 +1,39 @@
+name: Acquire published female lower-limb anatomy
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r223/lower_limb.py','.github/workflows/rdte-r223-lower-limb.yml']
+permissions:
+  contents: read
+jobs:
+  acquire:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Acquire official published final STL archive
+        run: |
+          set -euo pipefail
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --max-redirs 4 --max-time 180 --max-filesize 200000000 'https://digitalcommons.du.edu/cgi/viewcontent.cgi?article=1001&context=visiblehuman&filename=3&type=additional' -o "$RUNNER_TEMP/source.zip"
+          sha256sum "$RUNNER_TEMP/source.zip"
+      - name: Inspect actual meshes and preserve donor frame
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r223/lower_limb.py "$RUNNER_TEMP/source.zip" "$RUNNER_TEMP/lower-limb"
+          cp "$RUNNER_TEMP/source.zip" "$RUNNER_TEMP/lower-limb/source.zip"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r223-female-lower-limb
+          path: ${{ runner.temp }}/lower-limb
+          retention-days: 30
+          if-no-files-found: error

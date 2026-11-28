@@ -6,7 +6,7 @@ Oneirifact is a procedural 3D creation and exploration project. Its goal is to m
 
 ## Release status
 
-The read-only [Anatomy Explorer](https://sempersupra.github.io/oneirifact/anatomy/) reference preview and renderer showcase are available online. A separate adult morphology designer generates generic female exterior geometry locally from editable parameters. The native procedural editor is not yet released. This repository contains the public showcase and its delivery checks, not the procedural engine. No product binaries or engine source are distributed at this stage.
+The read-only [Anatomy Explorer](https://sempersupra.github.io/oneirifact/anatomy/) reference preview and renderer showcase are available online. A separate adult morphology designer generates generic adult male and female exterior geometry locally from editable parameters. The native procedural editor is not yet released. This repository contains the public showcase and its delivery checks, not the procedural engine. No product binaries or engine source are distributed at this stage.
 
 Verified releases will include supported features, limitations, build and test instructions, and applicable licensing notices.
 
@@ -39,4 +39,4 @@ For an exact display rebuild with Python 3.12+ and curl, run `python3 gallery/re
 
 ## Adult morphology designer
 
-Open [the browser designer](https://sempersupra.github.io/oneirifact/morph/) from the showcase or Anatomy Explorer. It has a neutral and athletic preset and independent adult age-design, stature, mass-shape, muscularity, torso and spine flexion controls. All geometry generation is local to the browser. The age and mass controls are not clinical estimates. The exterior is not registered to or coupled to the internal atlas. Rebuild the exact qualified browser package using `python3 gallery/restore_adult_design_release.py`; the archive and every allowlisted file are verified before restoration. Source asset license is included.
+Open [the browser designer](https://sempersupra.github.io/oneirifact/morph/) from the showcase or Anatomy Explorer. It includes male and female athletic presets, eleven shared regional controls, optional binary-only and advanced configuration, adult age-design, stature, mass-shape, muscularity, torso and spine flexion controls. Gender and presentation do not infer the selected internal anatomical configuration. All geometry generation is local to the browser. The age and mass controls are not clinical estimates. The exterior is not registered to or coupled to the internal atlas. Rebuild the exact qualified browser package using `python3 gallery/restore_adult_design_release.py`; the archive and every allowlisted file are verified before restoration. Source asset license is included.

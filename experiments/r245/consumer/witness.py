@@ -16,6 +16,8 @@ from gltf import parse,read,add,encode,sha,worlds
 from compiler import compile_clip,footwear_from_profile,compose_upper_body
 
 OUT=Path(sys.argv[sys.argv.index("--")+1]);QUICK="--quick" in sys.argv
+DAILY="--daily-coverage" in sys.argv
+daily_props=None
 CASE=json.loads((OUT/"case.json").read_text());MORPH=CASE["morphology"]
 SHOE=footwear_from_profile(CASE["shoe_profile"],MORPH)
 DOC,BIN=parse((OUT/"bound-source.glb").read_bytes());SOURCE_WORLD,PARENTS=worlds(DOC)
@@ -236,6 +238,7 @@ def solve(frame):
         for prefix,control in (("upperarm","proximal"),("lowerarm","distal")):
             for suffix in ("01","02"):pose(prefix+suffix+"."+side,solved[control]@REST[prefix+suffix+"."+side]);update()
         pose("wrist."+side,solved["distal"]@REST["wrist."+side]);update()
+        if daily_props is not None:daily_props.adjust_wrist(frame,side)
         resolved[side]=cv(target);hand_reach[side]=(position("wrist."+side)-target).length
     return {"resolved_hands_m":resolved,"actual_mouth_proxy_m":cv(actual_mouth),"actual_head_proxy_m":cv(actual_head),"hand_reach_error_m":hand_reach}
 
@@ -263,6 +266,7 @@ def observe(frame,resolved):
         tip=ev.matrix_world@(sum((obj.data.vertices[i].co for i in BRUSH_TIP_IDS),Vector())/len(BRUSH_TIP_IDS))
         actual["prop_tips_m"]={"toothbrush":cv(tip)}
         actual["toothbrush_tip_to_mouth_proxy_m"]=(tip-bv(actual["mouth_m"])).length
+    if daily_props is not None:daily_props.observe(frame,actual)
     return {"time_s":frame["time_s"],"actual":actual,"target":frame,"resolved_task":resolved,"replay_phase":"native_ik_then_original_rig_fk"}
 
 def capture_source_world():
@@ -294,9 +298,13 @@ brush.data.materials.append(material("Brush head proxy",(.84,.89,.85),.7))
 for p in brush.data.polygons:
     if p.index>=32:p.material_index=1
 bone_parent(brush,wrist,False)
+if DAILY:
+    from daily_props import DailyProps
+    daily_props=DailyProps(globals())
 
 FULL={"standing","sit_to_stand","squatting","walking","brushing_teeth","walking_brush"}
 IDS=["standing","sitting","sit_to_stand","squatting","walking","brushing_teeth","crouching","jogging","running","showering","eating_ice_cream_cone","walking_brush"]
+if DAILY:FULL=set(IDS)
 if QUICK:IDS=["standing","squatting","walking","brushing_teeth"]
 clips=[];actions={};tracks={};checks=[];replay_reference={};activity_state=[];clip_inputs={}
 for activity in IDS:
@@ -381,12 +389,16 @@ def choose_action(activity,t):
     rig.animation_data_create();rig.animation_data.action=bpy.data.actions[actions[activity]]
     if hasattr(rig.animation_data,"action_slot") and len(rig.animation_data.action.slots):rig.animation_data.action_slot=rig.animation_data.action.slots[0]
     f=1+t*24;scene.frame_set(int(f),subframe=f-int(f));update()
+    if DAILY:
+        if bpy.data.objects.get("Toothbrush support proxy"):bpy.data.objects["Toothbrush support proxy"].hide_render=activity not in ("brushing_teeth","walking_brush")
+        if bpy.data.objects.get("Authored chair support proxy"):bpy.data.objects["Authored chair support proxy"].hide_render=activity not in ("sitting","sit_to_stand")
+        if daily_props is not None:daily_props.visibility(activity)
 
 for (activity,t),(expected,shoes) in replay_reference.items():
     choose_action(activity,t);err=nearest_error(evaluated(skin),expected,2048)
     se=max(nearest_error(evaluated(bpy.data.objects[n]),v,len(v)) for n,v in shoes.items())
     checks.append({"activity_id":activity,"time_s":t,"phase":"baked_blend_action","max_bidirectional_error_m":err,"shoe_error_m":se})
-for activity in ("walking","squatting","brushing_teeth"):
+for activity in (IDS if DAILY else ("walking","squatting","brushing_teeth")):
     if activity in actions:
         for t in (.3125,.7291666666666666):
             choose_action(activity,t)
@@ -420,6 +432,7 @@ chair=make_mesh("Authored chair support proxy",[tup(bv(v)) for v in cvv],cff,mat
 def render(activity,t,path,detail=False,preview=False):
     choose_action(activity,t);chair.hide_render=activity not in ("sitting","sit_to_stand")
     brush.hide_render=activity not in ("brushing_teeth","walking_brush")
+    if daily_props is not None:daily_props.visibility(activity)
     vertices=evaluated(skin);center=(vertices.min(0)+vertices.max(0))/2
     if detail:center=np.array([center[0],center[1],.14]);camera.data.ortho_scale=.67
     else:camera.data.ortho_scale=MORPH["stature_m"]*1.20;center[2]=MORPH["stature_m"]*.47
@@ -428,11 +441,12 @@ def render(activity,t,path,detail=False,preview=False):
     scene.render.filepath=str(path);bpy.ops.render.render(write_still=True)
 
 render_specs=[("standing",0,"01-standing"),("sit_to_stand",0,"02-sitting"),("squatting",2,"03-squat"),("walking",.55,"04-walk"),("brushing_teeth",.5,"05-brushing"),("standing",0,"06-footwear")]
+if DAILY:render_specs += [("crouching",0,"07-crouching"),("jogging",.3,"08-jogging"),("running",.28,"09-running"),("showering",.5,"10-showering"),("eating_ice_cream_cone",1.5,"11-ice-cream")]
 for activity,t,name in render_specs:render(activity,t,OUT/(name+".png"),name=="06-footwear")
-video_case=CASE["id"] in ("male155flat","male185stiletto","female155stiletto","female185flat")
+video_case=DAILY or CASE["id"] in ("male155flat","male185stiletto","female155stiletto","female185flat")
 video_manifest=[]
 if video_case:
-    for activity in ("walking","squatting","walking_brush"):
+    for activity in (("sit_to_stand","crouching","jogging","running","showering","eating_ice_cream_cone") if DAILY else ("walking","squatting","walking_brush")):
         folder=OUT/(activity+"-frames");folder.mkdir()
         duration=clip_inputs[activity]["instance"]["duration_s"]
         for i,t in enumerate(np.arange(0,duration,1/8)):render(activity,float(t),folder/(str(i).zfill(4)+".png"),preview=True)
@@ -504,6 +518,11 @@ receipt={"schema":"oneirifact.motion-consumer-receipt/v1","status":transport+"_N
  "contact_acceptance":"SEPARATE_INDEPENDENT_CRITIC_PENDING","geometry_preservation":"Original 13380 vertices/26756 triangles,163 source bones,3packed influence sets retained; source rest-bind fitting precedes animation.",
  "props":{"chair":"Static .blend/render context only; seat/body contact unqualified","toothbrush":"Actual wrist-bone-parented rigid .blend/render prop; actual tip-to-mouth proxy distance observed; excluded from GLB because per-clip prop visibility is not encoded","finger_grip_and_dental_contact":"NOT_QUALIFIED"},
  "limitations":["Eight uniform-stature source combinations plus one actual nonuniform male-older donor morph; no universal morph coverage","Footwear meshes are rigid support proxies, not fitted shoes","Toe articulation uses middle-toe source joint for shoe hinge; original five toe roots retain their own heads","No measured human motion, forces, balance, joint limits, self-collision or soft tissue validation","Mouth/head and arm-neutral targets are authored proxies; no dental contact admission","Skin-only: anatomical skeletal meshes and all internal physiology omitted"],"files":{}}
+if DAILY:
+    receipt["extension"]={"id":"r248-dense-daily-activity","parent_head":"7fc8141fef8e2133ecceb2474005e82da4da69ad","coverage":"All12 activity/composition entries sampled at authored24fps; fractional replay probes for every entry","props":"Actual rigid wrist-parented cone with fixed authored wrist orientation, evaluated tip; static shower head/context lines. Native scene/render only; GLB retains body/shoe animation. Grip, oral contact, water mechanics and realism remain unqualified."}
+    receipt["time_mapping"]["fractional_seek"]="Two off-key samples for every authored activity, compared after reopen and reimport"
+    receipt["props"]["ice_cream_cone"]="Original rigid wrist-parented mesh; evaluated scoop-tip to mouth-proxy distances; no eating/contact acceptance"
+    receipt["props"]["shower"]="Original static head and context lines; no fluid simulation or wet-contact claim"
 for path in sorted(OUT.iterdir()):
     if path.is_file() and path.name!="consumer-receipt.json":receipt["files"][path.name]={"bytes":path.stat().st_size,"sha256":sha(path.read_bytes())}
 save_json(OUT/"consumer-receipt.json",receipt)

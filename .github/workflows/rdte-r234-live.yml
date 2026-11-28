@@ -1,0 +1,25 @@
+name: R234 independent live human design witness
+on:
+  pull_request:
+    branches: [main]
+    paths: ['tests/verify_live_human.py','.github/workflows/rdte-r234-live.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Independently verify the exact released archive bytes, site and routes
+        run: python3 tests/verify_live_human.py "$RUNNER_TEMP/live-human-receipt.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r234-live-human-design-receipt
+          path: ${{ runner.temp }}/live-human-receipt.json
+          retention-days: 30
+          if-no-files-found: error

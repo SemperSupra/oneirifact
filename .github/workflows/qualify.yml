@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: public-showcase-${{ github.ref }}
@@ -17,7 +18,7 @@ concurrency:
 jobs:
   qualify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     outputs:
       manifest_sha256: ${{ steps.digest.outputs.sha256 }}
     steps:
@@ -74,6 +75,22 @@ jobs:
           path: site/inspect
           retention-days: 30
           if-no-files-found: error
+      - name: Build compact anatomical reference explorer
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OPENBLAS_NUM_THREADS: 1
+          OMP_NUM_THREADS: 1
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/anatomy-input"
+          for row in 'male 15238389268' 'female 15238269509' 'regional 15249571443' 'pineal 15251480567' 'identity 15251349301' 'registration 15252200930'; do
+            read -r name id <<< "$row"
+            gh api repos/SemperSupra/oneirifact/actions/artifacts/$id/zip > "$RUNNER_TEMP/anatomy-input/$name.zip"
+          done
+          python3 -m venv "$RUNNER_TEMP/anatomy-venv"
+          source "$RUNNER_TEMP/anatomy-venv/bin/activate"
+          pip install numpy==2.3.5 trimesh==4.6.8 fast-simplification==0.1.13
+          python gallery/build_anatomy.py "$RUNNER_TEMP/anatomy-input"
       - name: Verify public repository and static site
         run: |
           set -eu
@@ -81,6 +98,7 @@ jobs:
           python3 -m unittest discover -s tests -v
           python3 tests/smoke_site.py
           node tests/smoke_inspector.mjs
+          node tests/smoke_anatomy.mjs
       - name: Stage and hash every qualified asset
         id: digest
         run: |

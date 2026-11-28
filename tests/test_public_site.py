@@ -28,7 +28,7 @@ class PublicSiteTests(unittest.TestCase):
         self.parser.feed((SITE / "index.html").read_text(encoding="utf-8"))
 
     def test_static_showcase_only(self):
-        self.assertIn(sorted(p.name for p in SITE.iterdir()), [["index.html"], ["gallery", "index.html"], ["gallery", "index.html", "inspect"]])
+        self.assertIn(sorted(p.name for p in SITE.iterdir()), [["anatomy", "index.html"], ["anatomy", "gallery", "index.html"], ["anatomy", "gallery", "index.html", "inspect"]])
         self.assertTrue((SITE / "index.html").is_file())
         self.assertFalse((SITE / "index.html").is_symlink())
         self.assertIn("Browser preview in preparation", self.parser.text)
@@ -75,6 +75,7 @@ class PublicSiteTests(unittest.TestCase):
         self.assertEqual(links, {
             "https://github.com/SemperSupra/oneirifact",
             "https://github.com/SemperSupra/oneirifact/issues",
+            "anatomy/",
         } | {f"gallery/{p}{ext}" for p in profiles for ext in (".png",".blend",".glb",".json")} | {f"inspect/{p}.html" for p in profiles} | {"inspect/index.html","inspect/specs.json.html","inspect/pavilion.py.html","inspect/export_gallery.py.html","inspect/bearing.py.html"})
 
 

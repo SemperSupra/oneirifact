@@ -1,0 +1,25 @@
+name: R239 independent shared human design live witness
+on:
+  pull_request:
+    branches: [main]
+    paths: ['tests/verify_shared_design_live.py','.github/workflows/rdte-r239-shared-live.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify exact anonymous archives and live asset inventory
+        run: python3 tests/verify_shared_design_live.py "$RUNNER_TEMP/shared-live-receipt.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r239-shared-live-receipt
+          path: ${{ runner.temp }}/shared-live-receipt.json
+          retention-days: 30
+          if-no-files-found: error

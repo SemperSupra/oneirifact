@@ -1,0 +1,11 @@
+# R255 authored motion extension studies
+
+Three independent public CPU packs contain twelve requested representative activities and a diagnostic pose sequence. All motion is original authored kinematics. Judo-inspired throwing and wrestling-inspired takedown use two independently bound actors. No motion is presented as captured human movement, a validated martial-arts technique, or simulated dynamics.
+
+The source hierarchy, original inverse bind matrices, all three influence sets and all 13,380 source vertices per actor are preserved. Morphology is resolved before animation. The producer reuses only seven named function definitions from the immutable R246 consumer; its top-level producer is not executed. Separate two-link construction controls retain the original intermediate limb subdivisions. Saved Blender scenes and independently reimported GLBs are compared at every between-key midpoint and three full keys across all corresponding skin vertices. All native and GLB quaternion keys use a consistent hemisphere.
+
+The geometric critic records source palm vertex proximity, original foot skin subset minima, whole-skin ground penetration, target residuals, limb length drift and intermediate-bone relative rotations. Failure remains visible and is distinct from transport success. Surface proximity is not contact force or anatomical acceptance; collision response, self-intersection and dynamic stability remain unqualified. A 10 cm heel/8 mm forefoot rigid support proxy has an explicitly authored heel detachment and response; it is not a fracture or physics model.
+
+The diagnostic sequence preserves original rest/bind, then poses separate T/A references, shoulder elevation, elbow flexion, torso twist/flexion, hip/knee flexion, single-leg stance, squat, open hand and fist studies. Declared angles are test inputs, not physiological limits. The original source rest is never overwritten by a reference pose.
+
+The public workflow uses pinned Blender 5.2.4 on standard `ubuntu-24.04` runners, no GPU and no paid cloud service. Each completed group emits its own gallery catalog, native scene/GLB per clip, actual CPU-rendered MP4 and contact sheet, source notices, transport/geometry observations and exact file manifest. Post-upload artifact identity is resolved by the independent immutable release lock rather than guessed inside its own upload.

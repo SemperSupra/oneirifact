@@ -74,10 +74,19 @@ def sample(meta, activity, t, actor_index=0):
             foot_R[s]=R;foot_stance[s]=u in (0.,1.)
         hand_mode="tuck";torso=.25*tuck
     elif activity=="cartwheel":
-        u=window(t,.6,3.5);R=rot([0,0,1],-2*math.pi*u)
-        hip=hip0+[-.95*h*u,0,0];hip[1]=hip0[1]-.12*h*math.sin(math.pi*u)**2
+        u=window(t,.6,3.5);R=rot([0,0,1],2*math.pi*u)
+        hip=hip0+[-.95*h*u,0,0]
+        # Lower into each lateral hand entry, rise over the inverted support.
+        # This declared kinematic arc is subsequently checked against source
+        # hand reach and the full evaluated skin, not treated as dynamics.
+        hip[1]=hip0[1]-.22*h*math.sin(2*math.pi*u)**2+.04*h*math.sin(math.pi*u)**4
         for s,sign in (("L",1),("R",-1)):
-            local=np.array(meta["ankles_m"][s])-hip0;local[0]+=sign*.20*h*math.sin(math.pi*u)**2
+            # Widen the legs on a measured reach sphere, not by increasing
+            # Cartesian X while retaining the original fully extended Y.
+            joint=np.array(meta["hips_m"][s]);knee=np.array(meta["knees_m"][s]);ankle=np.array(meta["ankles_m"][s])
+            length=(np.linalg.norm(knee-joint)+np.linalg.norm(ankle-knee))*.99;angle=.10+.53*math.sin(math.pi*u)**2
+            spread=joint-hip0+np.array([sign*length*math.sin(angle),-length*math.cos(angle),ankle[2]-joint[2]])
+            local=mix(ankle-hip0,spread,math.sin(math.pi*u)**2)
             feet[s]=hip+R@local;foot_R[s]=R;foot_stance[s]=u<.02 or u>.98
         hand_mode="cartwheel";torso=.02
     elif activity=="karate_sequence":
@@ -89,7 +98,7 @@ def sample(meta, activity, t, actor_index=0):
         u=window(t,1.5,4.3);entry=window(t,0,1.4);yaw=0 if actor_index==0 else math.pi
         R=rot([0,1,0],yaw);hip+=np.array([0,0,(-.13 if actor_index==0 else .13)*h]);feet={s:hip+R@(np.array(v)-hip0) for s,v in feet.items()};foot_R={s:R.copy() for s in feet}
         if actor_index==0:
-            hip[1]-=(.23 if activity=="wrestling_partner_takedown" else .06)*h*entry
+            hip[1]-=(.27 if activity=="wrestling_partner_takedown" else .06)*h*entry
             torso=(.42 if activity=="wrestling_partner_takedown" else .20)*entry*(1-.5*u);twist=.35*u
             hip[2]+=.09*h*u
         else:
@@ -99,14 +108,28 @@ def sample(meta, activity, t, actor_index=0):
             else:
                 R=rot([0,1,0],math.pi)@rot([1,0,0],-math.pi/2*u)
                 hip=mix(hip,[0,.13*h,.50*h],u)
+                hip[1]-=.08*h*entry*(1-u)
+                hip[2]-=.10*h*entry*(1-u)
             for s,sign in (("L",1),("R",-1)):
                 local=mix(np.array(meta["ankles_m"][s])-hip0,[sign*.09*h,-.29*h,.16*h],math.sin(math.pi*u)**2)
                 feet[s]=hip+R@local;foot_R[s]=R;foot_stance[s]=u<.01
-        hand_mode="partner" if .65<t<2.65 else "balance"
+            if activity=="wrestling_partner_takedown":
+                release=window(t,2.25,3.0);stance_root=hip0+np.array([0,0,.13*h]);stance_R=rot([0,1,0],math.pi)
+                for s in feet:
+                    anchor=stance_root+stance_R@(np.array(meta["ankles_m"][s])-hip0)
+                    feet[s]=mix(anchor,feet[s],release);foot_stance[s]=release==0.
+                    foot_R[s]=rot([0,1,0],math.pi)@rot([1,0,0],-math.pi/2*u*release)
+        release_time=2.25 if activity=="wrestling_partner_takedown" else 2.55
+        hand_mode="partner" if 1.15<t<release_time else "balance"
     elif activity=="push_up":
         depth=(1-math.cos(2*math.pi*t/2))/2;hip=np.array([0,(.20-.075*depth)*h,0.])
-        angle=math.atan2(.46*h,hip[1]-.045*h);R=rot([1,0,0],angle);torso=.025
-        feet={s:np.array([sign*.07*h,.055*h,-.44*h]) for s,sign in (("L",1),("R",-1))};foot_R={s:rot([1,0,0],.95) for s in feet}
+        foot_R={s:rot([1,0,0],.95) for s in feet};spans=[];heights=[]
+        for s in feet:
+            offsets=np.asarray(meta["foot_skin_offsets_m"][s]);height=.002-float((offsets@foot_R[s].T)[:,1].min())
+            joint=np.array(meta["hips_m"][s]);knee=np.array(meta["knees_m"][s]);ankle=np.array(meta["ankles_m"][s])
+            length=.995*(np.linalg.norm(joint-knee)+np.linalg.norm(knee-ankle));span=math.sqrt(max(0,length**2-(hip[1]-height)**2))
+            feet[s]=np.array([joint[0]-hip0[0],height,joint[2]-hip0[2]-span]);spans.append(span);heights.append(height)
+        angle=math.atan2(float(np.mean(spans)),hip[1]-float(np.mean(heights)));R=rot([1,0,0],angle);torso=.025
         hand_mode="push_up"
     elif activity=="sit_up":
         flex=(1-math.cos(2*math.pi*t/4))/2;hip=np.array([0,.105*h,0.]);R=rot([1,0,0],-math.pi/2);torso=1.05*flex;head=.20*flex
@@ -148,14 +171,19 @@ def hands(meta,frame,shoulders,chest=None,partner=None):
             contacts.append({"actor_part":"palm."+s,"kind":"ground_support_intent","point_m":target.tolist()})
         elif mode=="cartwheel":
             u=window(t,.6,3.5)
-            if (.22<u<.60 and s=="L") or (.40<u<.78 and s=="R"):
-                target=np.array([-(.38 if s=="L" else .58)*h,0.,0.]);palm[s]=target
+            # Travel towards -X makes the anatomical right hand the first
+            # support; the left hand follows across the inverted phase.
+            if (.22<u<.60 and s=="R") or (.40<u<.78 and s=="L"):
+                target=np.array([-(.38 if s=="R" else .58)*h,0.,0.]);palm[s]=target
                 contacts.append({"actor_part":"palm."+s,"kind":"ground_support_intent","point_m":target.tolist()})
+            elif (s=="R" and u>=.60) or (s=="L" and u>=.78):offset=np.array([sign*.05*h,-.16*h,.07*h])
             else:offset=np.array([sign*.04*h,.28*h,0.])
         elif mode=="partner" and partner:
-            key=("chest" if s=="L" else "shoulder") if frame["activity"]=="judo_partner_throw" else ("knee" if s=="L" else "back")
+            # Defender uses upper-body contacts; only the takedown initiator
+            # receives the opponent's knee/back targets.
+            key=("chest" if s=="L" else "shoulder") if frame["activity"]=="judo_partner_throw" or frame["actor_index"]==1 else ("knee" if s=="L" else "back")
             target=np.array(partner[key]);palm[s]=target
-            contacts.append({"actor_part":"palm."+s,"kind":"partner_source_surface_intent","partner_anchor":key,"point_m":target.tolist()})
+            contacts.append({"actor_part":"palm."+s,"kind":"partner_source_surface_intent","partner_anchor":key,"role":"initiator" if frame["actor_index"]==0 else "defender","phase":"authored_grip_1.15_to_2.25_s" if frame["activity"]=="wrestling_partner_takedown" else "authored_grip_1.15_to_2.55_s","release_semantics":"Explicit authored release before remaining fall; no continuing grip claim.","point_m":target.tolist()})
         elif mode=="diagnostic":
             d=frame["diagnostic"]
             if d in ("source_rest","hand_open","fist"):offset=np.array(meta["wrists_m"][s])-np.array(meta["shoulders_m"][s])
@@ -165,4 +193,9 @@ def hands(meta,frame,shoulders,chest=None,partner=None):
             elif d=="elbow_flexion":offset=np.array([sign*.12*h,.015*h,.12*h])
         if s in frame["hand_overrides"]:offset=np.array(frame["hand_overrides"][s])
         targets[s]=shoulder+R@offset
+    for c in contacts:
+        if c["kind"]=="ground_support_intent":
+            side=c["actor_part"][-1];height=frame.get("palm_height_offsets_m",{}).get(side,0.)
+            palm[side][1]+=height;c["point_m"]=palm[side].tolist();c["support_plane_y_m"]=0.;c["palm_proxy_height_above_plane_m"]=height
+            c["contact_semantics"]="Measured hand-patch plane proximity only; the source palm proxy can lie above it. No load-bearing claim."
     return targets,palm,contacts

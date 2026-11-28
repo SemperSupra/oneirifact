@@ -66,7 +66,7 @@ class Actor:
         for p in self.skin.data.polygons:p.use_smooth=True
         self.meta["shoulders_m"]={s:cv(self.rest["upperarm01."+s].translation).tolist() for s in ("L","R")}
         self.meta["wrists_m"]={s:cv(self.rest["wrist."+s].translation).tolist() for s in ("L","R")}
-        self.anchor_ids={};self.palm_normals={};self.palm_offsets={};self.hand_ids={};self.foot_ids={}
+        self.anchor_ids={};self.palm_normals={};self.palm_offsets={};self.hand_ids={};self.foot_ids={};self.meta["foot_skin_offsets_m"]={}
         h=self.meta["stature_m"]
         def select(center,names,normal=None):
             ni={self.names.index(n) for n in names};membership=np.isin(self.joints,list(ni));w=(self.weights*membership).sum(1);ids=np.flatnonzero(w>.5)
@@ -84,6 +84,10 @@ class Actor:
             self.palm_normals[s]=normal;self.palm_offsets[s]=self.verts[vid]-wrist
             _,ids=select(np.array(self.meta["ankles_m"][s]),[n for n in self.names if n=="foot."+s or n.startswith("toe") and n.endswith("."+s)])
             self.foot_ids[s]=ids
+            self.meta["foot_skin_offsets_m"][s]=(self.verts[ids]-np.array(self.meta["ankles_m"][s])).tolist()
+            for region in ("heel","forefoot","toe"):
+                center=np.array(self.meta["ankles_m"][s])+self.meta["feet"][s][region+"_from_ankle_m"]
+                self.anchor_ids[region+"."+s]=int(ids[np.argmin(np.linalg.norm(self.verts[ids]-center,axis=1))])
         for key,center,names in (
             ("chest",[0,.74*h,.09*h],["spine01","spine02","spine03"]),
             ("back",[0,.70*h,-.06*h],["spine02","spine03","spine04"]),
@@ -117,7 +121,7 @@ class Actor:
             self.pose("foot."+s,F@self.rest["foot."+s]);update();self.foot_deltas[s]=F
             self.reach["ankle."+s]=float((ankle-target).length)
         self.frame=f
-    def arms(self,partner=None):
+    def arms(self,partner=None,record=True):
         f=self.frame;shoulders={s:cv(self.point("upperarm01."+s)) for s in ("L","R")}
         targets,palms,contact=hands(self.meta,f,shoulders,partner=partner);self.contact_intents=f["contacts"]+contact
         for s,sign in (("L",1),("R",-1)):
@@ -151,9 +155,12 @@ class Actor:
         for c in self.contact_intents:
             r=copy.deepcopy(c);part=c["actor_part"]
             if part.startswith("palm"):
-                vid=self.anchor_ids[part];actual=canonical[vid];r.update(source_vertex_id=vid,actual_point_m=actual.tolist(),distance_m=float(np.linalg.norm(actual-c["point_m"])))
+                vid=self.anchor_ids[part];actual=canonical[vid];side=part[-1];ids=self.hand_ids[side];lowest=int(ids[np.argmin(canonical[ids,1])])
+                r.update(source_vertex_id=vid,actual_point_m=actual.tolist(),distance_m=float(np.linalg.norm(actual-c["point_m"])),
+                    actual_hand_skin_min_y_m=float(canonical[lowest,1]),minimum_hand_source_vertex_id=lowest,minimum_hand_source_point_m=canonical[lowest].tolist())
             else:
-                s=part[-1];r.update(source_vertex_subset_count=len(self.foot_ids[s]),actual_min_y_m=float(canonical[self.foot_ids[s],1].min()))
+                s=part[-1];r.update(source_vertex_subset_count=len(self.foot_ids[s]),actual_min_y_m=float(canonical[self.foot_ids[s],1].min()),
+                    source_contact_points={region:{"vertex_id":self.anchor_ids[region+"."+s],"point_m":canonical[self.anchor_ids[region+"."+s]].tolist()} for region in ("heel","forefoot","toe")})
             contacts.append(r)
         lengths={};subdivision=0.
         for s in ("L","R"):
@@ -163,10 +170,12 @@ class Actor:
                     n2=prefix+"02."+s;parent=self.rig.data.bones[n2].parent.name
                     bind=(self.rest[parent].inverted()@self.rest[n2]).to_quaternion();now=(self.world(parent).inverted()@self.world(n2)).to_quaternion()
                     subdivision=max(subdivision,float(bind.rotation_difference(now).angle))
-        row={"time_s":f["time_s"],"actor":self.id,"root_hip_m":f["hip"].tolist(),"contacts":contacts,"target_errors_m":self.reach.copy(),"limb_length_drift_m":lengths,
+        row={"time_s":f["time_s"],"actor":self.id,"root_hip_m":f["hip"].tolist(),"actual_hip_center_m":cv((self.point("upperleg01.L")+self.point("upperleg01.R"))/2).tolist(),"contacts":contacts,"target_errors_m":self.reach.copy(),"limb_length_drift_m":lengths,
+             "actual_ankles_m":{s:cv(self.point("foot."+s)).tolist() for s in ("L","R")},
              "intermediate_relative_rotation_error_rad":subdivision,"whole_skin_min_y_m":float(canonical[:,1].min()),"diagnostic":f["diagnostic"]}
-        self.rows.append(row);self.times.append(f["time_s"]);self.worlds.append(self.e["capture_source_world"]())
-        self.poses.append([(self.rig.pose.bones[n].location.copy(),self.rig.pose.bones[n].rotation_quaternion.copy()) for n in self.names])
+        if record:
+            self.rows.append(row);self.times.append(f["time_s"]);self.worlds.append(self.e["capture_source_world"]())
+            self.poses.append([(self.rig.pose.bones[n].location.copy(),self.rig.pose.bones[n].rotation_quaternion.copy()) for n in self.names])
         return row
     def bake(self,activity):
         self.rig.animation_data_clear();action=bpy.data.actions.new(self.id+" / "+activity);action.use_fake_user=True;action_set(self.rig,action);previous={};corrected=0

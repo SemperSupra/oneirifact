@@ -1,7 +1,7 @@
-name: R255 authored motion extension products
+name: R255 evaluated geometry contact-fit products
 on:
   pull_request:
-    branches: [rdte/r246-native-aquatic-consumer]
+    branches: [rdte/r255-motion-extensions]
     paths: ['experiments/r255/extensions/**', '.github/workflows/rdte-r255-extensions.yml']
 permissions:
   contents: read
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2 Node24
         if: always()
         with:
-          name: r255-${{ matrix.group }}-v1
+          name: r255-${{ matrix.group }}-v2
           path: ${{ runner.temp }}/product
           retention-days: 30
           if-no-files-found: error

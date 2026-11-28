@@ -5,7 +5,7 @@ from PIL import Image,ImageDraw,ImageFont
 import imageio_ffmpeg
 
 ROOT=Path(sys.argv[1]);INPUT=Path(sys.argv[2]);GROUP=sys.argv[3]
-PACK="r255-"+GROUP+"-v1"
+PACK="r255-"+GROUP+"-v2"
 ENCODER="e7e7fb30477f717e6f55f9180a70386c62677ef8a4d4d1a5d948f4098aa3eb99"
 def sha(raw):return hashlib.sha256(raw).hexdigest()
 def save(p,x):p.write_text(json.dumps(x,indent=2,allow_nan=False)+"\n")
@@ -47,12 +47,12 @@ for folder in sorted(ROOT.iterdir()):
     save(folder/"media-verification.json",verification);media.append({"activity":activity,**verification})
     preview={**asset(movie),"fps":spec["fps"],"frames":len(frames),"duration_s":len(frames)/spec["fps"]}
     actors=[{"id":a["id"],"sex_variant":a["sex_variant"],"stature_m":a["stature_m"],"morphology_label":a["case_id"],"footwear":a["footwear"],"source_bind_sha256":a["source_bind_sha256"]} for a in receipt["actors"]]
-    packages.append({"id":"r255-"+activity.replace("_","-"),"title":activity.replace("_"," ").title(),"group":GROUP,"source_kind":"authored","actors":actors,
+    packages.append({"id":"r255-"+activity.replace("_","-")+"-v2","supersedes":"r255-"+activity.replace("_","-"),"title":activity.replace("_"," ").title(),"group":GROUP,"source_kind":"authored","actors":actors,
        "clips":[{"id":activity,"title":activity.replace("_"," ").title(),"animation_name":activity,"duration_s":receipt["duration_s"],"evaluation":"Authored kinematic study; "+receipt["contact"]+"; realism and technique held","preview":preview}],
        "assets":{"model":asset(folder/"motion.glb"),"native_scene":asset(folder/"motion.blend"),"poster":asset(poster),"contact_sheet":asset(folder/"contact-sheet.png"),"receipt":asset(folder/"receipt.json"),"rights":asset(rights)},
        "provenance":{"repository":"SemperSupra/oneirifact","producer_head":receipt["source_head_commit"],"producer_run_id":receipt["run_id"],"provider_artifact":"RESOLVED_BY_POST_UPLOAD_RELEASE_LOCK","source_revision":receipt["source_parent"],"source_artifact_id":15266855834,"source_archive_sha256":"e694ab4d06bae33bf829e624d03a2bd81bb28d8b8059c42ae83e36819f33dd68","source_notices":asset(rights)},
        "qualification":{"transport":receipt["transport"],"realism":receipt["realism"],"contact":receipt["contact"],"physics":receipt["physics"],"retarget":receipt["retarget"]},
-       "included_layers":receipt["included_layers"],"omitted_layers":receipt["omitted_layers"],"notes":[receipt["scope"],"Any failed contact or silhouette remains visible and explicitly unaccepted. Native and GLB transport do not imply valid technique.","Video cadence differs from 24 fps native animation."],"model_inventory":receipt["model_inventory"]})
+       "included_layers":receipt["included_layers"],"omitted_layers":receipt["omitted_layers"],"notes":[receipt["scope"],receipt["kinematic_fit"],"Any failed contact or silhouette remains visible and explicitly unaccepted. Native and GLB transport do not imply valid technique.","Video cadence differs from 24 fps native animation."],"model_inventory":receipt["model_inventory"]})
     # Render frames are reproducible intermediates; package exact native/media instead.
     shutil.rmtree(folder/"frames")
 catalog={"schema":"oneirifact.motion-browser/v1","pack_id":PACK,"title":"R255 "+GROUP.replace("-"," "),"packages":packages,"scope":"Original authored extension prototypes with full source weights and paired actors where declared. No capture, physics, contact or realism acceptance inferred from successful transport."}

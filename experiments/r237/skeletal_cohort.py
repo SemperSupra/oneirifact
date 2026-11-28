@@ -17,9 +17,26 @@ def run(out,scratch):
             raw=response.read((2<<20)+1);need(len(raw)<=2<<20,"metadata size")
         meta=json.loads(raw);md=meta["metadata"];lic=md.get("license",{})
         rights=lic.get("id","") if isinstance(lic,dict) else str(lic)
-        report.update({"metadata_sha256":hashlib.sha256(raw).hexdigest(),"title":md.get("title"),"license":rights,"access_right":md.get("access_right"),"files":[{"key":f["key"],"size":f["size"],"checksum":f["checksum"]} for f in meta["files"]]})
+        report.update({"metadata_sha256":hashlib.sha256(raw).hexdigest(),"title":md.get("title"),"license":rights,"access_right":md.get("access_right"),"rights":md.get("rights"),"files":[{"key":f["key"],"size":f["size"],"checksum":f["checksum"]} for f in meta["files"]]})
+        # Resolve earlier version separately. Never infer v2 rights from a mirror
+        # or simply from an open-access flag. Identical bytes from an expressly
+        # licensed version may be used under that version's license.
         if rights.lower() not in ("cc-by-4.0","cc0-1.0","cc-by-3.0"):
-            report["status"]="HOLD_RIGHTS";return
+            v1="https://zenodo.org/api/records/22833546"
+            with urllib.request.urlopen(v1,timeout=30) as response:
+                need(response.status==200 and urllib.parse.urlparse(response.geturl()).hostname=="zenodo.org","v1 metadata origin")
+                old_raw=response.read((2<<20)+1);need(len(old_raw)<=2<<20,"v1 metadata size")
+            old=json.loads(old_raw);old_md=old["metadata"];old_lic=old_md.get("license",{})
+            old_rights=old_lic.get("id","") if isinstance(old_lic,dict) else str(old_lic)
+            report["earlier_version"]={"source":v1,"metadata_sha256":hashlib.sha256(old_raw).hexdigest(),"license":old_rights,"rights":old_md.get("rights"),"files":[{"key":f["key"],"size":f["size"],"checksum":f["checksum"]} for f in old["files"]]}
+            if old_rights.lower() not in ("cc-by-4.0","cc0-1.0","cc-by-3.0"):
+                report["status"]="HOLD_RIGHTS";return
+            old_file=next((f for f in old["files"] if f["key"]=="NM_LEXT.mat" and f["checksum"]=="md5:"+MD5),None)
+            if old_file is None:
+                report["status"]="HOLD_VERSION_IDENTITY";return
+            meta=old;report["admitted_source"]=v1;report["admitted_license"]=old_rights
+        else:
+            report["admitted_source"]=API;report["admitted_license"]=rights
         f=next(f for f in meta["files"] if f["key"]=="NM_LEXT.mat")
         need(f["checksum"]=="md5:"+MD5 and 0<f["size"]<=CAP,"source pin/budget")
         url=f["links"]["self"];need(url.startswith("https://zenodo.org/"),"source origin")

@@ -1,0 +1,65 @@
+name: R237 durable shared adult design package
+on:
+  pull_request:
+    branches: [main]
+    paths: ['gallery/qualify_r237_shared.py','.github/workflows/r237-shared-design.yml']
+  push:
+    branches: [main]
+    paths: ['gallery/qualify_r237_shared.py','.github/workflows/r237-shared-design.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  pack:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    outputs:
+      sha: ${{ steps.pack.outputs.sha }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Package exact qualified public browser assets
+        id: pack
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15259064051/zip > "$RUNNER_TEMP/shared.zip"
+          python3 gallery/qualify_r237_shared.py "$RUNNER_TEMP/shared.zip" "$RUNNER_TEMP/qualified"
+          python3 gallery/qualify_r237_shared.py "$RUNNER_TEMP/shared.zip" "$RUNNER_TEMP/replay"
+          cmp "$RUNNER_TEMP/qualified/shared-design-r237-v1.zip" "$RUNNER_TEMP/replay/shared-design-r237-v1.zip"
+          echo "sha=$(sha256sum "$RUNNER_TEMP/qualified/shared-design-r237-v1.zip" | cut -d ' ' -f1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r237-shared-design-pack
+          path: ${{ runner.temp }}/qualified
+          retention-days: 30
+          if-no-files-found: error
+  publish:
+    needs: pack
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PACK_SHA: ${{ needs.pack.outputs.sha }}
+      TAG: shared-design-r237-v1
+    steps:
+      - name: Publish once, verify anonymous readback
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/publish"
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name r237-shared-design-pack --dir "$RUNNER_TEMP/publish"
+          cd "$RUNNER_TEMP/publish"
+          echo "$PACK_SHA  shared-design-r237-v1.zip" | sha256sum --check --strict
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Shared adult morphology designer R237" --notes "Qualified CC0 exterior design basis and browser controls; male and female presets, 11 regional controls, optional binary-only mode. Internal anatomical configuration remains metadata. No clinical/native claim." --latest=false shared-design-r237-v1.zip receipt.json
+          fi
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --max-time 120 --max-filesize 16777216 "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/shared-design-r237-v1.zip" -o "$RUNNER_TEMP/readback.zip"
+          echo "$PACK_SHA  $RUNNER_TEMP/readback.zip" | sha256sum --check --strict
+          echo R237_SHARED_DESIGN_PUBLIC_READBACK_PASS

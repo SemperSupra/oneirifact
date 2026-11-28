@@ -43,7 +43,7 @@ def run(out,scratch):
         need(f["checksum"]=="md5:"+expected and 0<f["size"]<=CAP,"source pin/budget")
         url=f["links"]["self"];need(url.startswith("https://zenodo.org/"),"source origin")
         path=scratch/"NM_LEXT.mat"
-        subprocess.run(["curl","--fail","--silent","--show-error","--location","--max-redirs","3","--proto","=https","--proto-redir","=https","--connect-timeout","15","--max-time","150","--max-filesize",str(CAP),url,"-o",str(path)],check=True,timeout=165)
+        subprocess.run(["curl","--fail","--silent","--show-error","--location","--max-redirs","3","--proto","=https","--proto-redir","=https","--connect-timeout","15","--max-time","220","--max-filesize",str(CAP),url,"-o",str(path)],check=True,timeout=235)
         need(path.stat().st_size==f["size"],"source length")
         with path.open("rb") as b:need(hashlib.file_digest(b,"md5").hexdigest()==expected,"source MD5")
         with path.open("rb") as b:report["archive_sha256"]=hashlib.file_digest(b,"sha256").hexdigest()

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Explore anatomical reference models and reconstruction qualification in your browser.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' data: blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Oneirifact — Anatomy Explorer</title>
+<link rel="stylesheet" href="viewer.css">
+<script type="module" src="../inspect/model-viewer.min.js"></script>
+<script defer src="viewer.js"></script>
+</head>
+<body>
+<header><a href="../">Oneirifact</a><span> / Anatomy Explorer</span><label for="theme">Theme <select id="theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label></header>
+<main>
+<h1>Anatomy Explorer</h1>
+<p class="intro">Explore the actual anatomical reference models and reconstruction evidence. No installation or account required.</p>
+<p class="notice">Research preview: incomplete donor anatomy, not a medical tool or a native articulated Oneirifact model. Browser display meshes may be simplified; original source identities and evidence are preserved.</p>
+<nav aria-label="Explorer views"><button id="explore-tab" aria-pressed="true">3D explorer</button><button id="evidence-tab" aria-pressed="false">Qualification evidence</button></nav>
+<section id="explore" aria-label="3D exploration">
+<div class="layout"><section class="stage">
+<div id="display">
+<img id="preview" alt="Reference geometry preview" hidden>
+<model-viewer id="viewer" camera-controls touch-action="pan-y" alt="Selected anatomical reference model" interaction-prompt="none" hidden></model-viewer>
+</div>
+<div class="toolbar"><button id="start" disabled>Explore in 3D</button><button id="front" disabled title="Front view">Front</button><button id="side" disabled title="Side view">Side</button><button id="reset" disabled title="Reset view">Reset</button><button id="image" disabled>Image</button></div>
+<p id="status" role="status" aria-live="polite" data-state="pending">Loading reference catalog…</p>
+</section>
+<section class="controls">
+<label for="dataset">Reference dataset</label><select id="dataset" disabled></select>
+<label for="layer">Anatomical system / model</label><select id="layer" disabled></select>
+<p id="scope" class="muted"></p><p id="size" class="muted"></p>
+<p><a id="attribution" hidden>Source and license</a> <a id="attribution2" hidden>Additional source</a></p>
+<details open id="inventory-panel"><summary>Named anatomical structures</summary><label for="search">Search this layer</label><input id="search" type="search" placeholder="e.g. femur, heart, FMA"><p id="count" class="muted"></p><ul id="inventory"></ul><button id="more" hidden>Show more</button></details>
+</section></div>
+</section>
+<section id="evidence" hidden aria-label="Qualification evidence"><h2>Registration and identity evidence</h2><p>Held-out centres are not surface or joint qualification. Candidate labels are not admitted anatomy.</p><div id="evidence-content" role="status">Select this tab to load the qualification receipts.</div></section>
+<noscript>The interactive browser requires JavaScript. The gallery's rendered images are available on the main Oneirifact page.</noscript>
+</main>
+<footer><a href="../">Project showcase</a> · <a href="../inspect/index.html">Artifact inspector</a> · <a href="https://github.com/SemperSupra/oneirifact/issues">Feedback</a></footer>
+</body></html>

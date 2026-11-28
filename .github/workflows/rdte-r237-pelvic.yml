@@ -1,0 +1,29 @@
+name: R237 original female pelvic landmark schema qualification
+on:
+  pull_request:
+    branches: [rdte/r234-female-pelvic-source-qualification]
+    paths: ['experiments/r237/pelvic_schema.py','.github/workflows/rdte-r237-pelvic.yml']
+permissions:
+  contents: read
+jobs:
+  schema:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Inspect source format and attempt exact paired observer interpretation
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5
+          python experiments/r237/pelvic_schema.py "$RUNNER_TEMP/pelvis"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r237-pelvic-schema-receipt
+          path: ${{ runner.temp }}/pelvis
+          retention-days: 30
+          if-no-files-found: error

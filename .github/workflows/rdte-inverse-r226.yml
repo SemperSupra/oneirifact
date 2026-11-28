@@ -1,0 +1,38 @@
+name: Qualify inverse spatial holdout and topology selection
+on:
+  pull_request:
+    branches: [rdte/r203-sequence-bakeoff]
+    paths: ['experiments/inverse-r226/**','.github/workflows/rdte-inverse-r226.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  spatial-ablation:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Fetch immutable original synthetic baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api repos/SemperSupra/oneirifact/actions/artifacts/15229628907/zip > "$RUNNER_TEMP/baseline.zip"
+      - name: Run spatial-holdout ablation
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.2.6 scipy==1.15.3 scikit-image==0.25.2 Pillow==11.2.1
+          python experiments/inverse-r226/spatial_ablation.py "$RUNNER_TEMP/baseline.zip" "$RUNNER_TEMP/r226"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r226-spatial-topology-ablation
+          path: ${{ runner.temp }}/r226
+          retention-days: 30
+          if-no-files-found: error

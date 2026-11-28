@@ -1,0 +1,47 @@
+name: R239 full influence human motion
+on:
+  pull_request:
+    branches: [rdte/r219-anatomical-rig]
+    paths: ['experiments/r239/**','.github/workflows/rdte-r239-rig.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualify:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        sex: [male,female]
+    env:
+      SEX: ${{ matrix.sex }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Restore exact donor rig witness
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if test "$SEX" = male; then id=15237582155; else id=15236338379; fi
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/$id/zip > "$RUNNER_TEMP/rig.zip"
+      - name: Preserve all source influences and replay diagnostic clips
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 Pillow==12.0.0
+          python experiments/r239/full_influence.py "$RUNNER_TEMP/rig.zip" "$RUNNER_TEMP/rig-results" "$SEX"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r239-full-influence-${{ matrix.sex }}
+          path: ${{ runner.temp }}/rig-results
+          retention-days: 30
+          if-no-files-found: error

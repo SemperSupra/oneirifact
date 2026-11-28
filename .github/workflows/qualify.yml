@@ -99,6 +99,21 @@ jobs:
           python3 tests/smoke_site.py
           node tests/smoke_inspector.mjs
           node tests/smoke_anatomy.mjs
+      - name: Retain anatomy browser screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: anatomy-browser-witnesses
+          path: ${{ runner.temp }}/anatomy-*.png
+          retention-days: 30
+          if-no-files-found: ignore
+      - name: Retain browser reference asset pack
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: anatomy-display-assets
+          path: site/anatomy/data
+          retention-days: 30
+          if-no-files-found: error
       - name: Stage and hash every qualified asset
         id: digest
         run: |

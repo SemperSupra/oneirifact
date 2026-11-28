@@ -1,0 +1,50 @@
+name: R234 regional athletic adult morphology
+on:
+  pull_request:
+    branches: [rdte/r232-adult-morphology]
+    paths: ['experiments/r234/**','.github/workflows/rdte-r234-regional.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  regional:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Retrieve pinned CC0 source basis and exact regional target bytes
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/targets"
+          gh api repos/SemperSupra/oneirifact/actions/artifacts/15257080341/zip > "$RUNNER_TEMP/base.zip"
+          python3 - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          lock=json.loads(Path("experiments/r234/regional-targets.json").read_text())
+          root="https://raw.githubusercontent.com/makehumancommunity/makehuman/"+lock["upstream"]+"/makehuman/data/targets/"
+          out=Path(os.environ["RUNNER_TEMP"])/"targets"
+          for rows in list(lock["regional"].values())+list(lock["breast"].values()):
+              for path,h in rows:
+                  dest=out/(Path(path).name+".target")
+                  subprocess.run(["curl","--fail","--silent","--show-error","--location","--proto","=https","--proto-redir","=https","--max-time","40","--max-filesize","16000000",root+path+".target","-o",str(dest)],check=True)
+          PY
+      - name: Qualify each regional control and render actual design variants
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/venv"
+          source "$RUNNER_TEMP/venv/bin/activate"
+          pip install numpy==2.3.5 scipy==1.17.0 trimesh==4.6.8 Pillow==12.0.0
+          python experiments/r234/regional.py "$RUNNER_TEMP/base.zip" "$RUNNER_TEMP/targets" "$RUNNER_TEMP/results"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r234-regional-adult-design
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+          if-no-files-found: error

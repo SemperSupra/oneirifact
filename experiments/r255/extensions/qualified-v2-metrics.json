@@ -1,0 +1,748 @@
+{
+  "schema": "oneirifact.frozen-motion-product-metrics/v1",
+  "producer": {
+    "repository": "SemperSupra/oneirifact",
+    "head": "53a49b7387cb01675f75cea10d8de15d89a09bac",
+    "run_id": 46168671427,
+    "artifacts": [
+      {
+        "group": "support-events",
+        "id": 15272701335,
+        "sha256": "ef5674988cc349b75e37524dd39b415926830500bda6578cd09c72607c39f321"
+      },
+      {
+        "group": "acrobatics-combat",
+        "id": 15273065720,
+        "sha256": "d0fbafad6c1a7f0a646cf7409d0f01905adf6ae3e69afd7746c01601083dd58a"
+      },
+      {
+        "group": "exercise-dance",
+        "id": 15272956536,
+        "sha256": "db76068942a746c9c93a9e90110cc8cfc7c9a535d9055571bb3705b7520baeaa"
+      }
+    ]
+  },
+  "scope": "Observed actual public v2 product values. Retained contact/realism/technique holds and failures are not acceptance.",
+  "clips": [
+    {
+      "id": "backward_fall",
+      "group": "support-events",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "female155flat",
+          "sex_variant": "female",
+          "stature_m": 1.55,
+          "source_bind_sha256": "896d413748e4990bd1175b786fb4ded7272f411422ce917cc483823080bc63a2",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 4.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.1894823338672582e-06,
+      "metrics": {
+        "max_ik_target_error_m": 8.352443927716736e-05,
+        "max_declared_palm_contact_distance_m": null,
+        "minimum_whole_skin_y_m": 0.0019994378089904785,
+        "max_limb_length_drift_m": 3.2929407817183787e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.0664894814491272,
+        "max_kinematic_ankle_target_displacement_m": 0.0664894814491272,
+        "max_root_speed_m_s": 0.42829502886249615,
+        "max_adjacent_fit_offset_change_m": 0.011158074855804445,
+        "max_total_root_change_from_public_baseline_m": 0.0664894814491272
+      },
+      "receipt_sha256": "a3aa08060c28e6ab1e57604433fd84f13aea019b63c45030013f765f25ef5fea",
+      "glb_sha256": "f27b1a1d61cc20024faab004985dc2b3a827fadee01e21c1df1670806aba29e9",
+      "model_inventory": {
+        "meshes": 2,
+        "skins": 1,
+        "joints_per_skin": [
+          163
+        ],
+        "total_skin_vertices": 13380,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "slip_fall",
+      "group": "support-events",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "female155flat",
+          "sex_variant": "female",
+          "stature_m": 1.55,
+          "source_bind_sha256": "896d413748e4990bd1175b786fb4ded7272f411422ce917cc483823080bc63a2",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 4.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "FAIL_DIAGNOSTIC",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.1894823338672582e-06,
+      "metrics": {
+        "max_ik_target_error_m": 0.030502943866355894,
+        "max_declared_palm_contact_distance_m": null,
+        "minimum_whole_skin_y_m": 0.0019994378089904785,
+        "max_limb_length_drift_m": 3.2929407817183787e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.0664894814491272,
+        "max_kinematic_ankle_target_displacement_m": 0.0664894814491272,
+        "max_root_speed_m_s": 0.4282952161496146,
+        "max_adjacent_fit_offset_change_m": 0.011158074855804445,
+        "max_total_root_change_from_public_baseline_m": 0.0664894814491272
+      },
+      "receipt_sha256": "8de3a41c2698886f4f36c333f85eb7f4a7ed604b3f83d420cc94b850105c9e13",
+      "glb_sha256": "d44852d03e3b979098e4847012a0c5358258c4609c5c3bff2f4006f89d98570f",
+      "model_inventory": {
+        "meshes": 2,
+        "skins": 1,
+        "joints_per_skin": [
+          163
+        ],
+        "total_skin_vertices": 13380,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "stiletto_heel_break",
+      "group": "support-events",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "female155flat",
+          "sex_variant": "female",
+          "stature_m": 1.55,
+          "source_bind_sha256": "896d413748e4990bd1175b786fb4ded7272f411422ce917cc483823080bc63a2",
+          "footwear": "10 cm heel and 8 mm forefoot rigid support proxies"
+        }
+      ],
+      "duration_s": 4.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.0889323677120166e-06,
+      "metrics": {
+        "max_ik_target_error_m": 0.01720600948177716,
+        "max_declared_palm_contact_distance_m": null,
+        "minimum_whole_skin_y_m": -0.016229353845119476,
+        "max_limb_length_drift_m": 2.3537176596644116e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.0,
+        "max_kinematic_ankle_target_displacement_m": 0.0,
+        "max_root_speed_m_s": 0.2577117773668099,
+        "max_adjacent_fit_offset_change_m": 0.0,
+        "max_total_root_change_from_public_baseline_m": 0.0
+      },
+      "receipt_sha256": "5a391be8cff91aecc6d6be47e87a77f519b9b5a828531934392ffcf76849a12c",
+      "glb_sha256": "6ad8d9bfcf95f0542804fd59af841fde99cc663bfa9d74ab640581425422b967",
+      "model_inventory": {
+        "meshes": 6,
+        "skins": 1,
+        "joints_per_skin": [
+          163
+        ],
+        "total_skin_vertices": 13380,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "trip_fall",
+      "group": "support-events",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "female155flat",
+          "sex_variant": "female",
+          "stature_m": 1.55,
+          "source_bind_sha256": "896d413748e4990bd1175b786fb4ded7272f411422ce917cc483823080bc63a2",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 4.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.0261281528159386e-06,
+      "metrics": {
+        "max_ik_target_error_m": 8.403227093085702e-05,
+        "max_declared_palm_contact_distance_m": null,
+        "minimum_whole_skin_y_m": 0.0019998650532215834,
+        "max_limb_length_drift_m": 2.8261582596389445e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.1765442361831665,
+        "max_kinematic_ankle_target_displacement_m": 0.1765442361831665,
+        "max_root_speed_m_s": 0.39123685548178727,
+        "max_adjacent_fit_offset_change_m": 0.01950593073666096,
+        "max_total_root_change_from_public_baseline_m": 0.1765442361831665
+      },
+      "receipt_sha256": "e9e2e5e6919d34902b34d3b0e18530f8a0e3e6447a7ff41558df269331814fc0",
+      "glb_sha256": "4d0adddebc2a321b12cf2ea9e179dfae65b24d7b55161574cfb6908a903ad668",
+      "model_inventory": {
+        "meshes": 3,
+        "skins": 1,
+        "joints_per_skin": [
+          163
+        ],
+        "total_skin_vertices": 13380,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "cartwheel",
+      "group": "acrobatics-combat",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "male155flat",
+          "sex_variant": "male",
+          "stature_m": 1.55,
+          "source_bind_sha256": "684417c9f6fb92b0a3b9cfc0dd13955b1204670a05545cf6e19054fac99d673b",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 4.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.723388707018013e-06,
+      "metrics": {
+        "max_ik_target_error_m": 1.6370967428182988e-05,
+        "max_declared_palm_contact_distance_m": 1.0870270703638977e-06,
+        "minimum_whole_skin_y_m": 0.001999795436859131,
+        "max_limb_length_drift_m": 4.759673922216656e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.09038378925621515,
+        "max_kinematic_ankle_target_displacement_m": 0.0903837892562151,
+        "max_root_speed_m_s": 1.5504246853194155,
+        "max_adjacent_fit_offset_change_m": 0.036768265278909106,
+        "max_total_root_change_from_public_baseline_m": 0.24769320062063616
+      },
+      "receipt_sha256": "377e5a31873d4cacd63128b409bb6a5eff3f55dd54cfa6ed31b547eec061d90e",
+      "glb_sha256": "a4674090a77bd8b4223c6f4d84e55c952a43bcceabf9faba3b5630322fb34436",
+      "model_inventory": {
+        "meshes": 2,
+        "skins": 1,
+        "joints_per_skin": [
+          163
+        ],
+        "total_skin_vertices": 13380,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "judo_partner_throw",
+      "group": "acrobatics-combat",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "male155flat",
+          "sex_variant": "male",
+          "stature_m": 1.55,
+          "source_bind_sha256": "684417c9f6fb92b0a3b9cfc0dd13955b1204670a05545cf6e19054fac99d673b",
+          "footwear": "barefoot"
+        },
+        {
+          "id": "actor-b",
+          "case_id": "female155flat",
+          "sex_variant": "female",
+          "stature_m": 1.55,
+          "source_bind_sha256": "896d413748e4990bd1175b786fb4ded7272f411422ce917cc483823080bc63a2",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 5.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.3559698480679906e-06,
+      "metrics": {
+        "max_ik_target_error_m": 5.622007434959572e-05,
+        "max_declared_palm_contact_distance_m": 3.372612438968779e-05,
+        "minimum_whole_skin_y_m": 0.001999852480366826,
+        "max_limb_length_drift_m": 3.5815047849663273e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.13083251428604126,
+        "max_kinematic_ankle_target_displacement_m": 0.13083251428604126,
+        "max_root_speed_m_s": 0.7707603048226231,
+        "max_adjacent_fit_offset_change_m": 0.02095052194595337,
+        "max_total_root_change_from_public_baseline_m": 0.13083251428604126
+      },
+      "receipt_sha256": "ff573efca2b9a61a3230a9437a1c569c9067386b7b159b33136725ec4c9af9dc",
+      "glb_sha256": "2a791573c039ae522d61617cc9af3cab582812784cf5f9444a812d3887696853",
+      "model_inventory": {
+        "meshes": 3,
+        "skins": 2,
+        "joints_per_skin": [
+          163,
+          163
+        ],
+        "total_skin_vertices": 26760,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "karate_sequence",
+      "group": "acrobatics-combat",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "male155flat",
+          "sex_variant": "male",
+          "stature_m": 1.55,
+          "source_bind_sha256": "684417c9f6fb92b0a3b9cfc0dd13955b1204670a05545cf6e19054fac99d673b",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 4.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.426781320999363e-06,
+      "metrics": {
+        "max_ik_target_error_m": 0.02578529887224701,
+        "max_declared_palm_contact_distance_m": null,
+        "minimum_whole_skin_y_m": -2.6218671337119304e-05,
+        "max_limb_length_drift_m": 3.199213066684692e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.0,
+        "max_kinematic_ankle_target_displacement_m": 0.0,
+        "max_root_speed_m_s": 0.09714732533507885,
+        "max_adjacent_fit_offset_change_m": 0.0,
+        "max_total_root_change_from_public_baseline_m": 0.0
+      },
+      "receipt_sha256": "786cd7485f9293f9dc26a80fc7dd7ab277de1b63ffbcbc101651d328066404fe",
+      "glb_sha256": "38e1d70636e9908f6b574e599d689a97da5e904b52a7f7739a54772bf8c08b93",
+      "model_inventory": {
+        "meshes": 2,
+        "skins": 1,
+        "joints_per_skin": [
+          163
+        ],
+        "total_skin_vertices": 13380,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "somersault",
+      "group": "acrobatics-combat",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "male155flat",
+          "sex_variant": "male",
+          "stature_m": 1.55,
+          "source_bind_sha256": "684417c9f6fb92b0a3b9cfc0dd13955b1204670a05545cf6e19054fac99d673b",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 4.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.998311831264521e-06,
+      "metrics": {
+        "max_ik_target_error_m": 8.431372493225941e-05,
+        "max_declared_palm_contact_distance_m": null,
+        "minimum_whole_skin_y_m": -2.249288399980287e-07,
+        "max_limb_length_drift_m": 4.6511894419287714e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.0,
+        "max_kinematic_ankle_target_displacement_m": 0.0,
+        "max_root_speed_m_s": 0.8120680247833444,
+        "max_adjacent_fit_offset_change_m": 0.0,
+        "max_total_root_change_from_public_baseline_m": 0.0
+      },
+      "receipt_sha256": "ba7bbf2e093f869df25fc077ee38b623b7b32f96ce9e132e5a0f56108b240caa",
+      "glb_sha256": "f1e6a360eca6d30fc1c5e0921586f9f8e6ef930dba616dfa34a0ac795fe381d4",
+      "model_inventory": {
+        "meshes": 2,
+        "skins": 1,
+        "joints_per_skin": [
+          163
+        ],
+        "total_skin_vertices": 13380,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "wrestling_partner_takedown",
+      "group": "acrobatics-combat",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "male155flat",
+          "sex_variant": "male",
+          "stature_m": 1.55,
+          "source_bind_sha256": "684417c9f6fb92b0a3b9cfc0dd13955b1204670a05545cf6e19054fac99d673b",
+          "footwear": "barefoot"
+        },
+        {
+          "id": "actor-b",
+          "case_id": "female155flat",
+          "sex_variant": "female",
+          "stature_m": 1.55,
+          "source_bind_sha256": "896d413748e4990bd1175b786fb4ded7272f411422ce917cc483823080bc63a2",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 5.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.4057727354849285e-06,
+      "metrics": {
+        "max_ik_target_error_m": 0.019372632372666974,
+        "max_declared_palm_contact_distance_m": 0.019372783667336243,
+        "minimum_whole_skin_y_m": 0.0019929988775402308,
+        "max_limb_length_drift_m": 3.496426086713189e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.22285241117662632,
+        "max_kinematic_ankle_target_displacement_m": 0.0040225922558456695,
+        "max_root_speed_m_s": 5.359646874967126,
+        "max_adjacent_fit_offset_change_m": 0.22285260533090331,
+        "max_total_root_change_from_public_baseline_m": 0.35615747572611445
+      },
+      "receipt_sha256": "bfe860e045eb728b57af10af58af96a88077ed2245ee25e6d02a8d44d7196da9",
+      "glb_sha256": "2731b75038df0ce843c986e4ee08a00e2fde996675cedc6e3b8891ee0586cafb",
+      "model_inventory": {
+        "meshes": 3,
+        "skins": 2,
+        "joints_per_skin": [
+          163,
+          163
+        ],
+        "total_skin_vertices": 26760,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "dance_steps",
+      "group": "exercise-dance",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "female185flat",
+          "sex_variant": "female",
+          "stature_m": 1.8499999999999999,
+          "source_bind_sha256": "5f67bccd498851bc4db640b7ae3fdb5c3c68cfaee38ba245ec4584fea7fec89d",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 6.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.2797659965505533e-06,
+      "metrics": {
+        "max_ik_target_error_m": 6.900610824765431e-05,
+        "max_declared_palm_contact_distance_m": null,
+        "minimum_whole_skin_y_m": -4.1570692701498047e-05,
+        "max_limb_length_drift_m": 4.4299066415121047e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.0,
+        "max_kinematic_ankle_target_displacement_m": 0.0,
+        "max_root_speed_m_s": 0.42994638252182404,
+        "max_adjacent_fit_offset_change_m": 0.0,
+        "max_total_root_change_from_public_baseline_m": 0.0
+      },
+      "receipt_sha256": "0f82ec7351e34c3659659c0e2e512f028d871a950831007dac1eb5df17fb0adc",
+      "glb_sha256": "2aba8e0e499b56e16b025d131be2accd21185bc11282d59a4fe3eafa3dbe926b",
+      "model_inventory": {
+        "meshes": 2,
+        "skins": 1,
+        "joints_per_skin": [
+          163
+        ],
+        "total_skin_vertices": 13380,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "diagnostic_poses",
+      "group": "exercise-dance",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "female185flat",
+          "sex_variant": "female",
+          "stature_m": 1.8499999999999999,
+          "source_bind_sha256": "5f67bccd498851bc4db640b7ae3fdb5c3c68cfaee38ba245ec4584fea7fec89d",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 12.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.4383287468748293e-06,
+      "metrics": {
+        "max_ik_target_error_m": 0.014298681671421763,
+        "max_declared_palm_contact_distance_m": null,
+        "minimum_whole_skin_y_m": -4.580906534101814e-05,
+        "max_limb_length_drift_m": 4.068167038240311e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.0,
+        "max_kinematic_ankle_target_displacement_m": 0.0,
+        "max_root_speed_m_s": 9.767998695373285,
+        "max_adjacent_fit_offset_change_m": 0.0,
+        "max_total_root_change_from_public_baseline_m": 0.0
+      },
+      "receipt_sha256": "a1fa70c735b872fd994023e6b973640c1b8c2696d5fef9f3e20c36b51bd9c99d",
+      "glb_sha256": "2b92a571182ad84d1a3a50f5f5155a189ff48ec9a2d42c5913a811190ce94b37",
+      "model_inventory": {
+        "meshes": 2,
+        "skins": 1,
+        "joints_per_skin": [
+          163
+        ],
+        "total_skin_vertices": 13380,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "push_up",
+      "group": "exercise-dance",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "female185flat",
+          "sex_variant": "female",
+          "stature_m": 1.8499999999999999,
+          "source_bind_sha256": "5f67bccd498851bc4db640b7ae3fdb5c3c68cfaee38ba245ec4584fea7fec89d",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 4.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.0897222339381112e-06,
+      "metrics": {
+        "max_ik_target_error_m": 3.3193073456183256e-06,
+        "max_declared_palm_contact_distance_m": 3.441522936181407e-06,
+        "minimum_whole_skin_y_m": 0.0019997358322143555,
+        "max_limb_length_drift_m": 4.998797686339707e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 7.059097290040839e-06,
+        "max_kinematic_ankle_target_displacement_m": 2.899169921910527e-07,
+        "max_root_speed_m_s": 0.21732759476090005,
+        "max_adjacent_fit_offset_change_m": 2.2649765014648438e-06,
+        "max_total_root_change_from_public_baseline_m": 7.059097290040839e-06
+      },
+      "receipt_sha256": "e5998374aa451a1d88d6a6058f5cca9262f758a1d8c5c913c303f01346883475",
+      "glb_sha256": "169c689ecd0ba5ea9f03a59bf32373a1242095a689921fb77423f0eb2ef50ad2",
+      "model_inventory": {
+        "meshes": 2,
+        "skins": 1,
+        "joints_per_skin": [
+          163
+        ],
+        "total_skin_vertices": 13380,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    },
+    {
+      "id": "sit_up",
+      "group": "exercise-dance",
+      "actors": [
+        {
+          "id": "actor-a",
+          "case_id": "female185flat",
+          "sex_variant": "female",
+          "stature_m": 1.8499999999999999,
+          "source_bind_sha256": "5f67bccd498851bc4db640b7ae3fdb5c3c68cfaee38ba245ec4584fea7fec89d",
+          "footwear": "barefoot"
+        }
+      ],
+      "duration_s": 4.0,
+      "native_fps": 24,
+      "helper_source_sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "probe_scope": "All between-key midpoints plus first/middle/last keys; all 13,380 corresponding skin vertices per actor; independent full-weight CPU LBS at three keys",
+      "contact": "HOLD_GEOMETRIC_PROXIMITY_ONLY",
+      "realism": "HOLD_AUTHORED_KINEMATICS",
+      "physics": "NOT_SIMULATED",
+      "retarget": "NOT_APPLICABLE_ORIGINAL_AUTHORED_TARGETS",
+      "technique": "NOT_ACCEPTED",
+      "transport_tolerance_m": 5e-05,
+      "worst_transport_error_m": 1.3240698563298036e-06,
+      "metrics": {
+        "max_ik_target_error_m": 8.684662777074774e-05,
+        "max_declared_palm_contact_distance_m": null,
+        "minimum_whole_skin_y_m": 0.002877514809370041,
+        "max_limb_length_drift_m": 2.8757766934450757e-07,
+        "max_intermediate_relative_rotation_error_rad": 0.0,
+        "max_kinematic_root_displacement_m": 0.0,
+        "max_kinematic_ankle_target_displacement_m": 0.0,
+        "max_root_speed_m_s": 0.0,
+        "max_adjacent_fit_offset_change_m": 0.0,
+        "max_total_root_change_from_public_baseline_m": 0.0
+      },
+      "receipt_sha256": "e0986129499c22254791bd49a1d1d4d7f27a4dcce600aff2cd04649d70ccd956",
+      "glb_sha256": "b5fddafb5a343eb388a2623fa15852b83182e245556d3ea84780a4dbace76146",
+      "model_inventory": {
+        "meshes": 2,
+        "skins": 1,
+        "joints_per_skin": [
+          163
+        ],
+        "total_skin_vertices": 13380,
+        "source_weight_sets": [
+          "JOINTS_0/WEIGHTS_0",
+          "JOINTS_1/WEIGHTS_1",
+          "JOINTS_2/WEIGHTS_2"
+        ],
+        "maximum_positive_influences": 9,
+        "source_attributes_and_inverse_binds_bit_identical": true
+      }
+    }
+  ]
+}

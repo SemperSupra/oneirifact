@@ -1,0 +1,23 @@
+{
+  "schema": "oneirifact.frozen-native-helper-source/v1",
+  "repository": "SemperSupra/oneirifact",
+  "qualified_producer_head": "53a49b7387cb01675f75cea10d8de15d89a09bac",
+  "qualified_run": 46168671427,
+  "execution": "Only seven explicitly allowlisted function definitions from witness.py are compiled. Its top-level producer is never executed. gltf.py is imported as the exact source transport helper.",
+  "files": [
+    {
+      "path": "gltf.py",
+      "sha256": "efce3c66622cc303fef03cc552c29f7e369d13206bf2fb53a2598d24d69aec1e",
+      "bytes": 2460,
+      "upstream_path": "experiments/r246/consumer/gltf.py",
+      "upstream_head": "a8620c416070696fdd8d24d76464c8b30dfe9205"
+    },
+    {
+      "path": "witness.py",
+      "sha256": "0196adf5d96699988f75990f94a03180b9c8ed3fcb91b6bb163499c16ce5d10d",
+      "bytes": 38594,
+      "upstream_path": "experiments/r246/consumer/witness.py",
+      "upstream_head": "a8620c416070696fdd8d24d76464c8b30dfe9205"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+name: R255 durable source replay
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experiments/r255/extensions/**', 'experiments/r255/source_input/**', '.github/workflows/r255-motion-replay.yml']
+  workflow_dispatch:
+    inputs:
+      group:
+        description: One bounded replay group
+        type: choice
+        default: exercise-dance
+        options: [support-events, acrobatics-combat, exercise-dance]
+permissions:
+  contents: read
+jobs:
+  replay:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        group: ${{ fromJSON(github.event_name == 'pull_request' && '["exercise-dance","acrobatics-combat"]' || format('["{0}"]', inputs.group)) }}
+    env:
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      R255_PACK_REVISION: replay-${{ github.run_id }}-${{ github.run_attempt }}
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+      PYTHONUNBUFFERED: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 Node24
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Restore published original source entries and pinned encoder
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD_SHA"
+          source_url="$(python3 -c 'import json; print(json.load(open("experiments/r255/source_input/input-lock.json"))["url"])')"
+          curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error --retry 2 --max-time 120 "$source_url" -o "$RUNNER_TEMP/source.zip"
+          python3 experiments/r255/source_input/prepare.py "$RUNNER_TEMP/source.zip" "$RUNNER_TEMP/inputs" "$RUNNER_TEMP/source-input-restore-receipt.json"
+          python3 -m venv "$RUNNER_TEMP/venv"
+          mkdir "$RUNNER_TEMP/wheels"
+          "$RUNNER_TEMP/venv/bin/pip" download --no-deps --only-binary=:all: imageio-ffmpeg==0.6.0 -d "$RUNNER_TEMP/wheels"
+          wheel="$RUNNER_TEMP/wheels/imageio_ffmpeg-0.6.0-py3-none-manylinux2014_x86_64.whl"
+          echo "c7e46fcec401dd990405049d2e2f475e2b397779df2519b544b8aab515195282  $wheel" | sha256sum -c -
+          "$RUNNER_TEMP/venv/bin/pip" install "$wheel" Pillow==12.0.0
+      - name: Actual native product with saved and reimported midpoint replay
+        run: |
+          set -euo pipefail
+          archive=blender-5.2.4-linux-x64.tar.xz
+          expected=2fd14c50987426897ba60237ee996edf2b4151f4b1a72a460ca20be58c1d2d86
+          blender_root="$RUNNER_TEMP/blender"
+          mkdir "$blender_root"
+          for origin in https://download.blender.org https://mirror.blender.org https://mirror.nju.edu.cn/blender; do
+            if timeout 110s curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error --connect-timeout 12 --max-time 95 "$origin/release/Blender5.2/$archive" -o "$blender_root/$archive"; then
+              echo "$expected  $blender_root/$archive" | sha256sum -c -
+              break
+            fi
+          done
+          echo "$expected  $blender_root/$archive" | sha256sum -c -
+          timeout 150s tar -xf "$blender_root/$archive" -C "$blender_root"
+          "$blender_root/blender-5.2.4-linux-x64/blender" -b --factory-startup --threads 2 --python-exit-code 1 --python experiments/r255/extensions/produce.py -- "$RUNNER_TEMP/inputs" "$RUNNER_TEMP/product" "${{ matrix.group }}"
+      - name: Compare with frozen qualified v2 source and metrics
+        run: python3 experiments/r255/extensions/compare_replay.py "$RUNNER_TEMP/product" "${{ matrix.group }}"
+      - name: Package actual decoded media under a unique replay identity
+        if: always()
+        run: |
+          set -euo pipefail
+          if test -d "$RUNNER_TEMP/product"; then
+            cp "$RUNNER_TEMP/source-input-restore-receipt.json" "$RUNNER_TEMP/product/"
+            "$RUNNER_TEMP/venv/bin/python" experiments/r255/extensions/package.py "$RUNNER_TEMP/product" "$RUNNER_TEMP/inputs" "${{ matrix.group }}"
+          fi
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2 Node24
+        if: always()
+        with:
+          name: r255-${{ matrix.group }}-replay-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/product
+          retention-days: 30
+          if-no-files-found: error

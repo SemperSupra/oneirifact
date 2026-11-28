@@ -86,7 +86,12 @@ def run(archive,out):
             x=210+j*176;y0=40+i*212
             if tag not in comparison:
                 d.text((x,y0+70),"NO ELIGIBLE",fill="white");continue
-            p=comparison[tag];v,f,m=mesh(p,64);v32,f32,m32=mesh(p,32)
+            p=comparison[tag]
+            try:
+                v,f,m=mesh(p,64);v32,f32,m32=mesh(p,32)
+            except (AssertionError,ValueError) as e:
+                meshrows[tag]={"heldout":metrics(p,te,yt),"topology":topology(p),"mesh_status":"HELD_DOMAIN_OR_EMPTY","grid64":None,"grid32":None}
+                d.text((x,y0+70),"MESH HELD",fill="white");continue
             export(out/f"{name}-{tag}-64.obj",v,f);export(out/f"{name}-{tag}-32.obj",v32,f32)
             meshrows[tag]={"grid32":m32,"grid64":m,"heldout":metrics(p,te,yt),"topology":topology(p)}
             im.paste(render(v,f,(.56,.34)),(x,y0))

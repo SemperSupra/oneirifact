@@ -30,14 +30,16 @@ def catalog_check(c,entries):
     for p in c['packages']:
         require(SEGMENT.fullmatch(p['id']) and p['id'] not in seen,'duplicate/invalid package');seen.add(p['id'])
         require(p['source_kind'] in ('authored','captured') and p['actors'] and p['clips'],'package scope')
-        require(p['qualification']['realism']=='HELD','realism must remain held for this release')
+        require(p['qualification']['realism'] in ('HELD','HOLD_AUTHORED_KINEMATICS'),'realism must remain held for these research releases')
         for key in ('model','native_scene','poster','contact_sheet','receipt','rights'):link(p['assets'][key])
         for still in p['assets'].get('stills',[]):link(still)
+        for evidence in p['assets'].get('evidence',[]):link(evidence)
         clip_ids=set()
         for clip in p['clips']:
             require(clip['id'] not in clip_ids and clip['duration_s']>0 and clip['animation_name'],'invalid/duplicate clip');clip_ids.add(clip['id'])
             if clip.get('preview'):link(clip['preview'])
             if clip.get('poster'):link(clip['poster'])
+    for evidence in c.get('evidence',[]):link(evidence)
     require(refs==set(entries),'unreferenced pack entries')
     return len(seen)
 def manifest(entries):return json.dumps({'schema':SCHEMA,'files':[{'path':n,**entries[n]} for n in sorted(entries)]},sort_keys=True,separators=(',',':')).encode()+b'\n'
